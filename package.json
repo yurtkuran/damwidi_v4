@@ -1,0 +1,36 @@
+{
+    "name": "traversymedia-dev-connector",
+    "version": "1.0.0",
+    "description": "Social network for developers",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "server": "clear; nodemon server.js",
+        "client": "npm start --prefix client",
+        "dev": "concurrently \"npm run server\" \"npm run client\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/yurtkuran/Dev-Connector.git"
+    },
+    "author": "Erol Yurtkuran",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/yurtkuran/Dev-Connector/issues"
+    },
+    "homepage": "https://github.com/yurtkuran/Dev-Connector#readme",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "config": "^3.3.1",
+        "express": "^4.17.1",
+        "express-validator": "^6.4.0",
+        "gravatar": "^1.8.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.9.10",
+        "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "concurrently": "^5.2.0",
+        "nodemon": "^2.0.3"
+    }
+}
