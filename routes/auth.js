@@ -1,14 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('config');
 const router = express.Router();
 
 // database models
 const User = require('../models/User');
 
 // authorization middleware
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 // express validator middleware
 const { check, validationResult } = require('express-validator');
@@ -19,6 +18,7 @@ const userValidation = [check('email', 'Please include a valid email').isEmail()
 // @route:  GET api/auth
 // @desc:   get the logged in user
 // @access: private
+// @role:   all
 router.get('/', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
@@ -32,6 +32,7 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/auth
 // @desc    authenticate user and get token
 // @access  Public
+// @role    all
 router.post('/', [userValidation], async (req, res) => {
     const errors = validationResult(req);
 
@@ -61,20 +62,15 @@ router.post('/', [userValidation], async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
+                isMember: user.isMember,
+                isAdmin: user.isAdmin,
             },
         };
 
-        jwt.sign(
-            payload,
-            config.get('jwtSecret'),
-            {
-                expiresIn: 360000,
-            },
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token });
-            }
-        );
+        jwt.sign(payload, process.env.SECRET, { expiresIn: '1d' }, (err, token) => {
+            if (err) throw err;
+            res.json({ token });
+        });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

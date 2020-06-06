@@ -1,13 +1,17 @@
 const express = require('express');
 
-// bring in local modules
-const connectDB = require('./config/db');
-
 // clear console
 console.clear();
 
+// configure dotenv - bring in configuration variables, passwords and keys
+require('dotenv').config();
+
+// bring in local modules
+const connectDB = require('./config/db');
+
 // connect to database
-connectDB();
+connectDB.connectMongoDB(); // mongo database
+connectDB.connectMySQL(); // MySQL database
 
 // initalize app
 const app = express();
@@ -17,13 +21,13 @@ app.use(express.json({ extended: false }));
 
 // inital route
 // app.get('/', (req, res) => res.json({ msg: 'Welcome to the ContactKeeper API...' }));
-app.get('/', (req, res) => res.send('api running'));
+app.get('/', (req, res) => res.send('api running...'));
 
 // define routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/profile', require('./routes/profile'));
-app.use('/api/posts', require('./routes/posts'));
+// app.use('/api/profile', require('./routes/profile'));
+// app.use('/api/posts', require('./routes/posts'));
 
 // server static assets in production
 if (process.env.NODE_ENV === 'production') {

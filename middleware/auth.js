@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
-const config = require('config');
 
-module.exports = function (req, res, next) {
+const auth = (req, res, next) => {
     // get token
     const token = req.header('x-auth-token');
 
@@ -12,10 +11,32 @@ module.exports = function (req, res, next) {
 
     // verify token
     try {
-        const decoded = jwt.verify(token, config.get('jwtSecret'));
+        const decoded = jwt.verify(token, process.env.SECRET);
         req.user = decoded.user;
         next();
     } catch (error) {
         res.status(401).json({ msg: 'invalid token' });
     }
+};
+
+const ensureAdmin = (req, res, next) => {
+    if (req.user.isAdmin) {
+        return next();
+    } else {
+        res.status(401).json({ msg: 'permission denied' });
+    }
+};
+
+const ensureMember = (req, res, next) => {
+    if (req.user.isMember) {
+        return next();
+    } else {
+        res.status(401).json({ msg: 'permission denied' });
+    }
+};
+
+module.exports = {
+    auth,
+    ensureAdmin,
+    ensureMember,
 };
