@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // bring in types
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT } from './types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS, EMAIL_VERIFIED, SET_MESSAGE } from './types';
 
 // bring in actions
 import { setAlert } from './alertActions';
@@ -25,14 +25,14 @@ export const loadUser = () => async (dispatch) => {
 };
 
 // register user
-export const register = ({ name, email, password }) => async (dispatch) => {
+export const register = ({ firstName, lastName, email, password, history }) => async (dispatch) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
         },
     };
 
-    const body = JSON.stringify({ name, email, password });
+    const body = JSON.stringify({ firstName, lastName, email, password });
 
     try {
         const res = await axios.post('/api/users', body, config);
@@ -40,18 +40,18 @@ export const register = ({ name, email, password }) => async (dispatch) => {
             type: REGISTER_SUCCESS,
             payload: res.data,
         });
-        dispatch(loadUser());
+        history.push('./login');
+        // dispatch(loadUser());
     } catch (err) {
         // loop through errors
-        const errors = err.response.data.errors;
-
-        if (errors) {
-            errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
-        }
-
-        dispatch({
-            type: REGISTER_FAIL,
+        const errors = {};
+        err.response.data.errors.forEach((error) => {
+            errors[error.param] = {
+                msg: error.msg,
+            };
         });
+        dispatch({ type: SET_MESSAGE, payload: errors });
+        dispatch({ type: REGISTER_FAIL, payload: errors });
     }
 };
 
@@ -86,7 +86,32 @@ export const login = ({ email, password }) => async (dispatch) => {
     }
 };
 
+// confirm JWT
+export const confirmToken = (token) => async (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const body = JSON.stringify({ token });
+
+    try {
+        const res = await axios.post('/api/confirm', body, config);
+        console.log(res.data);
+        dispatch({ type: EMAIL_VERIFIED });
+    } catch (err) {
+        console.log(err.response.data);
+        dispatch({ type: AUTH_ERROR });
+    }
+};
+
 // logout and clear profile
 export const logout = () => (dispatch) => {
     dispatch({ type: LOGOUT });
+};
+
+// clear error messages
+export const clearErrors = () => (dispatch) => {
+    dispatch({ type: CLEAR_ERRORS });
 };

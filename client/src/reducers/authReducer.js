@@ -1,10 +1,11 @@
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT } from '../actions/types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS, EMAIL_VERIFIED } from '../actions/types';
 
 const initialState = {
     token: localStorage.getItem('token'),
     isAuthenticated: null,
     loading: true,
     user: null,
+    errorMessages: null,
 };
 
 export default (state = initialState, action) => {
@@ -16,21 +17,44 @@ export default (state = initialState, action) => {
                 ...state,
                 isAuthenticated: true,
                 user: payload,
+                errorMessages: null,
                 loading: false,
             };
 
         case REGISTER_SUCCESS:
+            return {
+                ...state,
+                ...payload,
+                isAuthenticated: false,
+                errorMessages: null,
+                loading: false,
+            };
+
         case LOGIN_SUCCESS:
             localStorage.setItem('token', payload.token);
             return {
                 ...state,
                 ...payload,
                 isAuthenticated: true,
+                errorMessages: null,
                 loading: false,
+            };
+
+        case EMAIL_VERIFIED:
+            return {
+                ...state,
             };
 
         case REGISTER_FAIL:
         case LOGIN_FAIL:
+            return {
+                ...state,
+                token: null,
+                isAuthenticated: false,
+                errorMessages: payload,
+                loading: false,
+            };
+
         case AUTH_ERROR:
         case LOGOUT:
             localStorage.removeItem('token');
@@ -38,6 +62,17 @@ export default (state = initialState, action) => {
                 ...state,
                 token: null,
                 isAuthenticated: false,
+                errorMessages: null,
+                user: null,
+                loading: false,
+            };
+
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                token: null,
+                isAuthenticated: false,
+                errorMessages: null,
                 loading: false,
             };
 

@@ -1,15 +1,26 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+// bring in components
+import DisplayAlert from '../layout/Alert';
+
+// bring in bootstrap components
+import Alert from 'react-bootstrap/Alert';
 
 // bring in redux
 import { connect } from 'react-redux';
 
 // bring in actions
 import { setAlert } from '../../actions/alertActions';
-import { login } from '../../actions/authActions';
+import { login, clearErrors } from '../../actions/authActions';
 
-const Login = ({ setAlert, login, isAuthenticated }) => {
+const Login = ({ setAlert, login, clearErrors, isAuthenticated }) => {
+    // clear errors when component loads
+    useEffect(() => {
+        clearErrors();
+    }, [clearErrors]);
+
     // init local state
     const [formData, setFormData] = useState({
         email: '',
@@ -41,34 +52,81 @@ const Login = ({ setAlert, login, isAuthenticated }) => {
     }
 
     return (
-        <Fragment>
-            <h1 className='large text-primary'>Sign In</h1>
-            <p className='lead'>
-                <i className='fas fa-user'></i> Sign into your account
-            </p>
-
-            <form className='form' onSubmit={onSubmit}>
-                <div className='form-group'>
-                    <input type='email' placeholder='Email Address' name='email' value={email} onChange={onChange} />
+        <section className='landing'>
+            <div className='dark-overlay'>
+                <div className='header'>
+                    <nav>
+                        <ul>
+                            <li>
+                                <Link to='/'>DAMWIDI Investments</Link>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
-                <div className='form-group'>
-                    <input type='password' placeholder='Password' name='password' value={password} onChange={onChange} minLength='6' />
+                <div className='landing-inner-form row'>
+                    <div className='col-md-6 m-auto'>
+                        <div className='card card-body border-dark card-shadow'>
+                            <h1 className='text-center mb-3'>
+                                <i className='fas fa-sign-in-alt'></i> Login
+                            </h1>
+
+                            <DisplayAlert />
+
+                            {false && (
+                                <Alert variant='light' dismissible show='false'>
+                                    <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                </Alert>
+                            )}
+
+                            <form onSubmit={onSubmit}>
+                                <div className='form-group'>
+                                    <label className='mb-0' htmlFor='email'>
+                                        Email
+                                    </label>
+                                    <input
+                                        type='email'
+                                        name='email'
+                                        className='form-control  form-control-sm'
+                                        placeholder='Enter Email'
+                                        autoComplete='username'
+                                        value={email}
+                                        onChange={onChange}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label className='mb-0' htmlFor='password'>
+                                        Password
+                                    </label>
+                                    <input
+                                        type='password'
+                                        name='password'
+                                        className='form-control form-control-sm'
+                                        placeholder='Enter Password'
+                                        autoComplete='current-password'
+                                        value={password}
+                                        onChange={onChange}
+                                    />
+                                </div>
+                                <button type='submit' className='btn btn-primary btn-block'>
+                                    Login
+                                </button>
+                            </form>
+                            <p className='lead mt-4'>
+                                No Account? <Link to='/register'>Register</Link>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
-                <input type='submit' value='Register' className='btn btn-primary' />
-            </form>
-
-            <p className='my-1'>
-                Don't have an account? <Link to='/register'>Sign Up</Link>
-            </p>
-        </Fragment>
+            </div>
+        </section>
     );
 };
 
 Login.propTypes = {
     setAlert: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
 };
 
@@ -76,4 +134,4 @@ const mapStatetoProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStatetoProps, { setAlert, login })(Login);
+export default connect(mapStatetoProps, { setAlert, login, clearErrors })(Login);

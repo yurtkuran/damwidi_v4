@@ -2,11 +2,11 @@ import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 // bring in components
-import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
-import Register from './components/auth/Register';
 import Login from './components/auth/Login';
-import Alert from './components/layout/Alert';
+import Register from './components/auth/Register';
+import Confirm from './components/auth/Confirm';
+import Routes from './components/routing/Routes';
 
 // bring in redux
 import { Provider } from 'react-redux';
@@ -18,8 +18,9 @@ import { loadUser } from './actions/authActions';
 // bring in functions
 import setAuthToken from './utils/setAuthToken';
 
-// css file
-import './App.css';
+// css files
+import './css/style.css';
+import './css/bootstrap.css';
 
 // if a token exists in local storage, add to global header
 if (localStorage.token) {
@@ -35,15 +36,14 @@ const App = () => {
         <Provider store={store}>
             <Router>
                 <Fragment>
-                    <Navbar />
-                    <Route exact path='/' component={Landing} />
-                    <section className='container'>
-                        <Alert />
-                        <Switch>
-                            <Route exact path='/register' component={Register} />
-                            <Route exact path='/login' component={Login} />
-                        </Switch>
-                    </section>
+                    <Switch>
+                        <Route exact path='/' component={Landing} />
+                        <Route exact path='/login' component={Login} />
+                        <Route exact path='/register' component={Register} />
+                        <Route exact path='/confirm/:token' component={Confirm} />
+
+                        <Route component={Routes} />
+                    </Switch>
                 </Fragment>
             </Router>
         </Provider>

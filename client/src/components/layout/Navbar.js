@@ -2,50 +2,60 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+// bring in bootstrap components
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+
 // bring in redux
 import { connect } from 'react-redux';
 
 // bring in actions
 import { logout } from '../../actions/authActions';
 
-const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+const AppNavbar = ({ auth: { isAuthenticated, loading }, logout }) => {
     const authLinks = (
-        <ul>
-            <li>
-                <a onClick={logout} href='#!'>
-                    <i className='fas fa-sign-out-alt'></i> <span className='hide-sm'>Logout</span>
-                </a>
-            </li>
-        </ul>
+        <Nav className='justify-content-end'>
+            <Nav.Link href='#home'>Auth</Nav.Link>
+            <Nav.Link onClick={logout}>Logout</Nav.Link>
+        </Nav>
     );
 
     const guestLinks = (
-        <ul>
-            <li>
-                <a href='#!'>Developers</a>
-            </li>
-            <li>
-                <Link to='/register'>Register</Link>
-            </li>
-            <li>
-                <Link to='/login'>Login</Link>
-            </li>
-        </ul>
+        <Nav className='ml-auto'>
+            <Nav.Link href='/register'>Register</Nav.Link>
+            <Nav.Link href='/login'>Login</Nav.Link>
+        </Nav>
     );
 
     return (
-        <nav className='navbar bg-dark'>
-            <h1>
-                <Link to='/'>
-                    <i className='fas fa-code'></i> DevConnector
-                </Link>
-            </h1>
+        <Navbar className='py-1' expand='sm' bg='custom' variant='dark'>
+            <Navbar.Brand className='pr-3' href='/'>
+                DAMWIDI Investments
+            </Navbar.Brand>
+
+            {!loading && isAuthenticated && (
+                <Nav className='mr-auto'>
+                    <Nav.Link href='#home'>Home</Nav.Link>
+                    <Nav.Link href='#link'>Link</Nav.Link>
+                    <NavDropdown title='Dropdown' id='basic-nav-dropdown'>
+                        <NavDropdown.Item href='#action/3.1'>Action</NavDropdown.Item>
+                        <NavDropdown.Item disabled href='#action/3.2'>
+                            Another action
+                        </NavDropdown.Item>
+                        <NavDropdown.Item href='#action/3.3'>Something</NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item href='#action/3.4'>Separated link</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+            )}
+
             {!loading && <Fragment> {isAuthenticated ? authLinks : guestLinks}</Fragment>}
-        </nav>
+        </Navbar>
     );
 };
 
-Navbar.propTypes = {
+AppNavbar.propTypes = {
     logout: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
 };
@@ -54,4 +64,4 @@ const mapStatetoProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStatetoProps, { logout })(Navbar);
+export default connect(mapStatetoProps, { logout })(AppNavbar);

@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// email transporter
+const { sendRegistrationEmail } = require('../config/email');
+
 // database models
 const User = require('../models/User');
 
@@ -17,7 +20,7 @@ const newUserValidation = [
     check('firstName', 'Please add first name').not().isEmpty(),
     check('lastName', 'Please add last name').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be at least 8 characters').isLength({ min: 6 }),
+    check('password', 'Password must be at least 8 characters').isLength({ min: 8 }),
     check('email').custom((email, { req }) => {
         // check if email exists in database
         return User.findOne({ email }).then((newuser) => {
@@ -100,6 +103,9 @@ router.post('/', newUserValidation, async (req, res) => {
 
         // save to database
         await user.save();
+
+        // send confirmation email
+        sendRegistrationEmail(user.id);
 
         // return JWT token
         const payload = {
@@ -216,6 +222,11 @@ router.delete('/:userID', auth, ensureAdmin, async (req, res) => {
         console.error(err.message);
         res.status(500).send('server error');
     }
+});
+
+router.get('/test', (req, res) => {
+    sendRegistrationEmail('this is a test!');
+    res.send('OK');
 });
 
 module.exports = router;

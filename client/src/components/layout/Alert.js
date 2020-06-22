@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
+
+// bring in bootstrap components
+import Alert from 'react-bootstrap/Alert';
 
 // bring in redux
 import { connect } from 'react-redux';
 
-const Alert = ({ alerts }) =>
-    alerts !== null &&
-    alerts.length > 0 &&
-    alerts.map((alert) => (
-        <div key={alert.id} className={`alert alert-${alert.alertType}`}>
-            <i className='fas fa-info-cirle' /> {alert.msg}
-        </div>
-    ));
+const DisplayAlert = ({ alerts }) => {
+    return (
+        alerts !== null &&
+        alerts.length > 0 &&
+        alerts.map((alert) => (
+            <Alert variant={alert.alertType} dismissible={false} show={true} className='py-1 px-3'>
+                <i className='fas fa-info mr-2' /> {alert.msg}
+            </Alert>
+        ))
+    );
+};
 
-Alert.propTypes = {
+DisplayAlert.propTypes = {
     alerts: PropTypes.array.isRequired,
 };
 
@@ -21,4 +27,4 @@ const mapStatetoProps = (state) => ({
     alerts: state.alert,
 });
 
-export default connect(mapStatetoProps, null)(Alert);
+export default connect(mapStatetoProps, null)(DisplayAlert);
