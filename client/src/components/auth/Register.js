@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import validator from 'email-validator';
 
 // bring in components
-import DisplayAlert from '../layout/Alert';
 
 // bring in bootstrap components
 import Popover from 'react-bootstrap/Popover';
@@ -13,19 +13,17 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { setAlert } from '../../actions/alertActions';
-import { register, clearErrors } from '../../actions/authActions';
-import { clearMessages } from '../../actions/messageActions';
+import { register } from '../../actions/authActions';
+import { setMessage, clearMessages } from '../../actions/messageActions';
 
 // bring in password validator schema
 import validatePassword from '../../utils/validatePassword';
 
-const Register = ({ setAlert, register, clearErrors, clearMessages, history, auth: { loading, isAuthenticated, errorMessages } }) => {
+const Register = ({ register, setMessage, clearMessages, history, errorMessages, auth: { loading, isAuthenticated } }) => {
     // clear errors when component loads
     useEffect(() => {
-        clearErrors();
         clearMessages();
-    }, [clearErrors, clearMessages]);
+    }, [clearMessages]);
 
     // local form state
     const [formData, setFormData] = useState({
@@ -54,14 +52,21 @@ const Register = ({ setAlert, register, clearErrors, clearMessages, history, aut
     const onSubmit = async (e) => {
         e.preventDefault();
 
-        if (!validatePassword(password)) {
-            setFormErrorMessage({ ...formErrors, password2error: 'Passwords do not match!' });
-        }
+        // form validation
+        const errors = {};
+        if (firstName === '') errors.firstName = { msg: 'First name is required', alertType: 'success' };
 
-        if (password !== password2) {
-            setFormErrorMessage({ ...formErrors, password2error: 'Passwords do not match' });
+        if (lastName === '') errors.lastName = { msg: 'Last name is required' };
+
+        if (!validator.validate(email)) errors.email = { msg: 'Please enter a valid email' };
+
+        if (!validatePassword(password)) errors.password = { msg: 'Password does not meet criteria' };
+
+        if (password !== password2) errors.password2 = { msg: 'Passwords do not match' };
+
+        if (Object.keys(errors).length > 0) {
+            setMessage(errors);
         } else {
-            // setFormErrorMessage({ ...formErrors, password2error: '' });
             register({
                 firstName,
                 lastName,
@@ -121,8 +126,6 @@ const Register = ({ setAlert, register, clearErrors, clearMessages, history, aut
                                 <i className='fas fa-user-plus'></i> Register
                             </h1>
 
-                            <DisplayAlert />
-
                             <form onSubmit={onSubmit}>
                                 <div className='form-group row'>
                                     <div className='col-sm-6'>
@@ -163,7 +166,7 @@ const Register = ({ setAlert, register, clearErrors, clearMessages, history, aut
                                             Email
                                         </label>
                                         <input
-                                            type='email'
+                                            type='text'
                                             id='inputEmail'
                                             name='email'
                                             className='form-control form-control-sm'
@@ -215,7 +218,7 @@ const Register = ({ setAlert, register, clearErrors, clearMessages, history, aut
                                             value={password2}
                                             onChange={onChange}
                                         />
-                                        <h6 className='small text-danger'>{password2error !== '' && password2error}</h6>
+                                        <h6 className='small text-danger'>{errorMessages && errorMessages.password2 && errorMessages.password2.msg}</h6>
                                     </div>
                                 </div>
 
@@ -235,15 +238,15 @@ const Register = ({ setAlert, register, clearErrors, clearMessages, history, aut
 };
 
 Register.propTypes = {
-    setAlert: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
+    setMessage: PropTypes.func.isRequired,
     clearMessages: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
     auth: state.auth,
+    errorMessages: state.message.authMessages,
 });
 
-export default connect(mapStatetoProps, { setAlert, register, clearErrors, clearMessages })(withRouter(Register));
+export default connect(mapStatetoProps, { register, setMessage, clearMessages })(withRouter(Register));

@@ -1,11 +1,10 @@
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS, EMAIL_VERIFIED } from '../actions/types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, EMAIL_VERIFIED } from '../actions/types';
 
 const initialState = {
     token: localStorage.getItem('token'),
     isAuthenticated: null,
     loading: true,
     user: null,
-    errorMessages: null,
 };
 
 export default (state = initialState, action) => {
@@ -26,7 +25,6 @@ export default (state = initialState, action) => {
                 ...state,
                 ...payload,
                 isAuthenticated: false,
-                errorMessages: null,
                 loading: false,
             };
 
@@ -36,7 +34,6 @@ export default (state = initialState, action) => {
                 ...state,
                 ...payload,
                 isAuthenticated: true,
-                errorMessages: null,
                 loading: false,
             };
 
@@ -51,7 +48,6 @@ export default (state = initialState, action) => {
                 ...state,
                 token: null,
                 isAuthenticated: false,
-                errorMessages: payload,
                 loading: false,
             };
 
@@ -62,17 +58,7 @@ export default (state = initialState, action) => {
                 ...state,
                 token: null,
                 isAuthenticated: false,
-                errorMessages: null,
                 user: null,
-                loading: false,
-            };
-
-        case CLEAR_ERRORS:
-            return {
-                ...state,
-                token: null,
-                isAuthenticated: false,
-                errorMessages: null,
                 loading: false,
             };
 

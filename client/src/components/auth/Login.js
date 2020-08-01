@@ -13,13 +13,14 @@ import { connect } from 'react-redux';
 
 // bring in actions
 import { setAlert } from '../../actions/alertActions';
-import { login, clearErrors } from '../../actions/authActions';
+import { login } from '../../actions/authActions';
+import { clearMessages } from '../../actions/messageActions';
 
-const Login = ({ setAlert, login, clearErrors, isAuthenticated }) => {
+const Login = ({ setAlert, login, clearMessages, isAuthenticated }) => {
     // clear errors when component loads
     useEffect(() => {
-        clearErrors();
-    }, [clearErrors]);
+        clearMessages();
+    }, [clearMessages]);
 
     // init local state
     const [formData, setFormData] = useState({
@@ -125,8 +126,8 @@ const Login = ({ setAlert, login, clearErrors, isAuthenticated }) => {
 
 Login.propTypes = {
     setAlert: PropTypes.func.isRequired,
+    clearMessages: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
 };
 
@@ -134,4 +135,4 @@ const mapStatetoProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
 });
 
-export default connect(mapStatetoProps, { setAlert, login, clearErrors })(Login);
+export default connect(mapStatetoProps, { clearMessages, setAlert, login })(Login);

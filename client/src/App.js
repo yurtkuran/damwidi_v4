@@ -14,13 +14,14 @@ import store from './store';
 
 // bring in actions
 import { loadUser } from './actions/authActions';
+import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT
 
 // bring in functions
 import setAuthToken from './utils/setAuthToken';
 
 // css files
 import './css/style.css';
-import './css/bootstrap.css';
+// import './css/bootstrap.css';
 
 // if a token exists in local storage, add to global header
 if (localStorage.token) {
@@ -29,6 +30,11 @@ if (localStorage.token) {
 
 const App = () => {
     useEffect(() => {
+        // login admin user - REMOVE BEFORE DEPLOYMENT
+        const email = 'marge@springfield.com';
+        const password = '111111';
+        store.dispatch(login({ email, password }));
+
         store.dispatch(loadUser());
     }, []);
 

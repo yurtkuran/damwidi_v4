@@ -13,11 +13,26 @@ import { connect } from 'react-redux';
 // bring in actions
 import { logout } from '../../actions/authActions';
 
-const AppNavbar = ({ auth: { isAuthenticated, loading }, logout }) => {
+const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     const authLinks = (
-        <Nav className='justify-content-end'>
-            <Nav.Link href='#home'>Auth</Nav.Link>
-            <Nav.Link onClick={logout}>Logout</Nav.Link>
+        <Nav className='ml-auto'>
+            <NavDropdown title='Info' id='basic-nav-dropdown'>
+                <NavDropdown.Item href='#'>S&P 500 Companies</NavDropdown.Item>
+                <NavDropdown.Item href='#'>Basket Data</NavDropdown.Item>
+            </NavDropdown>
+
+            {user !== null && user.isAdmin && (
+                <NavDropdown title='Admin' id='basic-nav-dropdown'>
+                    <NavDropdown.Item href='#'>Sectors</NavDropdown.Item>
+                    <NavDropdown.Item href='#'>Stocks</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href='/users'>Users</NavDropdown.Item>
+                    <NavDropdown.Item href='#'>Users Log</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href='#'>Unstick Log</NavDropdown.Item>
+                </NavDropdown>
+            )}
+            {user !== null && isAuthenticated && <Nav.Link onClick={logout}>{user.firstName}: Logout</Nav.Link>}
         </Nav>
     );
 

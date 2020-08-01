@@ -40,7 +40,6 @@ const existingUserValidation = [
     check('email').custom((email, { req }) => {
         // check if email exists in database
         return User.findOne({ email }).then((user) => {
-            console.log(user);
             if (user) {
                 // email exists
                 if (user._id != req.body._id) {
@@ -105,7 +104,7 @@ router.post('/', newUserValidation, async (req, res) => {
         await user.save();
 
         // send confirmation email
-        sendRegistrationEmail(user.id);
+        sendRegistrationEmail(user);
 
         // return JWT token
         const payload = {
@@ -128,7 +127,7 @@ router.post('/', newUserValidation, async (req, res) => {
 // @desc:   update user - self
 // @access: private
 // @role:   all
-router.post('/update', auth, existingUserValidation, async (req, res) => {
+router.post('/edit', auth, existingUserValidation, async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -157,11 +156,11 @@ router.post('/update', auth, existingUserValidation, async (req, res) => {
     }
 });
 
-// @route:  POST api/users/update
+// @route:  POST api/users/update/:userID
 // @desc:   update user - admin
 // @access: private
-// @role:   all
-router.post('/update/:userID', [auth, ensureAdmin], existingUserValidation, async (req, res) => {
+// @role:   admin
+router.post('/update', [auth, ensureAdmin], existingUserValidation, async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -170,7 +169,7 @@ router.post('/update/:userID', [auth, ensureAdmin], existingUserValidation, asyn
     }
 
     // validation passes
-    const { firstName, lastName, email, isVerified, isMember, isAdmin } = req.body;
+    const { _id, firstName, lastName, email, isVerified, isMember, isAdmin } = req.body;
 
     // build user object
     const userFields = {
@@ -184,8 +183,25 @@ router.post('/update/:userID', [auth, ensureAdmin], existingUserValidation, asyn
 
     try {
         // update
-        user = await User.findOneAndUpdate({ _id: req.params.userID }, { $set: userFields }, { new: true });
+        user = await User.findOneAndUpdate({ _id }, { $set: userFields }, { new: true });
         return res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  POST api/users/validate
+// @desc:   validate user
+// @access: private
+// @role:   admin
+router.post('/validate', [auth, ensureAdmin], async (req, res) => {
+    // destructure email
+    const { email } = req.body;
+
+    try {
+        user = await User.findOne({ email }).select('email');
+        res.status(200).json({ user: user ? 1 : 0 });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

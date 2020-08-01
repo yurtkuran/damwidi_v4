@@ -1,17 +1,17 @@
-import { v4 as uuidv4 } from 'uuid';
-import { SET_MESSAGE, CLEAR_MESSAGES } from './types';
+import { SET_MESSAGE, CLEAR_MESSAGE, CLEAR_MESSAGES } from './types';
 
-export const setMessage = (msg, alertType = 'danger', timeout = 5000) => (dispatch) => {
-    const id = uuidv4();
-    console.log('test');
-
+export const setMessage = (field, msg) => (dispatch) => {
     dispatch({
         type: SET_MESSAGE,
-        payload: { msg, alertType, id },
+        payload: { field, msg },
     });
 };
 
 // clear error messages
-export const clearMessages = () => (dispatch) => {
-    dispatch({ type: CLEAR_MESSAGES });
+export const clearMessages = (field = 'all') => (dispatch) => {
+    if (field === 'all') {
+        dispatch({ type: CLEAR_MESSAGES });
+    } else {
+        dispatch({ type: CLEAR_MESSAGE, payload: field });
+    }
 };

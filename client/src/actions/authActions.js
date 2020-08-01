@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // bring in types
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, CLEAR_ERRORS, EMAIL_VERIFIED, SET_MESSAGE } from './types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, EMAIL_VERIFIED, SET_MESSAGE } from './types';
 
 // bring in actions
 import { setAlert } from './alertActions';
@@ -50,6 +50,7 @@ export const register = ({ firstName, lastName, email, password, history }) => a
                 msg: error.msg,
             };
         });
+
         dispatch({ type: SET_MESSAGE, payload: errors });
         dispatch({ type: REGISTER_FAIL, payload: errors });
     }
@@ -109,9 +110,4 @@ export const confirmToken = (token) => async (dispatch) => {
 // logout and clear profile
 export const logout = () => (dispatch) => {
     dispatch({ type: LOGOUT });
-};
-
-// clear error messages
-export const clearErrors = () => (dispatch) => {
-    dispatch({ type: CLEAR_ERRORS });
 };

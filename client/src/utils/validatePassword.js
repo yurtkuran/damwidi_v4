@@ -15,8 +15,6 @@ schema
     .is().not().oneOf(['Passw0rd', 'Password123']); // blacklist these values
 
 const validatePassword = (password) => {
-    console.log(schema.validate(password));
-
     return schema.validate(password)
 };
 
