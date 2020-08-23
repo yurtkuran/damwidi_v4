@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 // bring in types
-import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, EMAIL_VERIFIED, SET_MESSAGE } from './types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, EMAIL_VERIFIED } from './types';
 
 // bring in actions
 import { setAlert } from './alertActions';
+import { setMessage } from './messageActions';
 
 // bring in functions
 import setAuthToken from '../utils/setAuthToken';
@@ -44,14 +45,11 @@ export const register = ({ firstName, lastName, email, password, history }) => a
         // dispatch(loadUser());
     } catch (err) {
         // loop through errors
-        const errors = {};
-        err.response.data.errors.forEach((error) => {
-            errors[error.param] = {
-                msg: error.msg,
-            };
-        });
+        const errors = err.response.data.errors;
+        if (errors) {
+            errors.forEach((error) => dispatch(setMessage(error.param, error.msg)));
+        }
 
-        dispatch({ type: SET_MESSAGE, payload: errors });
         dispatch({ type: REGISTER_FAIL, payload: errors });
     }
 };

@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 // bring in bootstrap components
@@ -23,11 +22,11 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
 
             {user !== null && user.isAdmin && (
                 <NavDropdown title='Admin' id='basic-nav-dropdown'>
-                    <NavDropdown.Item href='#'>Sectors</NavDropdown.Item>
-                    <NavDropdown.Item href='#'>Stocks</NavDropdown.Item>
+                    <NavDropdown.Item href='/sectors'>Sectors</NavDropdown.Item>
+                    <NavDropdown.Item href='/stocks'>Stocks</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item href='/users'>Users</NavDropdown.Item>
-                    <NavDropdown.Item href='#'>Users Log</NavDropdown.Item>
+                    <NavDropdown.Item href='/userlog'>Users Log</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item href='#'>Unstick Log</NavDropdown.Item>
                 </NavDropdown>

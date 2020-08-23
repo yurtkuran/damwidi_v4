@@ -14,16 +14,25 @@ import { connect } from 'react-redux';
 
 // bring in actions
 import { register } from '../../actions/authActions';
-import { setMessage, clearMessages } from '../../actions/messageActions';
+import { clearMessages } from '../../actions/messageActions';
+
+// bring in functions
+import { isFormValid } from '../../utils/isFormValid';
 
 // bring in password validator schema
 import validatePassword from '../../utils/validatePassword';
 
-const Register = ({ register, setMessage, clearMessages, history, errorMessages, auth: { loading, isAuthenticated } }) => {
-    // clear errors when component loads
-    useEffect(() => {
-        clearMessages();
-    }, [clearMessages]);
+const initialErrorState = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    password2: '',
+};
+
+const Register = ({ register, clearMessages, history, errorMessages, auth: { loading, isAuthenticated } }) => {
+    // init form error messages
+    const [errorMessage, setErrorMessage] = useState(initialErrorState);
 
     // local form state
     const [formData, setFormData] = useState({
@@ -37,13 +46,41 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
     // destructure
     const { firstName, lastName, email, password, password2 } = formData;
 
-    // local form validation error message state
-    const [formErrors, setFormErrorMessage] = useState({
-        password2error: '',
-    });
+    // handle server-side error messages
+    useEffect(() => {
+        if (errorMessages) {
+            errorMessages.forEach((error) => {
+                setErrorMessage({ ...errorMessages, [error.field]: error.msg });
+                clearMessages(error.field);
+            });
+        }
+    }, [clearMessages, setErrorMessage, errorMessages]);
 
-    // destructure error messages
-    const { password2error } = formErrors;
+    // validate fields
+    const validateFields = async (field) => {
+        let error = '';
+        switch (field) {
+            case 'firstName':
+                error = firstName === '' ? 'First name is required' : '';
+                break;
+            case 'lastName':
+                error = lastName === '' ? 'Last name is required' : '';
+                break;
+            case 'email':
+                error = !validator.validate(email) ? 'Invald email' : '';
+                break;
+            case 'password':
+                error = !validatePassword(password) ? 'Password does not meet criteria' : '';
+                break;
+            case 'password2':
+                error = password !== password2 && validatePassword(password) ? 'Passwords do not match' : '';
+                break;
+            default:
+                break;
+        }
+        setErrorMessage({ ...errorMessage, [field]: error });
+        return error;
+    };
 
     // on change handler
     const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -52,21 +89,15 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
     const onSubmit = async (e) => {
         e.preventDefault();
 
-        // form validation
-        const errors = {};
-        if (firstName === '') errors.firstName = { msg: 'First name is required', alertType: 'success' };
+        // validate form before submitting
+        var formErrors = {};
+        const fields = Object.keys(errorMessage);
+        for (const field of fields) {
+            formErrors[field] = await validateFields(field);
+        }
+        setErrorMessage(formErrors);
 
-        if (lastName === '') errors.lastName = { msg: 'Last name is required' };
-
-        if (!validator.validate(email)) errors.email = { msg: 'Please enter a valid email' };
-
-        if (!validatePassword(password)) errors.password = { msg: 'Password does not meet criteria' };
-
-        if (password !== password2) errors.password2 = { msg: 'Passwords do not match' };
-
-        if (Object.keys(errors).length > 0) {
-            setMessage(errors);
-        } else {
+        if (isFormValid(formErrors)) {
             register({
                 firstName,
                 lastName,
@@ -74,6 +105,8 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                 password,
                 history,
             });
+        } else {
+            console.log('invalid form');
         }
     };
 
@@ -140,8 +173,9 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                                             placeholder='Enter First Name'
                                             value={firstName}
                                             onChange={onChange}
+                                            onBlur={async (e) => await validateFields(e.target.name)}
                                         />
-                                        <h6 className='small text-danger'>{errorMessages && errorMessages.firstName && errorMessages.firstName.msg}</h6>
+                                        <h6 className='small text-danger'>{errorMessage.firstName !== '' && errorMessage.firstName}</h6>
                                     </div>
                                     <div className='col-sm-6'>
                                         <label className='mb-0' htmlFor='inputLastname'>
@@ -155,8 +189,9 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                                             placeholder='Enter Last Name'
                                             value={lastName}
                                             onChange={onChange}
+                                            onBlur={async (e) => await validateFields(e.target.name)}
                                         />
-                                        <h6 className='small text-danger'>{errorMessages && errorMessages.lastName && errorMessages.lastName.msg}</h6>
+                                        <h6 className='small text-danger'>{errorMessage.lastName !== '' && errorMessage.lastName}</h6>
                                     </div>
                                 </div>
 
@@ -174,8 +209,9 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                                             autoComplete='username'
                                             value={email}
                                             onChange={onChange}
+                                            onBlur={async (e) => await validateFields(e.target.name)}
                                         />
-                                        <h6 className='small text-danger'>{errorMessages && errorMessages.email && errorMessages.email.msg}</h6>
+                                        <h6 className='small text-danger'>{errorMessage.email !== '' && errorMessage.email}</h6>
                                     </div>
                                 </div>
 
@@ -198,8 +234,9 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                                             autoComplete='new-password'
                                             value={password}
                                             onChange={onChange}
+                                            onBlur={async (e) => await validateFields(e.target.name)}
                                         />
-                                        <h6 className='small text-danger'>{errorMessages && errorMessages.password && errorMessages.password.msg}</h6>
+                                        <h6 className='small text-danger'>{errorMessage.password !== '' && errorMessage.password}</h6>
                                     </div>
                                 </div>
 
@@ -217,8 +254,9 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
                                             autoComplete='new-password'
                                             value={password2}
                                             onChange={onChange}
+                                            onBlur={async (e) => await validateFields(e.target.name)}
                                         />
-                                        <h6 className='small text-danger'>{errorMessages && errorMessages.password2 && errorMessages.password2.msg}</h6>
+                                        <h6 className='small text-danger'>{errorMessage.password2 !== '' && errorMessage.password2}</h6>
                                     </div>
                                 </div>
 
@@ -239,14 +277,13 @@ const Register = ({ register, setMessage, clearMessages, history, errorMessages,
 
 Register.propTypes = {
     register: PropTypes.func.isRequired,
-    setMessage: PropTypes.func.isRequired,
     clearMessages: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
     auth: state.auth,
-    errorMessages: state.message.authMessages,
+    errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { register, setMessage, clearMessages })(withRouter(Register));
+export default connect(mapStatetoProps, { register, clearMessages })(withRouter(Register));

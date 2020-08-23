@@ -1,0 +1,6 @@
+Prefixes:
+U - Users route
+
+
+Errors:
+U01: error during user delete with admin privileges

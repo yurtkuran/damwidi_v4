@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // bring in types
-import { GET_USERS, REMOVE_USER, SET_CURRENT, CLEAR_CURRENT } from './types';
+import { GET_USERS, REMOVE_USER, SET_CURRENT, CLEAR_CURRENT, LOG_ERROR, GET_LOGS } from './types';
 
 // bring in actions
 import { setMessage } from './messageActions';
@@ -29,7 +29,7 @@ export const updateUser = ({ _id, firstName, lastName, email, isAdmin, isMember,
     const body = JSON.stringify({ _id, firstName, lastName, email, isAdmin, isMember, isVerified });
 
     try {
-        const res = await axios.post('/api/users/update', body, config);
+        await axios.post('/api/users/update', body, config);
         history.push('./users');
     } catch (err) {
         const errors = err.response.data.errors;
@@ -41,15 +41,20 @@ export const updateUser = ({ _id, firstName, lastName, email, isAdmin, isMember,
 
 // delete user with admin privileges
 export const deleteUser = (userID) => async (dispatch) => {
+    const test = '5edb7a773329b379e06d752';
     try {
-        await axios.delete(`/api/users/${userID}`);
+        await axios.delete(`/api/users/${test}`);
         dispatch({ type: REMOVE_USER, payload: userID });
-    } catch (err) {}
+    } catch (err) {
+        const errMsg = err ? `status: ${err.response.status}: ${err.response.data}` : 'unknown error with delete user';
+        dispatch({ type: LOG_ERROR, payload: errMsg });
+    }
 };
 
 // validate user
 // used to validate email address prior to submitting form
-export const validate = async ({ email }) => {
+export const validate = ({ email }) => async (dispatch) => {
+    console.log(email);
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -61,15 +66,28 @@ export const validate = async ({ email }) => {
         const res = await axios.post('/api/users/validate', body, config);
         return !res.data.user;
     } catch (err) {
+        console.log(err.response);
         return false;
     }
 };
 
 // set current user
-export const setCurrent = (userID) => (dispatch) => {
-    dispatch({ type: SET_CURRENT, payload: userID });
+export const setCurrent = (user) => (dispatch) => {
+    dispatch({ type: SET_CURRENT, payload: user });
 };
 
+// clear current user
 export const clearCurrent = () => (dispatch) => {
     dispatch({ type: CLEAR_CURRENT });
+};
+
+// get user logs
+export const getLogs = () => async (dispatch) => {
+    try {
+        const res = await axios.get('/api/users/log');
+        dispatch({ type: GET_LOGS, payload: res.data });
+        return res;
+    } catch (err) {
+        console.log(err);
+    }
 };

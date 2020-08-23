@@ -49,6 +49,9 @@ const UserItem = ({ user, setCurrent, setShow, setMessage }) => {
 
 UserItem.propTypes = {
     setCurrent: PropTypes.func.isRequired,
+    setShow: PropTypes.func.isRequired,
+    setMessage: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
 };
 
 export default connect(null, { setCurrent })(UserItem);

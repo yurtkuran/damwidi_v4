@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import PropTypes from 'prop-types';
 import validator from 'email-validator';
@@ -39,6 +39,7 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
         setFormData(current);
     }, [setFormData, current]);
 
+    // handle server-side error messages
     useEffect(() => {
         if (errorMessages) {
             errorMessages.forEach((error) => {
@@ -46,7 +47,6 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
                 clearMessages(error.field);
             });
         }
-        // eslint-disable-next-line
     }, [clearMessages, setErrorMessage, errorMessages]);
 
     // destructure form fields
@@ -90,13 +90,10 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
         const fields = Object.keys(errorMessage);
         for (const field of fields) {
             isFormValid = await validateFields(field);
-            // console.log(field, isFormValid);
             if (!isFormValid) break;
         }
 
         if (isFormValid) {
-            console.log('valid form');
-            console.log(formData);
             updateUser(formData, history);
         } else {
             console.log('invalid form');
@@ -208,16 +205,16 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
                             </label>
                         </div>
                     </div>
-                    <div className='row justify-content-center border-bottom m-0 py-3'>
-                        <div className='col-sm-4 text-muted'>
+                    <div className='row border-bottom m-0 py-3'>
+                        <div className=' text-muted mx-auto'>
                             created: <Moment format='YYYY/MM/DD'>{current.createdAt}</Moment>
                         </div>
-                        <div className='col-sm-4 text-muted'>
+                        <div className=' text-muted mx-auto'>
                             last update: <Moment format='YYYY/MM/DD'>{current.updatedAt}</Moment>
                         </div>
                     </div>
                     <div className='row justify-content-end'>
-                        <Link to='/users' className=' btn btn-secondary m-3 rounded'>
+                        <Link to='/users' className='btn btn-secondary m-3 rounded'>
                             <i className='fa fa-list-alt mr-2'></i>View All
                         </Link>
                         <button type='submit' className='btn btn-primary m-3 rounded'>
@@ -232,6 +229,7 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
 
 UserForm.propTypes = {
     current: PropTypes.object.isRequired,
+    errorMessages: PropTypes.object,
     updateUser: PropTypes.func.isRequired,
     clearMessages: PropTypes.func.isRequired,
     validate: PropTypes.func.isRequired,

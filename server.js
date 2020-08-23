@@ -26,6 +26,8 @@ app.get('/', (req, res) => res.send('api running...'));
 // define routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/sectors', require('./routes/sectors'));
+app.use('/api/stocks', require('./routes/stocks'));
 app.use('/api/confirm', require('./routes/confirm'));
 
 // server static assets in production

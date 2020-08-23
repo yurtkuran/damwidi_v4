@@ -5,6 +5,7 @@ const router = express.Router();
 
 // database models
 const User = require('../models/User');
+const Log = require('../models/Log');
 
 // authorization middleware
 const { auth } = require('../middleware/auth');
@@ -69,6 +70,7 @@ router.post('/', [userValidation], async (req, res) => {
 
         jwt.sign(payload, process.env.SECRET, { expiresIn: '1d' }, (err, token) => {
             if (err) throw err;
+            writeLogUpdate(user, 'I');
             res.json({ token });
         });
     } catch (err) {
@@ -76,5 +78,20 @@ router.post('/', [userValidation], async (req, res) => {
         res.status(500).send('server error');
     }
 });
+
+const writeLogUpdate = (user, type) => {
+    const newLog = new Log({
+        userID: user.id.toString(),
+        name: `${user.lastName}, ${user.firstName}`,
+        type,
+    });
+
+    newLog.save((err, log) => {
+        if (err) {
+            console.log('Error during log save: ' + err);
+        }
+    });
+    return;
+};
 
 module.exports = router;

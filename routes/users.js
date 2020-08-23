@@ -8,6 +8,7 @@ const { sendRegistrationEmail } = require('../config/email');
 
 // database models
 const User = require('../models/User');
+const Log = require('../models/Log');
 
 // authorization middleware
 const { auth, ensureAdmin } = require('../middleware/auth');
@@ -234,6 +235,19 @@ router.delete('/:userID', auth, ensureAdmin, async (req, res) => {
         await User.findOneAndRemove({ _id: req.params.userID });
 
         res.json({ msg: 'user deleted' });
+    } catch (err) {
+        res.status(500).send('server error: U01');
+    }
+});
+
+// @route:  GET api/users/log
+// @desc:   get all user logs
+// @access: private
+// @role:   admin
+router.get('/log', auth, ensureAdmin, async (req, res) => {
+    try {
+        const logs = await Log.find().sort({ date: 'desc' });
+        res.json(logs);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

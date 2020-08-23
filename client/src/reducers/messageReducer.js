@@ -11,7 +11,6 @@ export default (state = initialState, action) => {
 
         case CLEAR_MESSAGE:
             return state.filter((message) => message.field !== payload);
-        // return state.filter((message) => Object.keys(message)[0] !== payload.field);
 
         case CLEAR_MESSAGES:
             return [];
