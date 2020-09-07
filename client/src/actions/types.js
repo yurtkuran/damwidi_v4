@@ -28,6 +28,8 @@ export const GET_LOGS               = 'GET_LOGS';
 
 // sector actions
 export const GET_SECTORS            = 'GET_SECTORS';
+export const UPDATE_SECTOR          = 'UPDATE_SECTOR'
+export const REMOVE_SECTOR          = 'REMOVE_SECTOR';
 export const SET_CURRENT_SECTOR     = 'SET_CURRENT_SECTOR';
 export const CLEAR_CURRENT_SECTOR   = 'CLEAR_CURRENT_SECTOR';
 
@@ -35,6 +37,10 @@ export const CLEAR_CURRENT_SECTOR   = 'CLEAR_CURRENT_SECTOR';
 export const GET_STOCKS             = 'GET_STOCKS';
 export const SET_CURRENT_STOCK      = 'SET_CURRENT_STOCK';
 export const CLEAR_CURRENT_STOCK    = 'CLEAR_CURRENT_STOCK';
+
+// iex actions
+export const GET_IEX_USAGE          = 'GET_IEX_USAGE';
+export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
 
 // error actions
 export const LOG_ERROR              = 'LOG_ERROR';

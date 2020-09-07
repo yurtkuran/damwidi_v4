@@ -11,6 +11,7 @@ DB_MySQL = new Sequelize(process.env.DB_MYSQL_DATABASE, process.env.DB_MYSQL_USE
         idle: 10000,
     },
     logging: false,
+    timezone: 'America/New_York',
 });
 
 const connectMySQL = async () => {

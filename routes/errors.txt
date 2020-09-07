@@ -1,6 +1,11 @@
 Prefixes:
 U - Users route
+S - Sectors route
 
 
 Errors:
 U01: error during user delete with admin privileges
+
+S01: error during sector delete with admin privileges
+S02: sector not found
+

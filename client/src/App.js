@@ -30,7 +30,7 @@ if (localStorage.token) {
 
 const App = () => {
     useEffect(() => {
-        // login admin user - REMOVE BEFORE DEPLOYMENT
+        // login admin user - REMOVE BEFORE DEPLOYMENT to-do
         const email = 'marge@springfield.com';
         const password = '111111';
         store.dispatch(login({ email, password }));

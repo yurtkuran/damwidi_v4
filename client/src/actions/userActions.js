@@ -54,7 +54,6 @@ export const deleteUser = (userID) => async (dispatch) => {
 // validate user
 // used to validate email address prior to submitting form
 export const validate = ({ email }) => async (dispatch) => {
-    console.log(email);
     const config = {
         headers: {
             'Content-Type': 'application/json',

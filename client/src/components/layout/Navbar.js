@@ -14,7 +14,7 @@ import { logout } from '../../actions/authActions';
 
 const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     const authLinks = (
-        <Nav className='ml-auto'>
+        <Nav className='ml-auto '>
             <NavDropdown title='Info' id='basic-nav-dropdown'>
                 <NavDropdown.Item href='#'>S&P 500 Companies</NavDropdown.Item>
                 <NavDropdown.Item href='#'>Basket Data</NavDropdown.Item>
@@ -29,6 +29,7 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                     <NavDropdown.Item href='/userlog'>Users Log</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item href='#'>Unstick Log</NavDropdown.Item>
+                    <NavDropdown.Item href='/iexstatus'>IEX Details</NavDropdown.Item>
                 </NavDropdown>
             )}
             {user !== null && isAuthenticated && <Nav.Link onClick={logout}>{user.firstName}: Logout</Nav.Link>}
@@ -43,7 +44,7 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     );
 
     return (
-        <Navbar className='py-1' expand='sm' bg='custom' variant='dark'>
+        <Navbar className='py-1 mb-5' expand='sm' bg='custom' variant='dark' fixed='top'>
             <Navbar.Brand className='pr-3' href='/'>
                 DAMWIDI Investments
             </Navbar.Brand>

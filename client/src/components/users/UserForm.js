@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { updateUser, validate } from '../../actions/userActions';
 import { clearMessages } from '../../actions/messageActions';
 
-// set initial state
+// set initial form state
 const initialState = {
     firstName: '',
     lastName: '',
@@ -21,6 +21,7 @@ const initialState = {
     isAdmin: false,
 };
 
+// set initial error state
 const initialErrorState = {
     firstName: '',
     lastName: '',
@@ -95,8 +96,6 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
 
         if (isFormValid) {
             updateUser(formData, history);
-        } else {
-            console.log('invalid form');
         }
     };
 

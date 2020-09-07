@@ -8,10 +8,14 @@ import { connect } from 'react-redux';
 
 const Dashboard = () => {
     return (
-        <div>
+        <div style={divStyle}>
             <h1>dashboard</h1>
         </div>
     );
+};
+
+const divStyle = {
+    marginTop: '4rem',
 };
 
 Dashboard.propTypes = {};

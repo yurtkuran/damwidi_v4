@@ -157,7 +157,7 @@ router.post('/edit', auth, existingUserValidation, async (req, res) => {
     }
 });
 
-// @route:  POST api/users/update/:userID
+// @route:  POST api/users/update
 // @desc:   update user - admin
 // @access: private
 // @role:   admin
@@ -254,6 +254,7 @@ router.get('/log', auth, ensureAdmin, async (req, res) => {
     }
 });
 
+// remove before deployment to-do
 router.get('/test', (req, res) => {
     sendRegistrationEmail('this is a test!');
     res.send('OK');

@@ -5,6 +5,7 @@ import { combineReducers } from 'redux';
 import alertReducer from './alertReducer';
 import authReducer from './authReducer';
 import errorReducer from './errorReducer';
+import iexReducer from './iexReducer';
 import logReducer from './logReducer';
 import messageReducer from './messageReducer';
 import sectorReducer from './sectorReducer';
@@ -15,6 +16,7 @@ export default combineReducers({
     alert: alertReducer,
     auth: authReducer,
     error: errorReducer,
+    iex: iexReducer,
     log: logReducer,
     message: messageReducer,
     sector: sectorReducer,
