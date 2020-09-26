@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
+
+// bring in dependencies
 import { useTable, useGlobalFilter, useAsyncDebounce, usePagination, useSortBy } from 'react-table';
 import Moment from 'react-moment';
+
+// bring in components
+import Spinner from '../layout/Spinner';
 
 // bring in redux
 import { connect } from 'react-redux';
@@ -113,9 +118,8 @@ const Table = ({ columns, data }) => {
                 <div>
                     <strong>
                         {pageIndex + 1} of {pageOptions.length}
-                    </strong>{' '}
+                    </strong>
                 </div>
-
                 <div>
                     <select
                         className='form-control'
@@ -141,7 +145,7 @@ const UserLog = ({ log: { logs, loading }, getLogs }) => {
         return getLogs();
     }, [getLogs]);
 
-    const columns = React.useMemo(
+    const columns = useMemo(
         () => [
             {
                 Header: 'Name',
@@ -177,11 +181,10 @@ const UserLog = ({ log: { logs, loading }, getLogs }) => {
     );
 
     return loading ? (
-        <h3>loading</h3>
+        <Spinner />
     ) : (
         <div className='col-sm-10 m-auto'>
-            <h1>User Log</h1>
-            <div className='mb-2'></div>
+            <h4>User Log</h4>
             <Table columns={columns} data={logs} />
         </div>
     );

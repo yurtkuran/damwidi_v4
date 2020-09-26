@@ -17,6 +17,7 @@
         "react-bootstrap": "^1.0.1",
         "react-contenteditable": "^3.3.5",
         "react-dom": "^16.13.1",
+        "react-hot-keys": "^2.6.0",
         "react-moment": "^0.9.7",
         "react-redux": "^7.2.0",
         "react-router-dom": "^5.1.2",

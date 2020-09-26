@@ -1,5 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
+
+// bring in dependencies
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import numeral from 'numeral';
@@ -85,7 +87,7 @@ const IEXStatus = ({ iex: { loadingUsage, usage, loadingDetails, details }, getU
         <Spinner />
     ) : (
         <div>
-            <h3 className='mb-3'>IEX Status</h3>
+            <h4 className='mb-3'>IEX Status</h4>
             <div className='mb-5'>
                 <button type='button' className='btn btn-light' onClick={() => toggleDetails(!displayDetails)}>
                     <i className='far fa-file-alt fa-lg text-info'></i> {displayDetails ? 'Hide' : 'Show'} Details

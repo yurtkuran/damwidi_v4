@@ -24,12 +24,15 @@ app.use(express.json({ extended: false }));
 app.get('/', (req, res) => res.send('api running...'));
 
 // define routes
-app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/confirm', require('./routes/confirm'));
+app.use('/api/damwidi', require('./routes/damwidi'));
+app.use('/api/etf', require('./routes/etf'));
+app.use('/api/marketData', require('./routes/marketData'));
 app.use('/api/iex', require('./routes/iex'));
 app.use('/api/sectors', require('./routes/sectors'));
 app.use('/api/stocks', require('./routes/stocks'));
-app.use('/api/confirm', require('./routes/confirm'));
+app.use('/api/users', require('./routes/users'));
 
 // server static assets in production
 if (process.env.NODE_ENV === 'production') {

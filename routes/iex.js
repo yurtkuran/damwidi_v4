@@ -11,8 +11,8 @@ const iexBaseURL = 'https://cloud.iexapis.com/stable/';
 // @route:  GET api/iex/usage
 // @desc:   retrieve current month usage for your account
 // @access: private
-// @role:   admin to-do
-router.get('/usage', async (req, res) => {
+// @role:   admin
+router.get('/usage', auth, ensureAdmin, async (req, res) => {
     const url = iexBaseURL + 'account/usage?token=' + process.env.IEXCLOUD_SECRET_KEY;
 
     try {
@@ -27,8 +27,8 @@ router.get('/usage', async (req, res) => {
 // @route:  GET api/iex/usage
 // @desc:   retrieve current month usage for your account
 // @access: private
-// @role:   admin to-do
-router.get('/details', async (req, res) => {
+// @role:   admin
+router.get('/details', auth, ensureAdmin, async (req, res) => {
     const url = iexBaseURL + 'account/metadata?token=' + process.env.IEXCLOUD_SECRET_KEY;
 
     try {

@@ -6,30 +6,29 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { setCurrent } from '../../actions/stockActions';
+import { setCurrent } from '../../actions/etfActions';
 
-const StockItem = ({ stock, setCurrent, setShow, setMessage }) => {
+const EtfItem = ({ etf, setCurrent, setShow, setMessage }) => {
     // destructure stock object
-    const { id, sector, symbol, companyName } = stock;
+    const { _id, symbol, description } = etf;
 
     const handleDelete = (id) => {
-        setCurrent(stock);
-        setMessage(`Are you sure you want to delete ${symbol}?`);
+        setCurrent(etf);
+        setMessage(`Are you sure you want to delete the EFT ${symbol}?`);
         setShow(true);
     };
 
     return (
-        <tr key={id}>
+        <tr key={_id}>
             <td className='text-center'>{symbol} </td>
-            <td className='text-center'>{sector}</td>
-            <td>{companyName}</td>
+            <td className='text-left'>{description}</td>
             <td className='text-center text-primary'>
-                <Link to='/stockform' onClick={() => setCurrent(stock)}>
+                <Link to='/etfform' onClick={() => setCurrent(etf)}>
                     <i className='far fa-edit'></i>
                 </Link>
             </td>
             <td className='text-center text-primary'>
-                <Link to='#' onClick={() => handleDelete(id)}>
+                <Link to='#' onClick={() => handleDelete(_id)}>
                     <i className='far fa-trash-alt'></i>
                 </Link>
             </td>
@@ -37,9 +36,9 @@ const StockItem = ({ stock, setCurrent, setShow, setMessage }) => {
     );
 };
 
-StockItem.prototypes = {
+EtfItem.prototypes = {
     setCurrent: PropTypes.func.isRequired,
-    stock: PropTypes.object.isRequired,
+    etf: PropTypes.object.isRequired,
 };
 
-export default connect(null, { setCurrent })(StockItem);
+export default connect(null, { setCurrent })(EtfItem);

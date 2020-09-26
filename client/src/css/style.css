@@ -1,6 +1,6 @@
 /* import fonts */
 @import url('https://fonts.googleapis.com/css?family=Josefin+Sans:100,300,400&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&display=swap');
 /* reset defaults */
 * {
     box-sizing: border-box;
@@ -91,4 +91,9 @@ body {
 
 .sortPointer {
     cursor: pointer;
+}
+
+.dataTable {
+    font-family: 'Inconsolata', sans-serif;
+    font-weight: 400;
 }

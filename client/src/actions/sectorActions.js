@@ -60,7 +60,6 @@ export const addOrUpdateSector = ({ id, symbol, name, description }, history) =>
 
 // delete sector with admin privileges
 export const deleteSector = (sectorID) => async (dispatch) => {
-    console.log(sectorID);
     try {
         await axios.delete(`/api/sectors/${sectorID}`);
         dispatch({ type: REMOVE_SECTOR, payload: sectorID });

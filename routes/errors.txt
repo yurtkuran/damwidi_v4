@@ -9,3 +9,5 @@ U01: error during user delete with admin privileges
 S01: error during sector delete with admin privileges
 S02: sector not found
 
+E01: error during etf delete
+

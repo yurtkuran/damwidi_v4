@@ -6,22 +6,22 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { validateSymbol as validateSymbolIEX } from '../../actions/iexActions';
-import { validateSymbol as validateSector, addOrUpdateSector } from '../../actions/sectorActions';
+import { addOrUpdateETF } from '../../actions/etfActions';
 
 // set initial form state
 const initialState = {
     symbol: '',
-    name: '',
+    description: '',
+    weightType: 'market',
 };
 
 // set initial error state
 const initialErrorState = {
     symbol: '',
-    name: '',
+    description: '',
 };
 
-const SectorForm = ({ current, validateSymbolIEX, validateSector, addOrUpdateSector, history }) => {
+const EtfForm = ({ current, addOrUpdateETF, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialState);
 
@@ -40,33 +40,18 @@ const SectorForm = ({ current, validateSymbolIEX, validateSector, addOrUpdateSec
     }, [setFormData, current]);
 
     // destructure form fields
-    const { symbol, name } = formData;
+    const { symbol, description, weightType } = formData;
 
     // validate fields
     const validateFields = async (field) => {
         let error = '';
         switch (field) {
-            case 'name':
-                error = name === '' ? 'Sector name is required' : '';
+            case 'description':
+                error = description === '' ? 'ETF description is required' : '';
                 break;
 
             case 'symbol':
-                if (symbol === '') {
-                    error = 'Symbol is required';
-                } else {
-                    // check if valid symbol and update description
-                    const companyData = await validateSymbolIEX({ symbol });
-                    if (companyData) {
-                        setFormData({ ...formData, description: companyData.companyName });
-                    } else {
-                        error = 'Invalid symbol';
-                    }
-
-                    // verify symbol (check if symbol is in use)
-                    if (error === '' && symbol.toUpperCase() !== current.symbol) {
-                        error = !(await validateSector({ symbol })) ? 'Sector already in use' : '';
-                    }
-                }
+                error = symbol === '' ? 'ETF symbol is required' : '';
                 break;
 
             default:
@@ -92,17 +77,17 @@ const SectorForm = ({ current, validateSymbolIEX, validateSector, addOrUpdateSec
         }
 
         if (isFormValid) {
-            addOrUpdateSector(formData, history);
+            addOrUpdateETF(formData, history);
         }
     };
 
     return (
         <div className='col-sm-12 col-md-10 col-lg-8 m-auto pt-3'>
-            <h4 className='text-center'>{current === null ? 'Add Sector' : 'Edit Sector'}</h4>
+            <h4 className='text-center'>{current === null ? 'Add ETF' : 'Edit ETF'}</h4>
             <div className='card card-body border-secondary card-shadow'>
                 <form onSubmit={onSubmit}>
                     <div className='form-group row'>
-                        <div className='col-sm-6'>
+                        <div className='col-sm-6 col'>
                             <label htmlFor='inputSectorSymbol' className='mb-0'>
                                 Symbol
                             </label>
@@ -118,29 +103,44 @@ const SectorForm = ({ current, validateSymbolIEX, validateSector, addOrUpdateSec
                             />
                             <h6 className='small text-danger'>{errorMessage.symbol !== '' && errorMessage.symbol}</h6>
                         </div>
+                        <div className='col'>
+                            Weight Type
+                            <div className='form-check'>
+                                <input className='form-check-input' type='radio' name='weightType' id='radio_01' value='market' onChange={onChange} checked={weightType === 'market'} />
+                                <label className='form-check-label' htmlFor='radio_01'>
+                                    Market Weight
+                                </label>
+                            </div>
+                            <div className='form-check'>
+                                <input className='form-check-input' type='radio' name='weightType' id='radio_02' value='manual' onChange={onChange} checked={weightType === 'manual'} />
+                                <label className='form-check-label' htmlFor='radio_02'>
+                                    Manual
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div className='form-group row'>
                         <div className='col-sm-12'>
-                            <label htmlFor='inputSectorName' className='mb-0'>
-                                Name
+                            <label htmlFor='inputSectorDesc' className='mb-0'>
+                                Description
                             </label>
                             <input
                                 type='text'
-                                id='inputSectorName'
-                                name='name'
+                                id='inputSectorDesc'
+                                name='description'
                                 className='form-control'
-                                placeholder='Sector Name'
-                                value={name}
+                                placeholder='Enter Sector Description'
+                                value={description}
                                 onChange={onChange}
-                                onBlur={async (e) => await validateFields(e.target.name)}
+                                onBlur={async (e) => await validateFields(e.target.description)}
                             />
-                            <h6 className='small text-danger'>{errorMessage.name !== '' && errorMessage.name}</h6>
+                            <h6 className='small text-danger'>{errorMessage.description !== '' && errorMessage.description}</h6>
                         </div>
                     </div>
 
                     <div className='row justify-content-end'>
-                        <Link to='/sectors' className='btn btn-secondary m-3 rounded'>
+                        <Link to='/etfs' className='btn btn-secondary m-3 rounded'>
                             <i className='fa fa-list-alt mr-2'></i>View All
                         </Link>
                         <button type='submit' className='btn btn-primary m-3 rounded'>
@@ -153,16 +153,14 @@ const SectorForm = ({ current, validateSymbolIEX, validateSector, addOrUpdateSec
     );
 };
 
-SectorForm.propTypes = {
+EtfForm.propTypes = {
     current: PropTypes.object.isRequired,
-    validateSymbolIEX: PropTypes.func.isRequired,
-    validateSector: PropTypes.func.isRequired,
-    addOrUpdateSector: PropTypes.func.isRequired,
+    addOrUpdateETF: PropTypes.func.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
-    current: state.sector.current,
+    current: state.etf.current,
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { validateSymbolIEX, validateSector, addOrUpdateSector })(SectorForm);
+export default connect(mapStatetoProps, { addOrUpdateETF })(EtfForm);

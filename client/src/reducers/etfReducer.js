@@ -1,8 +1,8 @@
-import { GET_SECTORS, UPDATE_SECTOR, REMOVE_SECTOR, SET_CURRENT_SECTOR, CLEAR_CURRENT_SECTOR } from '../actions/types';
+import { GET_SP500_COMPONENTS, GET_ETFS, REMOVE_ETF, SET_CURRENT_ETF, CLEAR_CURRENT_ETF } from '../actions/types';
 
 const initialState = {
-    sectors: [],
-    unstickLog: [],
+    etfs: [],
+    sp500: [],
     current: null,
     loading: true,
 };
@@ -11,37 +11,36 @@ export default (state = initialState, action) => {
     const { type, payload } = action;
 
     switch (type) {
-        case GET_SECTORS:
+        case GET_SP500_COMPONENTS:
             return {
                 ...state,
-                sectors: payload,
+                sp500: payload,
                 loading: false,
             };
 
-        case UPDATE_SECTOR:
+        case GET_ETFS:
             return {
                 ...state,
-                sectors: state.sectors.map((sector) => (sector.id === payload.id ? payload : sector)),
+                etfs: payload,
+                loading: false,
+            };
+
+        case REMOVE_ETF:
+            return {
+                ...state,
+                etfs: state.etfs.filter((etf) => etf._id !== payload),
                 current: null,
                 loading: false,
             };
 
-        case REMOVE_SECTOR:
-            return {
-                ...state,
-                sectors: state.sectors.filter((sector) => sector.id !== payload),
-                current: null,
-                loading: false,
-            };
-
-        case SET_CURRENT_SECTOR:
+        case SET_CURRENT_ETF:
             return {
                 ...state,
                 current: payload,
                 loading: false,
             };
 
-        case CLEAR_CURRENT_SECTOR:
+        case CLEAR_CURRENT_ETF:
             return {
                 ...state,
                 current: null,

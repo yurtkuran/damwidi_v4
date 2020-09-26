@@ -15,10 +15,7 @@ const { check, validationResult } = require('express-validator');
 // @access: private
 // @role:   admin
 router.get('/:sort', auth, ensureAdmin, async (req, res) => {
-    console.log(req.params.sort);
-
-    var sortDirection;
-
+    let sortDirection;
     switch (req.params.sort) {
         case 'symbol':
         case 'name':
@@ -120,7 +117,6 @@ router.delete('/:sectorID', auth, ensureAdmin, async (req, res) => {
 // @access: private
 // @role:   admin
 router.get('/validate/:symbol', auth, ensureAdmin, async (req, res) => {
-    console.log(req.params.symbol);
     try {
         const sector = await Sector.findOne({ where: { symbol: req.params.symbol } });
         res.status(200).json({ sector: sector ? 1 : 0 });

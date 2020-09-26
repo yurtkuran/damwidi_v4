@@ -14,7 +14,7 @@ import store from './store';
 
 // bring in actions
 import { loadUser } from './actions/authActions';
-import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT
+import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT to-do
 
 // bring in functions
 import setAuthToken from './utils/setAuthToken';
@@ -35,6 +35,7 @@ const App = () => {
         const password = '111111';
         store.dispatch(login({ email, password }));
 
+        // setAuthToken(localStorage.token);
         store.dispatch(loadUser());
     }, []);
 

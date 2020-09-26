@@ -35,12 +35,24 @@ export const CLEAR_CURRENT_SECTOR   = 'CLEAR_CURRENT_SECTOR';
 
 // stock-sector actions
 export const GET_STOCKS             = 'GET_STOCKS';
+export const REMOVE_STOCK           = 'REMOVE_STOCK';
 export const SET_CURRENT_STOCK      = 'SET_CURRENT_STOCK';
 export const CLEAR_CURRENT_STOCK    = 'CLEAR_CURRENT_STOCK';
 
 // iex actions
 export const GET_IEX_USAGE          = 'GET_IEX_USAGE';
 export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
+
+// damwidi actions
+export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
+
+// etf actions
+export const GET_SP500_COMPONENTS   = 'GET_SP500_COMPONENTS'
+export const GET_ETFS               = 'GET_ETFS'
+export const REMOVE_ETF             = 'REMOVE_ETF';
+export const SET_CURRENT_ETF        = 'SET_CURRENT_ETF';
+export const CLEAR_CURRENT_ETF      = 'CLEAR_CURRENT_ETF';
+
 
 // error actions
 export const LOG_ERROR              = 'LOG_ERROR';

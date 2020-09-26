@@ -28,7 +28,7 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                     <NavDropdown.Item href='/users'>Users</NavDropdown.Item>
                     <NavDropdown.Item href='/userlog'>Users Log</NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item href='#'>Unstick Log</NavDropdown.Item>
+                    <NavDropdown.Item href='/unstick'>Unstick Log</NavDropdown.Item>
                     <NavDropdown.Item href='/iexstatus'>IEX Details</NavDropdown.Item>
                 </NavDropdown>
             )}
@@ -62,6 +62,12 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                         <NavDropdown.Divider />
                         <NavDropdown.Item href='#action/3.4'>Separated link</NavDropdown.Item>
                     </NavDropdown>
+                    {user && user.isMember && (
+                        <NavDropdown title='Index Data'>
+                            <NavDropdown.Item href='/sp500components'>S&P 500</NavDropdown.Item>
+                            <NavDropdown.Item href='/etfs'>ETF's</NavDropdown.Item>
+                        </NavDropdown>
+                    )}
                 </Nav>
             )}
 

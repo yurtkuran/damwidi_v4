@@ -15,7 +15,16 @@ import SectorForm from '../sectors/SectorForm';
 import Stocks from '../stocks/Stocks';
 import StockForm from '../stocks/StockForm';
 
+import SP500Components from '../etf/SP500Components';
+import Etfs from '../etf/Etf';
+import EtfForm from '../etf/EtfForm';
+
 import IEXStatus from '../info/IEXStatus';
+
+import Unstick from '../damwidi/Unstick';
+
+import dynamicForm from '../test/dynamincForm';
+import dynamicFormFunc from '../test/dynamincFormFunc';
 
 // bring in helpers
 import PrivateRoute from '../routing/PrivateRoute';
@@ -34,13 +43,22 @@ const Routes = () => {
                     <PrivateRoute exact path='/modifyuser' component={UserForm} />
                     <PrivateRoute exact path='/userlog' component={UserLog} />
 
-                    <Route exact path='/sectors' component={Sectors} />
-                    <Route exact path='/sectorform' component={SectorForm} />
+                    <PrivateRoute exact path='/sectors' component={Sectors} />
+                    <PrivateRoute exact path='/sectorform' component={SectorForm} />
 
-                    <Route exact path='/stocks' component={Stocks} />
-                    <Route exact path='/stockform' component={StockForm} />
+                    <PrivateRoute exact path='/stocks' component={Stocks} />
+                    <PrivateRoute exact path='/stockform' component={StockForm} />
+
+                    <PrivateRoute expact path='/sp500components' component={SP500Components} />
+                    <Route expact path='/etfs' component={Etfs} />
+                    <Route exact path='/etfform' component={EtfForm} />
 
                     <PrivateRoute exact path='/iexstatus' component={IEXStatus} />
+
+                    <PrivateRoute exact path='/unstick' component={Unstick} />
+
+                    <Route exact path='/dynamicForm' component={dynamicForm} />
+                    <Route exact path='/dynamicFormFunc' component={dynamicFormFunc} />
                 </Switch>
             </section>
         </section>

@@ -12,10 +12,10 @@ const ModalConfirm = ({ show, message, title, handleClose }) => {
             </Modal.Header>
             <Modal.Body>{message}</Modal.Body>
             <Modal.Footer>
-                <Button variant='secondary' onClick={handleClose}>
+                <Button variant='secondary rounded' onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant='primary' onClick={() => handleClose('delete')}>
+                <Button variant='primary rounded' onClick={() => handleClose('delete')}>
                     Delete
                 </Button>
             </Modal.Footer>

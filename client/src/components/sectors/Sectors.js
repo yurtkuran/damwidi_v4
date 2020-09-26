@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+// bring in redux
+import { connect } from 'react-redux';
+
 // bring in components
 import Spinner from '../layout/Spinner';
 import ModalConfirm from '../layout/ModalConfirm';
 import SectorItem from './SectorItem';
-
-// bring in redux
-import { connect } from 'react-redux';
 
 // bring in actions
 import { getSectors, updateSectorWeight, clearCurrent, deleteSector } from '../../actions/sectorActions';
@@ -25,18 +25,14 @@ const dynamicSort = (property) => {
         property = property.substr(1);
     }
     return (a, b) => {
+        var result;
         if (isNaN(a[property]) && isNaN(b[property])) {
-            var result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+            result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
         } else {
-            var result = a - b;
+            result = a - b;
         }
         return result * sortOrder;
     };
-};
-
-// set initial error state
-const initialErrorState = {
-    checksum: '',
 };
 
 // styling
@@ -74,22 +70,14 @@ const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSect
     useEffect(() => {
         let weights = {};
         if (!loading && sectors.length > 0) {
-            sectors
-                .filter((sector) => sector.type === 'S')
-                .map((sector) => {
-                    weights[sector.symbol] = sector.weight;
-                });
+            sectors.filter((sector) => sector.type === 'S').map((sector) => (weights[sector.symbol] = sector.weight));
             sectorWeights.current = weights;
             if (Object.keys(sectorWeights.current).length !== 0) setLoadPage(true);
         }
 
         // calculate total weight
         let total = 0;
-        sectors
-            .filter((sector) => sector.type === 'S')
-            .map((sector) => {
-                total += parseFloat(sector.weight);
-            });
+        sectors.filter((sector) => sector.type === 'S').map((sector) => (total += parseFloat(sector.weight)));
         total = parseFloat(total.toFixed(2));
         setErrorMessage(total !== 100 ? `Sector weights sum to ${total}%` : '');
     }, [loading, sectors]);

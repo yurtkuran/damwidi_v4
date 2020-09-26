@@ -30,7 +30,7 @@ const initialErrorState = {
 
 const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages, history }) => {
     // init local form data
-    const [formData, setFormData] = useState(current);
+    const [formData, setFormData] = useState(initialState);
 
     // init form error messages
     const [errorMessage, setErrorMessage] = useState(initialErrorState);
@@ -51,7 +51,7 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
     }, [clearMessages, setErrorMessage, errorMessages]);
 
     // destructure form fields
-    const { _id, firstName, lastName, email, isVerified, isMember, isAdmin } = formData;
+    const { firstName, lastName, email, isVerified, isMember, isAdmin } = formData;
 
     // validate fields
     const validateFields = async (field) => {
