@@ -24,6 +24,7 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                 <NavDropdown title='Admin' id='basic-nav-dropdown'>
                     <NavDropdown.Item href='/sectors'>Sectors</NavDropdown.Item>
                     <NavDropdown.Item href='/stocks'>Stocks</NavDropdown.Item>
+                    <NavDropdown.Item href='/etfs'>ETF's</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item href='/users'>Users</NavDropdown.Item>
                     <NavDropdown.Item href='/userlog'>Users Log</NavDropdown.Item>

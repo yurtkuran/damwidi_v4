@@ -32,6 +32,7 @@ app.use('/api/marketData', require('./routes/marketData'));
 app.use('/api/iex', require('./routes/iex'));
 app.use('/api/sectors', require('./routes/sectors'));
 app.use('/api/stocks', require('./routes/stocks'));
+app.use('/api/stockdata', require('./routes/stockdata'));
 app.use('/api/users', require('./routes/users'));
 
 // server static assets in production

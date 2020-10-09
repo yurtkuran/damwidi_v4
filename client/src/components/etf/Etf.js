@@ -49,7 +49,7 @@ const Etf = ({ etf: { etfs, current, loading }, getETFs, deleteETF, clearCurrent
                         <tr>
                             <th className='text-center'>Symbol</th>
                             <th className='text-left'>Description</th>
-                            <th className='text-center' colSpan='2'>
+                            <th className='text-center' colSpan='3'>
                                 Controls
                             </th>
                         </tr>

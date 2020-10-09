@@ -114,7 +114,7 @@ router.get('/sp500/refresh', auth, ensureAdmin, async (req, res) => {
     }
 });
 
-router.get('/test/:symbol', async (req, res) => {
+router.get('/keystats/:symbol', async (req, res) => {
     const stat = req.query.stat;
     try {
         iex = await keyStats(req.params.symbol, stat);

@@ -7,12 +7,14 @@ import { connect } from 'react-redux';
 
 // bring in actions
 import { addOrUpdateETF } from '../../actions/etfActions';
+import { validateSymbol } from '../../actions/iexActions';
 
 // set initial form state
 const initialState = {
     symbol: '',
     description: '',
     weightType: 'market',
+    disabled: false,
 };
 
 // set initial error state
@@ -21,7 +23,7 @@ const initialErrorState = {
     description: '',
 };
 
-const EtfForm = ({ current, addOrUpdateETF, history }) => {
+const EtfForm = ({ current, addOrUpdateETF, validateSymbol, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialState);
 
@@ -40,7 +42,7 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
     }, [setFormData, current]);
 
     // destructure form fields
-    const { symbol, description, weightType } = formData;
+    const { symbol, description, weightType, disabled } = formData;
 
     // validate fields
     const validateFields = async (field) => {
@@ -51,7 +53,24 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
                 break;
 
             case 'symbol':
-                error = symbol === '' ? 'ETF symbol is required' : '';
+                if (symbol === '') {
+                    error = 'ETF symbol is required';
+                } else {
+                    setFormData((prevFormData) => {
+                        return { ...prevFormData, symbol: symbol.toUpperCase() };
+                    });
+
+                    const companyData = await validateSymbol({ symbol });
+                    if (companyData) {
+                        setFormData((prevFormData) => {
+                            return { ...prevFormData, description: companyData.companyName, disabled: true };
+                        });
+                    } else {
+                        setFormData((prevFormData) => {
+                            return { ...prevFormData, disabled: false };
+                        });
+                    }
+                }
                 break;
 
             default:
@@ -134,6 +153,7 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
                                 value={description}
                                 onChange={onChange}
                                 onBlur={async (e) => await validateFields(e.target.description)}
+                                disabled={disabled}
                             />
                             <h6 className='small text-danger'>{errorMessage.description !== '' && errorMessage.description}</h6>
                         </div>
@@ -156,6 +176,7 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
 EtfForm.propTypes = {
     current: PropTypes.object.isRequired,
     addOrUpdateETF: PropTypes.func.isRequired,
+    validateSymbol: PropTypes.func.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
@@ -163,4 +184,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { addOrUpdateETF })(EtfForm);
+export default connect(mapStatetoProps, { addOrUpdateETF, validateSymbol })(EtfForm);

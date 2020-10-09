@@ -40,6 +40,26 @@ export const addOrUpdateETF = (formData, history) => async (dispatch) => {
     }
 };
 
+// add/update etf components
+export const addOrUpdateComponents = (etfID, components, history) => async (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+    console.log(components);
+
+    const body = JSON.stringify({ etfID, components });
+    try {
+        await axios.post('/api/etf/components', body, config);
+
+        // redirect
+        history.push('./etfs');
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 // delete sector with admin privileges
 export const deleteETF = (etfID) => async (dispatch) => {
     try {

@@ -60,6 +60,22 @@ router.post('/', auth, ensureAdmin, async (req, res) => {
     }
 });
 
+// @route:  POST api/etf/components
+// @desc:   create or update etf components
+// @access: private
+// @role:   admin to-do
+router.post('/components', async (req, res) => {
+    try {
+        const etf = await ETF.findOne({ _id: req.body.etfID });
+        etf.holdings = req.body.components;
+        await etf.save();
+        res.json(etf);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
 // @route:  DELETE api/etf/:etfID
 // @desc:   delete etf
 // @access: private

@@ -1,5 +1,5 @@
 import React from 'react';
-import './dynamicForm.min.css';
+// import './dynamicForm.min.css';
 
 class DynamicForm extends React.Component {
     constructor(props) {

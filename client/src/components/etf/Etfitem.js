@@ -28,6 +28,11 @@ const EtfItem = ({ etf, setCurrent, setShow, setMessage }) => {
                 </Link>
             </td>
             <td className='text-center text-primary'>
+                <Link to='/etfcomponents' onClick={() => setCurrent(etf)}>
+                    <i className='fas fa-list-ol'></i>
+                </Link>
+            </td>
+            <td className='text-center text-primary'>
                 <Link to='#' onClick={() => handleDelete(_id)}>
                     <i className='far fa-trash-alt'></i>
                 </Link>

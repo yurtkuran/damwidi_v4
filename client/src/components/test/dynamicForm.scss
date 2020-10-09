@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Fredoka+One|Raleway');
 
 body {
-    // background-color: #ee0247;
+    background-color: #fff;
     padding: 20px;
 }
 
@@ -42,7 +42,7 @@ body {
         justify-content: space-between;
         padding: $horizontal-padding;
         box-sizing: border-box;
-        background-color: rgb(200, 200, 200);
+        background-color: #ffd41d;
     }
 
     &__button {
