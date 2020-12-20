@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { addOrUpdateETF } from '../../actions/etfActions';
 import { validateSymbol } from '../../actions/iexActions';
+import { addOrUpdateETF, validateSymbol as validateETF } from '../../actions/etfActions';
 
 // set initial form state
 const initialState = {
@@ -23,7 +23,7 @@ const initialErrorState = {
     description: '',
 };
 
-const EtfForm = ({ current, addOrUpdateETF, validateSymbol, history }) => {
+const EtfForm = ({ current, addOrUpdateETF, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialState);
 
@@ -60,15 +60,21 @@ const EtfForm = ({ current, addOrUpdateETF, validateSymbol, history }) => {
                         return { ...prevFormData, symbol: symbol.toUpperCase() };
                     });
 
-                    const companyData = await validateSymbol({ symbol });
-                    if (companyData) {
-                        setFormData((prevFormData) => {
-                            return { ...prevFormData, description: companyData.companyName, disabled: true };
-                        });
-                    } else {
-                        setFormData((prevFormData) => {
-                            return { ...prevFormData, disabled: false };
-                        });
+                    if (error === '' && (current === null || symbol.toUpperCase() !== current.symbol)) {
+                        error = !(await validateETF({ symbol })) ? 'Symbol already in use' : '';
+                    }
+
+                    if (error === '') {
+                        const companyData = await validateSymbol({ symbol });
+                        if (companyData) {
+                            setFormData((prevFormData) => {
+                                return { ...prevFormData, description: companyData.companyName, disabled: true };
+                            });
+                        } else {
+                            setFormData((prevFormData) => {
+                                return { ...prevFormData, disabled: false };
+                            });
+                        }
                     }
                 }
                 break;
@@ -91,10 +97,11 @@ const EtfForm = ({ current, addOrUpdateETF, validateSymbol, history }) => {
 
         // validate form before submitting
         var isFormValid = true;
+        let validField = true;
         for (const field of Object.keys(errorMessage)) {
-            isFormValid = await validateFields(field);
+            validField = await validateFields(field);
+            isFormValid = isFormValid && validField;
         }
-
         if (isFormValid) {
             addOrUpdateETF(formData, history);
         }
@@ -176,7 +183,6 @@ const EtfForm = ({ current, addOrUpdateETF, validateSymbol, history }) => {
 EtfForm.propTypes = {
     current: PropTypes.object.isRequired,
     addOrUpdateETF: PropTypes.func.isRequired,
-    validateSymbol: PropTypes.func.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
@@ -184,4 +190,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { addOrUpdateETF, validateSymbol })(EtfForm);
+export default connect(mapStatetoProps, { addOrUpdateETF })(EtfForm);

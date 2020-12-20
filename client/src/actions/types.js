@@ -45,9 +45,13 @@ export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
 
 // damwidi actions
 export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
+export const GET_TRADE_HISTORY      = 'GET_TRADE_HISTORY';
+export const GET_INTRADAY_DATA      = 'GET_INTRADAY_DATA';
+
 
 // etf actions
 export const GET_SP500_COMPONENTS   = 'GET_SP500_COMPONENTS'
+export const GET_STOCK_COMPONENTS   = 'GET_STOCK_COMPONENTS'
 export const GET_ETFS               = 'GET_ETFS'
 export const REMOVE_ETF             = 'REMOVE_ETF';
 export const SET_CURRENT_ETF        = 'SET_CURRENT_ETF';

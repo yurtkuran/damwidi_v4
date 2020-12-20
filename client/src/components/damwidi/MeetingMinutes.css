@@ -1,0 +1,35 @@
+.minutes__Pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 20px 20px 20px 20px;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(200, 200, 200, 1);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgba(245, 245, 245, 1);
+    height: 60px;
+}
+
+.minutes__Pagination h4 {
+    margin: auto 0;
+    padding: 0;
+    font-weight: bolder;
+}
+
+.minutes__Pagination h5 {
+    margin: auto 0;
+}
+
+.wp-block-table td,
+.wp-block-table th {
+    border: 1px solid;
+    border-color: rgba(200, 200, 200, 1);
+    padding: 5px 10px;
+}
+
+.has-text-align-center {
+    text-align: center;
+}

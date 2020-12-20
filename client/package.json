@@ -12,6 +12,7 @@
         "highcharts": "^8.2.0",
         "highcharts-react-official": "^3.0.0",
         "moment": "^2.25.3",
+        "papaparse": "^5.3.0",
         "password-validator": "^5.0.3",
         "react": "^16.13.1",
         "react-bootstrap": "^1.0.1",

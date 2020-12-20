@@ -32,8 +32,16 @@
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+.uploadWrapper {
+    padding: 0.5rem 1.8rem 1rem 1.8rem;
+    max-height: 65vh;
+    overflow-y: overlay;
+    box-sizing: border-box;
+}
+
 .fieldWrapper {
     padding-right: 1.8rem;
+    padding-left: 0rem;
     padding-top: 0.5rem;
     padding-bottom: 1rem;
     max-height: 65vh;

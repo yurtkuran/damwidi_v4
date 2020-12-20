@@ -11,8 +11,10 @@ const UnstickPositions = ({ positions }) => {
                 <tr>
                     {Object.keys(positions)
                         .filter((position) => position !== 'provider')
-                        .map((position) => (
-                            <th className='text-right bg-white'>{position}</th>
+                        .map((position, i) => (
+                            <th className='text-right bg-white' key={i}>
+                                {position}
+                            </th>
                         ))}
                 </tr>
             </thead>
@@ -20,22 +22,28 @@ const UnstickPositions = ({ positions }) => {
                 <tr>
                     {Object.keys(positions)
                         .filter((position) => position !== 'provider')
-                        .map((position) => (
-                            <td className='text-right'>{numeral(positions[position].close).format('$0,0.00')}</td>
+                        .map((position, i) => (
+                            <td className='text-right' key={i}>
+                                {numeral(positions[position].close).format('$0,0.00')}
+                            </td>
                         ))}
                 </tr>
                 <tr>
                     {Object.keys(positions)
                         .filter((position) => position !== 'provider')
-                        .map((position) => (
-                            <td className='text-right'>{numeral(positions[position].shares).format('0,0')}</td>
+                        .map((position, i) => (
+                            <td className='text-right' key={i}>
+                                {numeral(positions[position].shares).format('0,0')}
+                            </td>
                         ))}
                 </tr>
                 <tr>
                     {Object.keys(positions)
                         .filter((position) => position !== 'provider')
-                        .map((position) => (
-                            <td className='text-right'>{numeral(positions[position].shares * positions[position].close).format('$0,0.00')}</td>
+                        .map((position, i) => (
+                            <td className='text-right' key={i}>
+                                {numeral(positions[position].shares * positions[position].close).format('$0,0.00')}
+                            </td>
                         ))}
                 </tr>
             </tbody>

@@ -1,5 +1,5 @@
 /* import fonts */
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:100,300,400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Barlow:100,300,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&display=swap');
 /* reset defaults */
 * {
@@ -9,7 +9,7 @@
 }
 
 body {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Barlow', sans-serif;
     margin: 0rem 0rem 0rem 0rem;
 }
 

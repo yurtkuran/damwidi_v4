@@ -19,7 +19,8 @@ const Etf = ({ etf: { etfs, current, loading }, getETFs, deleteETF, clearCurrent
     // load etfs when component loads, clear current stock
     useEffect(() => {
         getETFs();
-    }, [getETFs]);
+        clearCurrent();
+    }, [getETFs, clearCurrent]);
 
     // modal props
     const [show, setShow] = useState(false);

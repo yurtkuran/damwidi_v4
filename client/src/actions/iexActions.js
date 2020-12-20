@@ -24,7 +24,7 @@ export const getDetails = () => async (dispatch) => {
 };
 
 // validate symbol
-export const validateSymbol = ({ symbol }) => async (dispatch) => {
+export const validateSymbol = async ({ symbol }) => {
     try {
         const res = await axios.get(`/api/iex/validate/${symbol}`);
         return res.data.symbol !== 'Unknown symbol' ? res.data : false;

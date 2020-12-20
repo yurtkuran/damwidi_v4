@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 
 // database models
 const SP500 = require('../models/SP500');
+const Stock = require('../models/Stock');
 
 // bring in local service modules
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
-const { company, keyStats } = require('../services/iexCloud');
+const { company, keyStats, quote } = require('../services/iexCloud');
+const { scrapeFidelity } = require('../services/scrapeGics');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -14,6 +17,10 @@ const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
 // express validator middleware
 const { check, validationResult } = require('express-validator');
 const { PromiseProvider } = require('mongoose');
+
+// damwidi_v2 base URL
+// const damwidiBaseURL = 'http://172.16.105.129/damwidiMain.php?mode=';
+const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
 
 // @route:  GET api/marketData/sp500
 // @desc:   retrieve S&P500 companies
@@ -114,6 +121,138 @@ router.get('/sp500/refresh', auth, ensureAdmin, async (req, res) => {
     }
 });
 
+// @route:  POST api/marketData/updateStockInfo
+// @desc:   update stock data
+// @access: private
+// @role:   admin
+router.post('/updateStockInfo', auth, ensureAdmin, async (req, res) => {
+    res.status(202);
+
+    try {
+        // retrieve stocks (from MongoDB)
+        let stocks = await Stock.find();
+
+        for (const stock of stocks) {
+            let { symbol, sector, industry } = stock;
+            // console.log(sector);
+            if (typeof sector === 'undefined' || sector === '' || typeof industry === 'undefined' || industry === null) {
+                // scrape fidelity
+                [sector, industry] = await scrapeFidelity(symbol);
+            }
+
+            // retrieve IEX company information
+            const iexCompany = await company(symbol);
+            const { companyName, website, exchange, description, country } = iexCompany;
+
+            // retrieve IEX key stats
+            const iexKeyStats = await keyStats(symbol);
+            const {
+                sharesOutstanding,
+                peRatio,
+                year5ChangePercent,
+                year2ChangePercent,
+                year1ChangePercent,
+                ytdChangePercent,
+                month6ChangePercent,
+                month3ChangePercent,
+                month1ChangePercent,
+                day30ChangePercent,
+                day5ChangePercent,
+            } = iexKeyStats;
+
+            if (sector === '') {
+                sector = iexCompany.sector;
+                industry = iexCompany.industry;
+            }
+
+            const stockData = {
+                sector,
+                industry,
+                companyName,
+                website,
+                exchange,
+                description,
+                country,
+                sharesOutstanding,
+                peRatio,
+                year5ChangePercent,
+                year2ChangePercent,
+                year1ChangePercent,
+                ytdChangePercent,
+                month6ChangePercent,
+                month3ChangePercent,
+                month1ChangePercent,
+                day30ChangePercent,
+                day5ChangePercent,
+            };
+
+            if (sector === '') {
+                stockData.sector = iexCompany.sector;
+                stockData.industry = iexCompany.industry;
+            }
+
+            await Stock.findOneAndUpdate({ symbol }, stockData);
+        }
+
+        stocks = await Stock.find();
+        res.status(200).json(stocks);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/marketData/stockInfo
+// @desc:   get all stocks
+// @access: private
+// @role:   member
+router.get('/stockInfo', auth, ensureMember, async (req, res) => {
+    try {
+        // retrieve stocks (from MongoDB)
+        let stocks = await Stock.find();
+        res.status(200).json(stocks);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/marketData/quote/:symbol
+// @desc:   retrieve intraday quote
+// @access: private
+// @role:   member
+router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
+    const stat = req.query.stat;
+    const symbol = req.params.symbol;
+
+    let iex = {};
+
+    try {
+        if (symbol !== 'DAM') {
+            iex = await quote(req.params.symbol);
+        } else {
+            const url = damwidiBaseURL + 'returnIntraDayData';
+            const damwidi = await axios.get(url);
+
+            // console.log(symbol);
+            // console.log(damwidi.data.intraDay.DAM);
+
+            const { currentValue, prevClose, gain } = damwidi.data.intraDay.DAM;
+
+            iex = {
+                latestPrice: currentValue,
+                change: currentValue - prevClose,
+                changePercent: gain / 100,
+            };
+        }
+        res.json(iex);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// to-do
 router.get('/keystats/:symbol', async (req, res) => {
     const stat = req.query.stat;
     try {
@@ -126,6 +265,20 @@ router.get('/keystats/:symbol', async (req, res) => {
     }
 });
 
+// to-do
+router.get('/company/:symbol', async (req, res) => {
+    const stat = req.query.stat;
+    try {
+        iex = await company(req.params.symbol);
+        console.log(typeof iex);
+        res.json(iex);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// to-do
 router.get('/test2/:symbol', async (req, res) => {
     try {
         // scrape S&P 500 list from stock market MBA

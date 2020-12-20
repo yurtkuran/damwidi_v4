@@ -1,0 +1,62 @@
+:root {
+    --table-border: rgba(0, 0, 0, 0.2);
+    --table-footer-border: rgba(0, 0, 0, 0.6);
+}
+
+.heatMapTable {
+    vertical-align: middle;
+    margin-top: 25px;
+    margin-bottom: 100px;
+    width: 100%;
+    font-size: 10pt;
+    color: rgb(48, 45, 45);
+    border-collapse: collapse;
+    border-spacing: 2px;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.heatMapTable th {
+    background-color: #e9ecef;
+    padding: 15px 10px 10px;
+    border: 1px solid var(--table-border);
+}
+
+.heatMapTable tbody td {
+    line-height: 1em;
+    padding: 12px 10px;
+    border: 1px solid var(--table-border);
+}
+
+.heatMapTable tfoot tr td {
+    line-height: 1em;
+    padding: 12px 10px;
+    border-left: 1px solid var(--table-border);
+    border-right: 1px solid var(--table-border);
+    border-top: 3px solid var(--table-footer-border);
+    /* color: rgba(0, 0, 0, 0.9); */
+    font-weight: bolder;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.tickUp {
+    color: rgba(15, 112, 1, 1);
+    background-color: rgba(183, 226, 192, 1);
+}
+
+.tickDown {
+    color: rgba(250, 0, 6, 1);
+    background-color: rgba(241, 185, 192, 1);
+}

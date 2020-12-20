@@ -1,0 +1,157 @@
+.indices {
+    justify-content: center;
+    display: grid;
+    grid-template-columns: 100px repeat(4, 1fr);
+    grid-template-rows: 80px auto;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+    height: 300;
+}
+
+.index-card {
+    justify-self: stretch;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: rgba(210, 210, 210, 0.6);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.index-gauge {
+    justify-self: stretch;
+    padding: 0 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: rgba(210, 210, 210, 0.6);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.index-up {
+    color: green;
+}
+
+.index-down {
+    color: rgba(209, 58, 58, 1);
+}
+
+.indices .index-card .info {
+    margin: auto 0;
+    justify-content: center;
+}
+
+.indices .index-card .info h3 {
+    margin: 0px auto;
+    display: inline-block;
+    font-weight: 300;
+}
+
+.indices .index-card .info p {
+    font-size: 0.8rem;
+    margin: 0 0;
+    color: rgb(48, 45, 45);
+}
+
+.index-card-up {
+    border-left: 6px solid green;
+}
+
+.index-card-down {
+    border-left: 6px solid rgba(209, 58, 58, 1);
+}
+
+.index-gauge h5.index-down {
+    margin: 0 !important;
+    position: relative;
+    top: 15px;
+    font-weight: 400;
+}
+
+.index-gauge h5.index-up {
+    margin: 0 !important;
+    position: relative;
+    top: -10px;
+    font-weight: 400;
+}
+
+i.gauge-arrow:before {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    top: 0px;
+    font-size: 3.5em;
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 15px;
+    width: 100%;
+    margin: 10px auto;
+}
+
+.chart {
+    width: 100%;
+    align-items: center;
+    height: 400px;
+    padding: 10px 10px;
+    margin: 0px auto;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.heatmap {
+    text-align: center;
+}
+
+.performance {
+    text-align: center;
+}
+
+.portfolio-table {
+    margin-top: 10px;
+}
+
+.highcharts-container {
+    /* position: absolute; */
+    height: 100%;
+}
+
+@media (max-width: 992px) {
+    .heatmap {
+        color: red;
+    }
+    .performance {
+        color: red;
+        visibility: hidden;
+    }
+    .charts {
+        grid-template-columns: 3fr;
+    }
+    .indices {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .index-card:nth-child(odd) {
+        justify-self: end;
+    }
+
+    .index-card:nth-child(even) {
+        justify-self: start;
+    }
+}

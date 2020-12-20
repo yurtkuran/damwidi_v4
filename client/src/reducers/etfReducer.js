@@ -1,8 +1,9 @@
-import { GET_SP500_COMPONENTS, GET_ETFS, REMOVE_ETF, SET_CURRENT_ETF, CLEAR_CURRENT_ETF } from '../actions/types';
+import { GET_SP500_COMPONENTS, GET_STOCK_COMPONENTS, GET_ETFS, REMOVE_ETF, SET_CURRENT_ETF, CLEAR_CURRENT_ETF } from '../actions/types';
 
 const initialState = {
     etfs: [],
     sp500: [],
+    stocks: [],
     current: null,
     loading: true,
 };
@@ -15,6 +16,13 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 sp500: payload,
+                loading: false,
+            };
+
+        case GET_STOCK_COMPONENTS:
+            return {
+                ...state,
+                stocks: payload,
                 loading: false,
             };
 

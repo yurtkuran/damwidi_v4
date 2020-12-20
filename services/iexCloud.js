@@ -29,7 +29,21 @@ const keyStats = async (symbol, stat = null) => {
     }
 };
 
+const quote = async (symbol, stat = null) => {
+    stat = stat !== null ? `/${stat}` : '';
+    const url = iexBaseURL + `stock/${symbol}/quote?token=` + process.env.IEXCLOUD_PUBLIC_KEY;
+
+    try {
+        const iex = await axios.get(url);
+        return iex.data;
+    } catch (err) {
+        console.log(err.message);
+        return false;
+    }
+};
+
 module.exports = {
     company,
     keyStats,
+    quote,
 };

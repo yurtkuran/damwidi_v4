@@ -21,8 +21,6 @@ const initialChartOptions = {
         type: 'column',
         animation: false,
         className: 'chartStyle',
-        // width: 800,
-        // height: (9 / 16) * 100 + '%', // 16:9 ratio
         height: 450,
     },
     title: {
@@ -66,6 +64,7 @@ const IEXStatus = ({ iex: { loadingUsage, usage, loadingDetails, details }, getU
 
             // update values
             setChartOptions({
+                ...initialChartOptions,
                 title: {
                     text:
                         moment(Object.keys(dailyUsage)[0]).format('MMMM') +

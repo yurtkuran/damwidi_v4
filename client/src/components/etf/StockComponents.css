@@ -1,0 +1,98 @@
+.stockRow:hover {
+    background-color: rgba(240, 240, 240, 1);
+}
+
+.stockInfo {
+    font-family: 'Josefin Sans', sans-serif;
+}
+
+.stockinfo :hover {
+    background-color: white;
+}
+
+.stockInfo__Performance {
+    margin: 10px auto 20px;
+    width: 90%;
+}
+
+.stockInfo__Performance h5 {
+    margin-bottom: 0;
+}
+
+.stockInfoTable {
+    table-layout: fixed;
+    width: 100%;
+    margin: 0px auto 10px;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.stockInfoTable th {
+    background-color: rgba(200, 200, 200, 1);
+}
+
+.stockInfoTable td {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.stockPerformance {
+    /* width: 20%; */
+    /* color: red; */
+}
+
+.stockInfo__Description {
+    width: 90%;
+    background-color: rgba(240, 240, 240, 1);
+    margin: 20px auto 10px;
+    padding: 10px 10px 10px 10px;
+    border-radius: 3px;
+    text-align: justify;
+    box-sizing: border-box;
+}
+
+.stockInfo__Description p {
+    margin: 0;
+}
+
+.stockInfo__Details {
+    width: 80%;
+    margin: 10px auto 10px;
+    border-top: solid;
+    border-top-width: 1px;
+    border-top-color: rgba(200, 200, 200, 1);
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(200, 200, 200, 1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stockInfo__Details div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    color: rgba(130, 130, 130, 1);
+}
+
+.stockInfo__Details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: black;
+}
+
+.stockInfo__Details a {
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.stockInfo__ComponentOf {
+    width: 90%;
+    margin: 0px auto 10px;
+    font-size: 0.8rem;
+}
+.stockInfo__ComponentOf span {
+    font-size: 0.8rem;
+    color: rgba(130, 130, 130, 1);
+}

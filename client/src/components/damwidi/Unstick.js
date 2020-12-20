@@ -38,11 +38,12 @@ const Table = ({ columns, data, renderRowSubComponent }) => {
                     </tr>
                 ))}
             </thead>
+
             <tbody {...getTableBodyProps()}>
                 {rows.map((row, i) => {
                     prepareRow(row);
                     return (
-                        <Fragment {...row.getRowProps()}>
+                        <Fragment key={i}>
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
                                     return <td {...cell.getCellProps({ className: cell.column.className })}>{cell.render('Cell')}</td>;
@@ -70,7 +71,7 @@ const Unstick = ({ damwidi: { unstick, loading }, getUnstick }) => {
         getUnstick();
     }, [getUnstick]);
 
-    // define table columne
+    // define table columns
     const columns = useMemo(
         () => [
             {

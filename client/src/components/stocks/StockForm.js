@@ -25,7 +25,7 @@ const initialErrorState = {
     symbol: '',
 };
 
-const StockForm = ({ current, sector: { sectors, loading }, getSectors, validateSymbolIEX, validateStock, addOrUpdateStock, history }) => {
+const StockForm = ({ current, sector: { sectors, loading }, getSectors, validateStock, addOrUpdateStock, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialFormState);
 
@@ -169,7 +169,6 @@ const StockForm = ({ current, sector: { sectors, loading }, getSectors, validate
 StockForm.propTypes = {
     current: PropTypes.object.isRequired,
     getSectors: PropTypes.func.isRequired,
-    validateSymbolIEX: PropTypes.func.isRequired,
     validateStock: PropTypes.func.isRequired,
     addOrUpdateStock: PropTypes.func.isRequired,
 };
@@ -180,4 +179,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { getSectors, validateSymbolIEX, validateStock, addOrUpdateStock })(StockForm);
+export default connect(mapStatetoProps, { getSectors, validateStock, addOrUpdateStock })(StockForm);

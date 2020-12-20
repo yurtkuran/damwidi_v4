@@ -27,14 +27,6 @@ const ETFSchema = new mongoose.Schema(
                 weight: {
                     type: Number,
                 },
-                sector: {
-                    type: String,
-                    trim: true,
-                },
-                industry: {
-                    type: String,
-                    trim: true,
-                },
             },
             { timestamps: true },
         ],
