@@ -1,0 +1,72 @@
+:root {
+    --table-border: rgba(0, 0, 0, 0.2);
+    --table-footer-border: rgba(0, 0, 0, 0.6);
+    --primary-color: red;
+}
+
+.allocationTable {
+    color: rgb(48, 45, 45);
+    border: 1px solid var(--table-border);
+    box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 100px;
+}
+
+.allocationTable td {
+    padding: 4px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.allocationTable th {
+    background-color: #e9ecef;
+    padding: 8px 10px 8px;
+    border: 1px solid var(--table-border);
+}
+
+.allocationTable tfoot td {
+    background-color: #e9ecef;
+    padding: 8px 10px 8px;
+    /* border: 1px solid var(--table-border); */
+    border-top: 2px solid rgba(0, 0, 0, 0.8);
+}
+
+.allocationTable .far {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.rowSPY {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+}
+
+.rowSummary td {
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.8);
+}
+
+.purchaseTableContainer {
+    margin: 1px auto 10px;
+    width: 600px;
+}
+
+.tradeTable {
+    width: 100%;
+    font-size: 10pt;
+    color: rgb(48, 45, 45);
+    border: 1px solid var(--table-border);
+    margin-bottom: 20px;
+}
+
+.tradeTable th {
+    padding: 4px 8px;
+}
+
+.tradeTable td {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.valueUp {
+    color: green;
+}
+
+.valueDown {
+    color: red;
+}

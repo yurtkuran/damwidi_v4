@@ -9,6 +9,7 @@ import errorReducer from './errorReducer';
 import etfReducer from './etfReducer';
 import iexReducer from './iexReducer';
 import logReducer from './logReducer';
+import marketReducer from './marketReducer';
 import messageReducer from './messageReducer';
 import sectorReducer from './sectorReducer';
 import stockReducer from './stockReducer';
@@ -22,6 +23,7 @@ export default combineReducers({
     etf: etfReducer,
     iex: iexReducer,
     log: logReducer,
+    market: marketReducer,
     message: messageReducer,
     sector: sectorReducer,
     stock: stockReducer,

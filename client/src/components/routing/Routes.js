@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 // bring in components
 import Navbar from '../layout/Navbar';
 import Dashboard from '../dashboard/Dashboard';
+import Allocation from '../allocation/Allocation';
 
 import Users from '../users/Users';
 import UserForm from '../users/UserForm';
@@ -28,6 +29,10 @@ import Unstick from '../damwidi/Unstick';
 import MeetingMinutes from '../damwidi/MeetingMinutes';
 import TradeHistory from '../damwidi/TradeHistory';
 
+import SectorTimeframe from '../charts/SectorTimeframe';
+import AboveBelow from '../charts/AboveBelow';
+import Technical from '../charts/Technical';
+
 // bring in helpers
 import PrivateRoute from '../routing/PrivateRoute';
 
@@ -40,6 +45,8 @@ const Routes = () => {
             <section className='container' style={sectionStyle}>
                 <Switch>
                     <PrivateRoute exact path='/dashboard' component={Dashboard} />
+
+                    <PrivateRoute exact path='/allocation' component={Allocation} />
 
                     <PrivateRoute exact path='/users' component={Users} />
                     <PrivateRoute exact path='/modifyuser' component={UserForm} />
@@ -55,15 +62,20 @@ const Routes = () => {
                     <PrivateRoute expact path='/etfs' component={Etfs} />
                     <PrivateRoute exact path='/etfform' component={EtfForm} />
                     <PrivateRoute exact path='/etfcomponents' component={EtfComponents} />
-
                     <PrivateRoute expact path='/etflist' component={EtfList} />
                     <PrivateRoute expact path='/stockData' component={StockData} />
 
                     <PrivateRoute exact path='/iexstatus' component={IEXStatus} />
+
                     <PrivateRoute exact path='/minutes' component={MeetingMinutes} />
+
                     <PrivateRoute exact path='/tradehistory' component={TradeHistory} />
 
                     <PrivateRoute exact path='/unstick' component={Unstick} />
+
+                    <PrivateRoute exact path='/sectorTimeframe' component={SectorTimeframe} />
+                    <PrivateRoute exact path='/aboveBelow' component={AboveBelow} />
+                    <PrivateRoute exact path='/technical' component={Technical} />
                 </Switch>
             </section>
         </section>

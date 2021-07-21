@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo, useCallback } from 'react';
 
 // bring in dependencies
-import { useTable, useSortBy, usePagination, useFilters } from 'react-table';
-import BTable from 'react-bootstrap/Table';
+import { useTable, useExpanded } from 'react-table';
 import numeral from 'numeral';
 import './PortfolioTable.css';
 
 // bring in redux
 
 // bring in components
+import PositionDetail from './PositionDetail';
 
 // bring in actions
 
@@ -20,11 +20,14 @@ import './PortfolioTable.css';
 const defaultPropGetter = () => ({});
 
 // display table
-const Table = ({ columns, data, getCellProps = defaultPropGetter }) => {
-    const { getTableProps, getTableBodyProps, headerGroups, footerGroups, prepareRow, rows } = useTable({
-        columns,
-        data,
-    });
+const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubComponent }) => {
+    const { getTableProps, getTableBodyProps, headerGroups, footerGroups, prepareRow, rows, visibleColumns } = useTable(
+        {
+            columns,
+            data,
+        },
+        useExpanded
+    );
 
     return (
         // <BTable striped bordered hover size='sm' {...getTableProps()} className='dataTable'>
@@ -42,11 +45,18 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter }) => {
                 {rows.map((row, i) => {
                     prepareRow(row);
                     return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map((cell) => {
-                                return <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>{cell.render('Cell')}</td>;
-                            })}
-                        </tr>
+                        <Fragment key={i}>
+                            <tr {...row.getRowProps()}>
+                                {row.cells.map((cell) => {
+                                    return <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>{cell.render('Cell')}</td>;
+                                })}
+                            </tr>
+                            {row.isExpanded ? (
+                                <tr>
+                                    <td colSpan={visibleColumns.length}>{renderRowSubComponent(data[row.index].sector)}</td>
+                                </tr>
+                            ) : null}
+                        </Fragment>
                     );
                 })}
             </tbody>
@@ -64,6 +74,12 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter }) => {
 };
 
 const PortfolioTable = ({ data }) => {
+    // function to render row sub components
+    const renderRowSubComponent = useCallback((symbol) => {
+        return <PositionDetail symbol={symbol} />;
+    }, []);
+
+    // define data
     const tableData = useMemo(
         () =>
             data
@@ -71,14 +87,23 @@ const PortfolioTable = ({ data }) => {
                 .sort((a, b) => {
                     return a.sector < b.sector ? -1 : a.sector > b.sector ? 1 : 0;
                 }),
-        []
+        [data]
     );
 
-    const damData = useMemo(() => data.filter((position) => position.sector === 'DAM')[0], []);
+    const damData = useMemo(() => data.filter((position) => position.sector === 'DAM')[0], [data]);
 
     // build columns
     const columns = useMemo(
         () => [
+            {
+                Header: () => null, // No header
+                id: 'expander', // It needs an ID
+                width: '10px',
+                className: 'text-center',
+                Cell: ({ row }) => (
+                    <span {...row.getToggleRowExpandedProps()}>{row.isExpanded ? <i className='far fa-caret-square-down'></i> : <i className='far fa-caret-square-right'></i>}</span>
+                ),
+            },
             {
                 accessor: 'sector',
                 Header: 'Symbol',
@@ -180,6 +205,7 @@ const PortfolioTable = ({ data }) => {
 
                 return { className: null };
             }}
+            renderRowSubComponent={renderRowSubComponent}
         />
     );
 };

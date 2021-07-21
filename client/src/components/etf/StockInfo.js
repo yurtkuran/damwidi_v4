@@ -1,31 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // bring in dependencies
 import numeral from 'numeral';
 
-// birng in components
+// bring in redux
+
+// bring in components
+
+// bring in actions
+
+// bring in functions and hooks
+import useFetch from '../../customHooks/useFetch';
+
+// set initial state
 
 const StockInfo = ({ stockData }) => {
+    const [loading, setLoading] = useState(true);
+
+    const { data: keyStats, isLoading, error } = useFetch(`api/marketData/keystats/${stockData.symbol}`);
+
     // destructure
-    const {
-        companyName,
-        description,
-        year1ChangePercent,
-        ytdChangePercent,
-        month6ChangePercent,
-        month3ChangePercent,
-        month1ChangePercent,
-        day5ChangePercent,
-        peRatio,
-        country,
-        exchange,
-        componentOf,
-    } = stockData;
+    const { companyName, description, country, exchange, componentOf } = stockData;
 
     // format website
     let { website } = stockData;
-    if (website && website.indexOf('http://') !== -1) {
-        website = website.substring(website.indexOf('http://') + 'http://'.length);
+    if (website && (website.indexOf('http://') !== -1 || website.indexOf('https://') !== -1)) {
+        website = website.split('//').pop();
     }
 
     return (
@@ -34,33 +34,35 @@ const StockInfo = ({ stockData }) => {
                 <>
                     <div className='stockInfo__Performance'>
                         <h5>Performance: {companyName}</h5>
-                        <table className='stockInfoTable dataTable'>
-                            <thead>
-                                <tr>
-                                    <th className='text-right stockPerformance'>1 Year</th>
-                                    <th className='text-right stockPerformance'>YTD</th>
-                                    <th className='text-right stockPerformance'>6 Mth</th>
-                                    <th className='text-right stockPerformance'>3 Mth</th>
-                                    <th className='text-right stockPerformance'>1 Mth</th>
-                                    <th className='text-right stockPerformance'>5 Day</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className='text-right'>{numeral(year1ChangePercent).format('0.00')}</td>
-                                    <td className='text-right'>{numeral(ytdChangePercent).format('0.00')}</td>
-                                    <td className='text-right'>{numeral(month6ChangePercent).format('0.00')}</td>
-                                    <td className='text-right'>{numeral(month3ChangePercent).format('0.00')}</td>
-                                    <td className='text-right'>{numeral(month1ChangePercent).format('0.00')}</td>
-                                    <td className='text-right'>{numeral(day5ChangePercent).format('0.00')}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        {!isLoading && keyStats && (
+                            <table className='stockInfoTable dataTable'>
+                                <thead>
+                                    <tr>
+                                        <th className='text-right stockPerformance'>1 Year</th>
+                                        <th className='text-right stockPerformance'>YTD</th>
+                                        <th className='text-right stockPerformance'>6 Mth</th>
+                                        <th className='text-right stockPerformance'>3 Mth</th>
+                                        <th className='text-right stockPerformance'>1 Mth</th>
+                                        <th className='text-right stockPerformance'>5 Day</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className='text-right'>{numeral(keyStats.year1ChangePercent).format('0.00%')}</td>
+                                        <td className='text-right'>{numeral(keyStats.ytdChangePercent).format('0.00%')}</td>
+                                        <td className='text-right'>{numeral(keyStats.month6ChangePercent).format('0.00%')}</td>
+                                        <td className='text-right'>{numeral(keyStats.month3ChangePercent).format('0.00%')}</td>
+                                        <td className='text-right'>{numeral(keyStats.month1ChangePercent).format('0.00%')}</td>
+                                        <td className='text-right'>{numeral(keyStats.day5ChangePercent).format('0.00%')}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        )}
                     </div>
 
                     <div className='stockInfo__Details'>
                         <div>
-                            P/E <p>{peRatio}</p>
+                            P/E <p>{keyStats && numeral(keyStats.peRatio).format('0.00')}</p>
                         </div>
                         <div>
                             Country<p>{country}</p>
@@ -71,7 +73,7 @@ const StockInfo = ({ stockData }) => {
                         <div>
                             Website
                             <p>
-                                <a target='_blank' rel='noopener noreferrer' href={`https://${website}`}>
+                                <a target='_blank' rel='noopener noreferrer' href={`http://${website}`}>
                                     {website}
                                 </a>
                             </p>

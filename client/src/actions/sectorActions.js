@@ -36,6 +36,25 @@ export const updateSectorWeight = (id, symbol, weight) => async (dispatch) => {
     }
 };
 
+// import all sector weights and update
+export const updateSectorWeightsFromImport = () => async (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    try {
+        const res = await axios.post('/api/sectors/updateSectorWeightsFromImport', null, config);
+        dispatch({ type: GET_SECTORS, payload: res.data });
+    } catch (err) {
+        const errors = err.response.data.errors;
+        if (errors) {
+            errors.forEach((error) => dispatch(setMessage(error.param, error.msg)));
+        }
+    }
+};
+
 // add or update sector
 export const addOrUpdateSector = ({ id, symbol, name, description }, history) => async (dispatch) => {
     const config = {

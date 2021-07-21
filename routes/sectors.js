@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 
 // database models
 const Sector = require('../models/Sector.model');
@@ -10,7 +11,13 @@ const { auth, ensureAdmin } = require('../middleware/auth');
 // express validator middleware
 const { check, validationResult } = require('express-validator');
 
-// @route:  GET api/sectors
+// function to round to 'n' digits
+const round = (num, digits) => {
+    const precision = Math.pow(10, digits);
+    return Math.round((num + Number.EPSILON) * precision) / precision;
+};
+
+// @route:  GET api/sectors/:sort
 // @desc:   get all stock-stector pairs
 // @access: private
 // @role:   admin
@@ -76,7 +83,7 @@ router.post('/', auth, ensureAdmin, async (req, res) => {
     }
 });
 
-// @route:  POST api/sectors
+// @route:  POST api/sectors/updateSectorWeight
 // @desc:   update sector weight
 // @access: private
 // @role:   admin
@@ -92,6 +99,40 @@ router.post('/updateSectorWeight', auth, ensureAdmin, async (req, res) => {
     } catch (err) {
         console.log('Error during record update: ' + err);
         res.status(500).send('server error');
+    }
+});
+
+// @route:  POST api/sectors/updateSectorWeightsFromImport
+// @desc:   update sector weight
+// @access: private
+// @role:   admin
+router.post('/updateSectorWeightsFromImport', auth, ensureAdmin, async (req, res) => {
+    const url = 'https://www.spglobal.com/spdji/en/util/redesign/index-data/get-performance-data-for-datawidget-redesign.dot?indexId=340';
+
+    // import weights and update
+    try {
+        const spglobal = await axios.get(url); // retrieve weights from SPGlobal
+        const indexSectorBreakdown = spglobal.data.indexSectorBreakdownHolder.indexSectorBreakdown;
+
+        await Promise.all(
+            indexSectorBreakdown.map(async (sector) => {
+                // destructure
+                const { sectorDescription, marketCapitalPercentage: weight, effectiveDate, fetchedDate } = sector;
+
+                // find sector in database
+                const sectorRecord = await Sector.findOne({ where: { sectorDescription } });
+
+                if (sectorRecord) {
+                    await sectorRecord.update({ weight: round(weight * 100, 2), effectiveDate, fetchedDate });
+                }
+            })
+        );
+
+        const sectors = await Sector.findAll({ order: [['weight', 'DESC']] });
+        res.json(sectors);
+    } catch (err) {
+        console.log('Error during sector weights update: ' + err);
+        res.status(500).send('server error: S03');
     }
 });
 

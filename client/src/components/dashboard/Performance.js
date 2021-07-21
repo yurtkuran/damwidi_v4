@@ -7,10 +7,8 @@ import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 
 // bring in redux
-import { connect } from 'react-redux';
 
 // bring in components
-import Spinner from '../layout/Spinner';
 
 // bring in actions
 
@@ -69,7 +67,7 @@ const initialChartOptions = {
             color: 'rgba(0,0,0,0.1)',
             data: [],
             pointPadding: 0.3,
-            pointPlacement: -0.2,
+            pointPlacement: 0.0,
             pointWidth: 14,
             animation: {
                 duration: 300,
@@ -80,7 +78,7 @@ const initialChartOptions = {
             color: 'rgba(0,0,0,0.5)',
             data: [],
             pointPadding: 0.4,
-            pointPlacement: -0.2,
+            pointPlacement: 0.0,
             pointWidth: 6,
             animation: {
                 duration: 300,
@@ -93,35 +91,38 @@ const initialChartOptions = {
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const Performance = ({ loading, intraDay }) => {
+const Performance = ({ seriesPrice, seriesSPY, categories }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
 
     // chart callback
     const afterChartCreated = (chart) => {
-        const { seriesPrice, seriesSPY, categories } = intraDay.performanceData;
+        const processedData = seriesPrice.map((val) => ({
+            y: val,
+            color: val < 0 ? 'rgba(209, 58, 58, 0.5)' : 'rgba(18, 143, 4, 0.5)',
+        }));
 
-        // update chart
-        chart.series[0].setData(seriesPrice);
-        chart.series[1].setData(seriesSPY);
-        chart.xAxis[0].setCategories(categories);
+        console.log(processedData);
 
-        // update bar colors
-        for (let i = 0; i < chart.series[0].data.length; i++) {
-            chart.series[0].data[i].update(
+        setChartOptions({
+            xAxis: {
+                categories: categories,
+            },
+            series: [
                 {
-                    color: chart.series[0].data[i].negative ? 'rgba(209, 58, 58, 0.5)' : 'rgba(18, 143, 4, 0.5)',
+                    data: processedData,
                 },
-                false
-            );
-        }
+                {
+                    data: seriesSPY,
+                },
+            ],
+        });
+
         chart.redraw();
-        chart.reflow();
+        // chart.reflow();
     };
 
-    return loading ? (
-        <Spinner />
-    ) : (
+    return (
         <div className='chart performance-wrapper'>
             <div className='performance'>
                 <div>Performance Since Purchase</div>
@@ -132,13 +133,9 @@ const Performance = ({ loading, intraDay }) => {
 };
 
 Performance.propTypes = {
-    intraDay: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
+    seriesPrice: PropTypes.array.isRequired,
+    seriesSPY: PropTypes.array.isRequired,
+    categories: PropTypes.array.isRequired,
 };
 
-const mapStatetoProps = (state) => ({
-    intraDay: state.damwidi.intraDay,
-    loading: state.damwidi.loading,
-});
-
-export default connect(mapStatetoProps, null)(Performance);
+export default Performance;

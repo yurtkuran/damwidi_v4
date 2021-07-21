@@ -17,7 +17,7 @@ const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
 // @role:   member
 router.get('/', auth, ensureMember, async (req, res) => {
     try {
-        const etfs = await ETF.find().populate('holdings.stock', '-history -__v -createdAt -updatedAt -_id');
+        const etfs = await ETF.find().sort({ symbol: 'asc' }).populate('holdings.stock', '-history -__v -createdAt -updatedAt -_id');
         res.json(etfs);
     } catch (err) {
         console.error(err.message);

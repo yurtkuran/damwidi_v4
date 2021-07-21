@@ -30,6 +30,7 @@ const SectorItem = ({ sector, weight, setCurrent, setShow, setMessage, updateWei
                 <ContentEditable
                     html={weight}
                     style={weightStyle}
+                    className='weightInput'
                     onChange={(e) => updateWeight(symbol, e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
                     onBlur={() => blurWeight(sector.id, symbol)}
@@ -37,12 +38,12 @@ const SectorItem = ({ sector, weight, setCurrent, setShow, setMessage, updateWei
             </td>
 
             <td className='text-center text-primary'>
-                <Link to='/sectorform' onClick={() => setCurrent(sector)}>
+                <Link to='/sectorform' className='noOutlineOnFocus' onClick={() => setCurrent(sector)}>
                     <i className='far fa-edit'></i>
                 </Link>
             </td>
             <td className='text-center text-primary'>
-                <Link to='#' onClick={() => handleDelete(sector.id)}>
+                <Link to='#' className='noOutlineOnFocus' onClick={() => handleDelete(sector.id)}>
                     <i className='far fa-trash-alt'></i>
                 </Link>
             </td>

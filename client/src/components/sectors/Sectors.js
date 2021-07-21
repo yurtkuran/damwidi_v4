@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useRef, Fragment } from 'react';
+import React, { useState, useEffect, useRef, useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+// bring in dependencies
+import './sectors.css';
 
 // bring in redux
 import { connect } from 'react-redux';
@@ -11,10 +14,9 @@ import ModalConfirm from '../layout/ModalConfirm';
 import SectorItem from './SectorItem';
 
 // bring in actions
-import { getSectors, updateSectorWeight, clearCurrent, deleteSector } from '../../actions/sectorActions';
+import { getSectors, updateSectorWeight, updateSectorWeightsFromImport, clearCurrent, deleteSector } from '../../actions/sectorActions';
 
 // bring in functions and hooks
-import useForceUpdate from '../../utils/useForceUpdate';
 
 // sort function
 // https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
@@ -44,7 +46,7 @@ const errorWeightStyle = {
     color: 'red',
 };
 
-const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSectorWeight, clearCurrent, deleteSector }) => {
+const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSectorWeight, updateSectorWeightsFromImport, clearCurrent, deleteSector }) => {
     // state to determine if okay to load page
     const [loadPage, setLoadPage] = useState(false);
 
@@ -54,11 +56,15 @@ const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSect
     // init form error messages
     const [errorMessage, setErrorMessage] = useState('');
 
-    // custome function to force re-render
-    const forceUpdate = useForceUpdate();
+    // state for button
+    const [buttonText, setButtonText] = useState('Import Weights');
+    const [buttonDisabled, setButtonDisabled] = useState(false);
 
     // ref to hold sector weights
     const sectorWeights = useRef({});
+
+    // used to force an updated
+    const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
     // load sectors when component loads, clear current sector
     useEffect(() => {
@@ -81,6 +87,17 @@ const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSect
         total = parseFloat(total.toFixed(2));
         setErrorMessage(total !== 100 ? `Sector weights sum to ${total}%` : '');
     }, [loading, sectors]);
+
+    useEffect(() => {
+        setButtonText('Import Weights');
+        setButtonDisabled(false);
+    }, [sectors]);
+
+    const onClick = () => {
+        setButtonText('Importing');
+        setButtonDisabled(true);
+        updateSectorWeightsFromImport();
+    };
 
     // hande weight update
     const updateWeight = (symbol, weight) => {
@@ -115,15 +132,20 @@ const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSect
     return !loadPage ? (
         <Spinner />
     ) : (
-        <Fragment>
+        <div className='sector-container'>
             <ModalConfirm show={show} setShow={setShow} handleClose={handleClose} message={message} title={'Confirm Deletion'} />
             <div className='col-12 m-auto'>
-                <h4 className=''>
-                    <Link to='/sectorform'>
-                        <i className='fas fa-plus mr-3'></i>
-                    </Link>
-                    Sectors
-                </h4>
+                <div className='sector-header'>
+                    <h4 className='sector-title'>
+                        <Link className='noOutlineOnFocus' to='/sectorform'>
+                            <i className='fas fa-plus mr-3'></i>
+                        </Link>
+                        Sectors
+                    </h4>
+                    <button className='btnn' onClick={onClick} disabled={buttonDisabled}>
+                        {buttonText}
+                    </button>
+                </div>
                 <table className='table table-bordered table-striped'>
                     <thead>
                         <tr>
@@ -162,7 +184,7 @@ const Sectors = ({ sector: { sectors, loading, current }, getSectors, updateSect
                 </table>
                 <h6 className='small text-danger text-right'>{errorMessage !== '' && errorMessage}</h6>
             </div>
-        </Fragment>
+        </div>
     );
 };
 
@@ -178,4 +200,4 @@ const mapStatetoProps = (state) => ({
     sector: state.sector,
 });
 
-export default connect(mapStatetoProps, { getSectors, updateSectorWeight, clearCurrent, deleteSector })(Sectors);
+export default connect(mapStatetoProps, { getSectors, updateSectorWeight, updateSectorWeightsFromImport, clearCurrent, deleteSector })(Sectors);

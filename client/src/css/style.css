@@ -97,3 +97,7 @@ body {
     font-family: 'Inconsolata', sans-serif;
     font-weight: 400;
 }
+
+.noOutlineOnFocus:focus {
+    outline: none;
+}

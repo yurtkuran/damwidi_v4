@@ -48,7 +48,6 @@ export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
 export const GET_TRADE_HISTORY      = 'GET_TRADE_HISTORY';
 export const GET_INTRADAY_DATA      = 'GET_INTRADAY_DATA';
 
-
 // etf actions
 export const GET_SP500_COMPONENTS   = 'GET_SP500_COMPONENTS'
 export const GET_STOCK_COMPONENTS   = 'GET_STOCK_COMPONENTS'
@@ -57,6 +56,9 @@ export const REMOVE_ETF             = 'REMOVE_ETF';
 export const SET_CURRENT_ETF        = 'SET_CURRENT_ETF';
 export const CLEAR_CURRENT_ETF      = 'CLEAR_CURRENT_ETF';
 
+// market data actions
+export const GET_INTRADAY           = 'GET_INTRADAY';
+export const GET_KEYSTATS           = 'GET_KEYSTATS';
 
 // error actions
 export const LOG_ERROR              = 'LOG_ERROR';

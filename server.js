@@ -6,6 +6,9 @@ console.clear();
 // configure dotenv - bring in configuration variables, passwords and keys
 require('dotenv').config();
 
+// set timezone
+process.env.TZ = 'America/New_York';
+
 // bring in local modules
 const connectDB = require('./config/db');
 

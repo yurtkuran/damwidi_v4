@@ -1,0 +1,48 @@
+:root {
+    --primary-color: #5a5a5a;
+    --secondary-color: #dbdbdb;
+}
+
+.weightInput:focus {
+    background-color: #e3e3e3;
+    border-radius: 3px;
+    outline: none;
+}
+
+.sector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sector-header h4 {
+    margin: 0;
+}
+
+.sector-header .btnn {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    width: 150px;
+    padding: 5px 10px;
+    border-radius: 2px;
+    border: none;
+    font-size: 0.8rem;
+}
+
+.sector-header .btnn:hover:enabled {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    font-size: 0.8rem;
+}
+
+.sector-header .btnn:active {
+    transform: scale(0.98);
+}
+
+.sector-header .btnn:disabled {
+    background-color: #fff;
+    border: 1px solid var(--secondary-color);
+    /* color: var(--secondary-color); */
+}

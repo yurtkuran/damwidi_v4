@@ -16,7 +16,7 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     const authLinks = (
         <Nav className='ml-auto '>
             {user !== null && user.isAdmin && (
-                <NavDropdown title='Admin' id='basic-nav-dropdown'>
+                <NavDropdown title='Admin' id='dropdown-admin'>
                     <NavDropdown.Item href='/sectors'>Sectors</NavDropdown.Item>
                     <NavDropdown.Item href='/stocks'>Stocks</NavDropdown.Item>
                     <NavDropdown.Item href='/etfs'>ETF's</NavDropdown.Item>
@@ -48,21 +48,17 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
             {!loading && isAuthenticated && (
                 <Nav className='mr-auto'>
                     <Nav.Link href='/dashboard'>Home</Nav.Link>
-                    {user && user.isMember && <Nav.Link href='#'>Allocation</Nav.Link>}
-                    <NavDropdown title='Charts' id='basic-nav-dropdown'>
-                        <NavDropdown.Item href='#action/3.1'>Action</NavDropdown.Item>
-                        <NavDropdown.Item disabled href='#action/3.2'>
-                            Another action
-                        </NavDropdown.Item>
-                        <NavDropdown.Item href='#action/3.3'>Something</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href='#action/3.4'>Separated link</NavDropdown.Item>
+                    {user && user.isMember && <Nav.Link href='/allocation'>Allocation</Nav.Link>}
+                    <NavDropdown title='Charts' id='dropdown-charts'>
+                        <NavDropdown.Item href='/sectorTimeframe'>Sector by Timeframe</NavDropdown.Item>
+                        <NavDropdown.Item href='/aboveBelow'>Above-Below</NavDropdown.Item>
+                        <NavDropdown.Item href='/technical'>Technical</NavDropdown.Item>
                     </NavDropdown>
                     {user && user.isMember && (
                         <>
                             <Nav.Link href='/tradehistory'>Trade History</Nav.Link>
                             <Nav.Link href='/minutes'>Minutes</Nav.Link>
-                            <NavDropdown title='Index Data'>
+                            <NavDropdown title='Index Data' id='dropdown-data'>
                                 <NavDropdown.Item href='/sp500components'>S&P 500</NavDropdown.Item>
                                 <NavDropdown.Item href='/etflist'>ETF's</NavDropdown.Item>
                                 <NavDropdown.Item href='/stockData'>Stocks</NavDropdown.Item>

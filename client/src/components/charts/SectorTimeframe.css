@@ -1,0 +1,43 @@
+.timeframe_charts_container {
+    box-sizing: border-box;
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
+    /* box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2); */
+    background-color: #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 2px;
+    height: 550px;
+}
+
+.timeframe_chart {
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    margin: 10px 10px;
+    padding: 2px;
+}
+
+.timeframe_chart h6 {
+    margin: 3px 0px 6px 0px !important;
+    color: rgb(65, 65, 65);
+    /* color: rebeccapurple; */
+    font-weight: bold;
+}
+
+.timeframe_chart h6 i {
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+.arrowGreen {
+    color: rgba(15, 112, 1, 1);
+    /* background-color: rgba(183, 226, 192, 1); */
+}
+
+.arrowRed {
+    color: rgba(250, 0, 6, 1);
+    /* background-color: rgba(241, 185, 192, 1); */
+}

@@ -63,4 +63,20 @@ router.get('/intraDayData', auth, ensureMember, async (req, res) => {
     }
 });
 
+// @route:  GET api/damwidi/timeframeData/:timeframe
+// @desc:   retrieve sector-timeframe data
+// @access: private
+// @role:   member
+router.get('/timeframeData/:timeframe', auth, ensureMember, async (req, res) => {
+    const url = `${damwidiBaseURL}returnSectorTimeframePerformanceData&timeframe=${req.params.timeframe}`;
+
+    try {
+        const damwidi = await axios.get(url);
+        res.json(damwidi.data);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
 module.exports = router;

@@ -101,6 +101,7 @@ i.gauge-arrow:before {
     grid-gap: 15px;
     width: 100%;
     margin: 10px auto;
+    height: 400px;
 }
 
 .chart {

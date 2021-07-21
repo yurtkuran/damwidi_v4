@@ -21,7 +21,7 @@ import { getIntraDayData } from '../../actions/damwidiActions';
 
 // set initial state
 
-const Dashboard = ({ intraDay, loading, getIntraDayData }) => {
+const Dashboard = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
     // state for indicies
     const [indexReturn, setIndexReturn] = useState([]);
 
@@ -52,7 +52,11 @@ const Dashboard = ({ intraDay, loading, getIntraDayData }) => {
                     <>
                         <div className='charts'>
                             <Heatmap categories={intraDay.graphHeatMap.labels} data={intraDay.graphHeatMap.datasets[0].data} title={intraDay.time} portfolio={intraDay.portfolioTable} />
-                            <Performance />
+                            <Performance
+                                categories={intraDay.performanceData.categories}
+                                seriesSPY={intraDay.performanceData.seriesSPY}
+                                seriesPrice={intraDay.performanceData.seriesPrice}
+                            />
                         </div>
                         <div className='portfolio-table'>
                             <PortfolioTable data={intraDay.heatMapData} />
@@ -70,13 +74,11 @@ const divStyle = {
 
 Dashboard.propTypes = {
     getIntraDayData: PropTypes.func.isRequired,
-    intraDay: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
+    damwidi: PropTypes.object.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
-    intraDay: state.damwidi.intraDay,
-    loading: state.damwidi.loading,
+    damwidi: state.damwidi,
 });
 
 export default connect(mapStatetoProps, { getIntraDayData })(Dashboard);

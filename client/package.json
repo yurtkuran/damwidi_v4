@@ -9,7 +9,7 @@
         "axios": "^0.19.2",
         "bootstrap": "^4.5.0",
         "email-validator": "^2.0.4",
-        "highcharts": "^8.2.0",
+        "highcharts": "^9.1.2",
         "highcharts-react-official": "^3.0.0",
         "moment": "^2.25.3",
         "papaparse": "^5.3.0",

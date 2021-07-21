@@ -8,7 +8,7 @@ const Stock = require('../models/Stock');
 
 // bring in local service modules
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
-const { company, keyStats, quote } = require('../services/iexCloud');
+const { company, keyStats, quote, intraDay } = require('../services/iexCloud');
 const { scrapeFidelity } = require('../services/scrapeGics');
 
 // authorization middleware
@@ -221,8 +221,8 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @desc:   retrieve intraday quote
 // @access: private
 // @role:   member
+// @source: iex
 router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
-    const stat = req.query.stat;
     const symbol = req.params.symbol;
 
     let iex = {};
@@ -252,12 +252,14 @@ router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
     }
 });
 
-// to-do
-router.get('/keystats/:symbol', async (req, res) => {
-    const stat = req.query.stat;
+// @route:  GET api/marketData/intraday/:symbol
+// @desc:   retrieve intraday candle
+// @access: private
+// @role:   member
+// @source: iex
+router.get('/intraday/:symbol', auth, ensureMember, async (req, res) => {
     try {
-        iex = await keyStats(req.params.symbol, stat);
-        console.log(typeof iex);
+        iex = await intraDay(req.params.symbol);
         res.json(iex);
     } catch (err) {
         console.error(err.message);
@@ -265,12 +267,32 @@ router.get('/keystats/:symbol', async (req, res) => {
     }
 });
 
+// @route:  GET api/marketData/keystats/:symbol?stat=
+// @desc:   retrieve intraday candle
+// @access: private
+// @role:   member
+// @source: iex
+router.get('/keystats/:symbol', auth, ensureMember, async (req, res) => {
+    const stat = req.query.stat;
+    try {
+        iex = await keyStats(req.params.symbol, stat);
+        res.json(iex);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+//
+// to-do, remove before deployment
+//  TEST FUNCTIONS & ROUTES
+
 // to-do
+// @source: iex
 router.get('/company/:symbol', async (req, res) => {
     const stat = req.query.stat;
     try {
         iex = await company(req.params.symbol);
-        console.log(typeof iex);
         res.json(iex);
     } catch (err) {
         console.error(err.message);
