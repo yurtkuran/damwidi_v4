@@ -1,0 +1,41 @@
+.timeframe-button-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.btn {
+    background-color: rgba(245, 245, 245);
+    border-radius: 3px;
+    border: none;
+    color: #000;
+    margin: 8px 2px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: rgba(220, 220, 220);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: rgba(57, 122, 152, 0.934);
+    color: #fff;
+}
+
+.btn.selected {
+    background-color: rgba(57, 122, 152, 0.934);
+    color: #fff;
+}
+
+.above-below-chart .chart-title {
+    font-weight: bold;
+    margin-left: 8px;
+}

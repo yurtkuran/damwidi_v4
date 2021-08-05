@@ -43,10 +43,19 @@ export const CLEAR_CURRENT_STOCK    = 'CLEAR_CURRENT_STOCK';
 export const GET_IEX_USAGE          = 'GET_IEX_USAGE';
 export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
 
+// alphavantage actions
+export const GET_DAILY              = 'GET_DAILY';
+export const RESET_ALPHA_LOADING    = 'RESET_ALPHA_LOADING';
+
+
 // damwidi actions
 export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
 export const GET_TRADE_HISTORY      = 'GET_TRADE_HISTORY';
 export const GET_INTRADAY_DATA      = 'GET_INTRADAY_DATA';
+export const GET_PERFORMANCE_DATA   = 'GET_PERFORMANCE_DATA';
+export const GET_ABOVEBELOW_DATA    = 'GET_ABOVEBELOW_DATA';
+export const GET_HISTORY            = 'GET_HISTORY';
+export const RESET_DAMWIDI_LOADING  = 'RESET_DAMWIDI_LOADING';
 
 // etf actions
 export const GET_SP500_COMPONENTS   = 'GET_SP500_COMPONENTS'
@@ -59,6 +68,7 @@ export const CLEAR_CURRENT_ETF      = 'CLEAR_CURRENT_ETF';
 // market data actions
 export const GET_INTRADAY           = 'GET_INTRADAY';
 export const GET_KEYSTATS           = 'GET_KEYSTATS';
+export const GET_QUOTE              = 'GET_QUOTE';
 
 // error actions
 export const LOG_ERROR              = 'LOG_ERROR';

@@ -1,7 +1,6 @@
 :root {
     --table-border: rgba(0, 0, 0, 0.2);
     --table-footer-border: rgba(0, 0, 0, 0.6);
-    --primary-color: red;
 }
 
 .allocationTable {

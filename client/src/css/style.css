@@ -101,3 +101,11 @@ body {
 .noOutlineOnFocus:focus {
     outline: none;
 }
+
+.up {
+    color: green;
+}
+
+.down {
+    color: rgba(209, 58, 58, 1);
+}

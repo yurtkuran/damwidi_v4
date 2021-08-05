@@ -28,6 +28,7 @@ app.get('/', (req, res) => res.send('api running...'));
 
 // define routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/alphaVantage', require('./routes/alphaVantage'));
 app.use('/api/confirm', require('./routes/confirm'));
 app.use('/api/damwidi', require('./routes/damwidi'));
 app.use('/api/etf', require('./routes/etf'));

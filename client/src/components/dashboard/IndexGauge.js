@@ -20,7 +20,8 @@ const IndexGauge = ({ indexReturn: { DAM, SPY } }) => {
 
     // load performance when data is available
     useEffect(() => {
-        setPerformnace(1 * (DAM - SPY));
+        const perf = Math.round((DAM - SPY) * 10000) / 10000;
+        setPerformnace(perf);
     }, [DAM, SPY]);
 
     const Performance = () => {

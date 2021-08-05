@@ -102,8 +102,6 @@ const Performance = ({ seriesPrice, seriesSPY, categories }) => {
             color: val < 0 ? 'rgba(209, 58, 58, 0.5)' : 'rgba(18, 143, 4, 0.5)',
         }));
 
-        console.log(processedData);
-
         setChartOptions({
             xAxis: {
                 categories: categories,

@@ -1,0 +1,113 @@
+{
+    "above": {
+        "0": {
+            "color": "000,150,000,1",
+            "weight": "3",
+            "dashstyle": "Solid"
+        },
+        "1": {
+            "color": "000,150,000,1",
+            "weight": "2",
+            "dashstyle": "Solid"
+        },
+        "2": {
+            "color": "000,150,000,1",
+            "weight": "1",
+            "dashstyle": "Solid"
+        },
+        "3": {
+            "color": "000,150,000,1",
+            "weight": "1",
+            "dashstyle": "ShortDash"
+        },
+        "4": {
+            "color": "000,150,000,1",
+            "weight": "1",
+            "dashstyle": "ShortDot"
+        }
+    },
+    "below": {
+        "0": {
+            "color": "192,000,000,1",
+            "weight": "3",
+            "dashstyle": "Solid"
+        },
+        "1": {
+            "color": "192,000,000,1",
+            "weight": "2",
+            "dashstyle": "Solid"
+        },
+        "2": {
+            "color": "192,000,000,1",
+            "weight": "1",
+            "dashstyle": "Solid"
+        },
+        "3": {
+            "color": "192,000,000,1",
+            "weight": "1",
+            "dashstyle": "ShortDash"
+        },
+        "4": {
+            "color": "192,000,000,1",
+            "weight": "1",
+            "dashstyle": "ShortDot"
+        }
+    },
+    "rs": {
+        "0": {
+            "color": "120, 100, 25",
+            "weight": "3",
+            "dashstyle": "Solid"
+        },
+        "1": {
+            "color": "120, 100, 30",
+            "weight": "2",
+            "dashstyle": "Solid"
+        },
+        "2": {
+            "color": "120, 100, 35",
+            "weight": "1",
+            "dashstyle": "Solid"
+        },
+        "3": {
+            "color": "120, 100, 40",
+            "weight": "1",
+            "dashstyle": "ShortDash"
+        },
+        "4": {
+            "color": "120, 100, 45",
+            "weight": "1",
+            "dashstyle": "ShortDot"
+        },
+        "5": {
+            "color": "color = 0, 0, 30",
+            "weight": "1",
+            "dashstyle": "ShortDot"
+        },
+        "6": {
+            "color": "0, 100, 55",
+            "weight": "1",
+            "dashstyle": "ShortDot"
+        },
+        "7": {
+            "color": "0, 100, 50",
+            "weight": "1",
+            "dashstyle": "ShortDash"
+        },
+        "8": {
+            "color": "0, 100, 45",
+            "weight": "1",
+            "dashstyle": "Solid"
+        },
+        "9": {
+            "color": "0, 100, 40",
+            "weight": "2",
+            "dashstyle": "Solid"
+        },
+        "10": {
+            "color": "0, 100, 35",
+            "weight": "3",
+            "dashstyle": "Solid"
+        }
+    }
+}

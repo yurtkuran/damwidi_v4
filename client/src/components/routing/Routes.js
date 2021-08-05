@@ -29,9 +29,9 @@ import Unstick from '../damwidi/Unstick';
 import MeetingMinutes from '../damwidi/MeetingMinutes';
 import TradeHistory from '../damwidi/TradeHistory';
 
-import SectorTimeframe from '../charts/SectorTimeframe';
-import AboveBelow from '../charts/AboveBelow';
-import Technical from '../charts/Technical';
+import SectorTimeframe from '../charts/sectorTimeframe/SectorTimeframe';
+import AboveBelow from '../charts/aboveBelow/AboveBelow';
+import Technical from '../charts/technical/Technical';
 
 // bring in helpers
 import PrivateRoute from '../routing/PrivateRoute';

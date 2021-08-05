@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 // bring in dependencies
-import axios from 'axios';
 import Highcharts from 'highcharts';
 import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
@@ -46,6 +45,9 @@ const initialChartOptions = {
     tooltip: {
         shared: true,
         valueSuffix: '%',
+        formatter: function () {
+            return `${this.x}:<br><b>${Math.round((this.y + Number.EPSILON) * 100) / 100}%</b>`;
+        },
     },
     exporting: {
         enabled: true,
@@ -80,7 +82,7 @@ const initialChartOptions = {
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const SectorTimeframeChart = ({ timeframe }) => {
+const SectorTimeframeChart = ({ timeframe, data }) => {
     const [loading, setLoading] = useState(true);
     const [timeframeData, setTimeframeData] = useState({});
     const [arrowClass, setArrowClass] = useState('');
@@ -88,63 +90,46 @@ const SectorTimeframeChart = ({ timeframe }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
 
-    // load timefrae data
-    useEffect(() => {
-        const loadTimeframeData = async () => {
-            try {
-                const res = await axios.get(`api/damwidi/timeframeData/${timeframe}`);
-                setTimeframeData(res.data);
-                setLoading(false);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-        loadTimeframeData();
-    }, [timeframe]);
-
     // set timeframe arrow and color
     useEffect(() => {
-        if (timeframeData && Object.keys(timeframeData).length > 0 && timeframeData.constructor === Object) {
-            const {
-                labels,
-                datasets: {
-                    0: { data },
-                },
-            } = timeframeData;
-
-            const idxSPY = labels.findIndex((symbol) => symbol === 'SPY');
-            const valueSPY = parseFloat(data[idxSPY]);
-
-            const idxDAM = labels.findIndex((symbol) => symbol === 'DAM');
-            const valueDAM = parseFloat(data[idxDAM]);
-
-            setArrowClass(`${valueDAM > valueSPY ? 'fa-arrow-circle-up' : 'fa-arrow-circle-down'} ${valueDAM >= 0 ? 'arrowGreen' : 'arrowRed'}`);
-        }
-    }, [timeframeData]);
+        const valueSPY = parseFloat(data.SPY[timeframe]);
+        const valueDAM = parseFloat(data.DAM[timeframe]);
+        setArrowClass(`${valueDAM > valueSPY ? 'fa-arrow-circle-up' : 'fa-arrow-circle-down'} ${valueDAM >= 0 ? 'arrowGreen' : 'arrowRed'}`);
+    }, []);
 
     // chart callback
     const afterChartCreated = (chart) => {
-        const {
-            SPY,
-            labels,
-            datasets: {
-                0: { data },
-            },
-        } = timeframeData;
-
-        const processedData = data.map((val) => {
-            return {
+        // build data
+        let categories = [];
+        let processedData = [];
+        let firstSectorIdx = null;
+        let lastSectorIdx = null;
+        for (const sector in data) {
+            categories.push(sector);
+            const val = data[sector][timeframe];
+            processedData.push({
                 y: parseFloat(val),
                 color: val < 0 ? 'rgba(209, 58, 58, 0.5)' : 'rgba(18, 143, 4, 0.5)',
-            };
-        });
+            });
+
+            if (firstSectorIdx === null) if (data[sector].type === 'S') firstSectorIdx = sector;
+            if (firstSectorIdx !== null && lastSectorIdx === null) if (data[sector].type !== 'S') lastSectorIdx = sector;
+        }
+
+        console.log(firstSectorIdx, lastSectorIdx);
 
         setChartOptions({
             xAxis: {
-                categories: labels,
+                categories,
                 plotLines: [
                     {
-                        value: labels.findIndex((symbol) => symbol === 'SPY') + 0.5,
+                        value: categories.findIndex((symbol) => symbol === firstSectorIdx) - 0.5,
+                        color: 'rgba(0,0,0,0.3)',
+                        width: 2,
+                        dashStyle: 'ShortDash',
+                    },
+                    {
+                        value: categories.findIndex((symbol) => symbol === lastSectorIdx) - 0.5,
                         color: 'rgba(0,0,0,0.3)',
                         width: 2,
                         dashStyle: 'ShortDash',
@@ -154,7 +139,7 @@ const SectorTimeframeChart = ({ timeframe }) => {
             yAxis: {
                 plotLines: [
                     {
-                        value: SPY,
+                        value: data['SPY'][timeframe],
                         color: 'rgba(0, 0, 0, .5)',
                         width: 1,
                         dashStyle: 'ShortDash',
@@ -186,7 +171,9 @@ const SectorTimeframeChart = ({ timeframe }) => {
                     <i className={`fa ${arrowClass}`} />
                 </h6>
             </span>
-            <div className=''>{!loading && <HighchartsReact highcharts={Highcharts} options={chartOptions} oneToOne={true} callback={afterChartCreated} />}</div>
+            <div className=''>
+                <HighchartsReact highcharts={Highcharts} options={chartOptions} oneToOne={true} callback={afterChartCreated} />
+            </div>
         </div>
     );
 };
