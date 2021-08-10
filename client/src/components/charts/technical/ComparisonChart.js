@@ -67,7 +67,6 @@ const ComparisonChart = ({ symbol, history, data }) => {
 
     // configure data when component loads
     useEffect(() => {
-        console.log(initialChartOptions.series);
         const { spy, value: dam } = history;
         let series = [];
 

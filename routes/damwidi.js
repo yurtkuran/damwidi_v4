@@ -86,7 +86,6 @@ router.get('/timeframeData', auth, ensureMember, async (req, res) => {
 // @role:   member
 router.get('/aboveBelowData/:timeframe', auth, ensureMember, async (req, res) => {
     const url = `${damwidiBaseURL}returnAboveBelow&timeframe=${req.params.timeframe}&version=v4`;
-    console.log(url);
 
     try {
         const damwidi = await axios.get(url);

@@ -45,10 +45,6 @@
     border: 1px solid var(--table-border) !important;
 }
 
-.candle-chart-container {
-    /* height: 600px; */
-}
-
 .comparison-chart-container {
     margin-top: 15px;
     padding: 50px 0px 100px 0px;
@@ -86,4 +82,27 @@
 
 .symbolDetailTable td:not(:first-child) {
     width: 80px;
+}
+
+.candle-chart-container {
+}
+
+.tooltip-container {
+}
+
+.tooltip-container table {
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.tooltip-container td {
+    padding: 4px 4px 0px 0px;
+}
+
+.tooltip-header {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+    padding: 2px 0px 4px 0px;
+    font-weight: bold;
 }

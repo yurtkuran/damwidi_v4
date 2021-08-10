@@ -3,7 +3,7 @@
     margin-bottom: 10px;
 }
 
-.btn {
+.timeframe.btn {
     background-color: rgba(245, 245, 245);
     border-radius: 3px;
     border: none;
@@ -15,22 +15,22 @@
     cursor: pointer;
 }
 
-.btn:hover {
+.timeframe.btn:hover {
     background-color: rgba(220, 220, 220);
 }
 
-.btn:active {
+.timeframe.btn:active {
     transform: scale(0.98);
 }
 
-.btn:focus {
+.timeframe.btn:focus {
     outline: none !important;
     box-shadow: none !important;
     background-color: rgba(57, 122, 152, 0.934);
     color: #fff;
 }
 
-.btn.selected {
+.timeframe.btn.selected {
     background-color: rgba(57, 122, 152, 0.934);
     color: #fff;
 }

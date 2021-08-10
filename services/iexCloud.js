@@ -43,11 +43,7 @@ const quote = async (symbol) => {
 };
 
 const intraDay = async (symbol) => {
-    console.log(symbol);
     const url = iexBaseURL + `stock/${symbol}/intraday-prices?token=` + process.env.IEXCLOUD_PUBLIC_KEY;
-
-    // to-do
-    // const url = `https://sandbox.iexapis.com/stable/stock/twtr/intraday-prices?token=Tsk_351c8b3c821f440daaef5371f3c337e5`;
 
     try {
         const iex = await axios.get(url);

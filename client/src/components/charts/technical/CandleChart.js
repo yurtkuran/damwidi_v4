@@ -7,6 +7,7 @@ import exportingModule from 'highcharts/modules/exporting';
 import indicators from 'highcharts/indicators/indicators';
 import bb from 'highcharts/indicators/bollinger-bands';
 import HighchartsReact from 'highcharts-react-official';
+import numeral from 'numeral';
 
 // bring in redux
 
@@ -20,6 +21,7 @@ import HighchartsReact from 'highcharts-react-official';
 const initialChartOptions = {
     chart: {
         height: '600px',
+        styledMode: false,
     },
 
     rangeSelector: {
@@ -43,6 +45,17 @@ const initialChartOptions = {
             crosshair: {
                 snap: false,
                 color: '#5b5b5b',
+                label: {
+                    enabled: true,
+                    borderColor: 'rgba(0, 0, 0, 0.6)',
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    formatter: function (value) {
+                        // console.log(this);
+                        return `${numeral(value).format('$0,0.00')}`;
+                    },
+                    style: { color: '#000' },
+                },
             },
         },
         {
@@ -62,6 +75,8 @@ const initialChartOptions = {
 
     tooltip: {
         split: true,
+        useHTML: true,
+        borderColor: 'rgba(0, 0, 0, 0.6)',
     },
 
     plotOptions: {
@@ -147,6 +162,7 @@ const CandleChart = ({ symbol, data }) => {
         }
 
         setChartOptions({
+            chart: {},
             yAxis: [
                 {
                     height: symbol.toUpperCase() === 'DAM' ? '100%' : '65%',
@@ -160,12 +176,17 @@ const CandleChart = ({ symbol, data }) => {
             ],
             series: [
                 {
+                    name: symbol,
                     type: 'candlestick',
                     id: 'candle',
                     data: ohlc.reverse(),
                     // dataGrouping: {
                     //     units: groupingUnits,
                     // },
+                    tooltip: {
+                        borderColor: '#000',
+                        pointFormatter: candleFormatter,
+                    },
                 },
                 {
                     type: 'bb',
@@ -212,6 +233,9 @@ const CandleChart = ({ symbol, data }) => {
                     // dataGrouping: {
                     //     units: groupingUnits,
                     // },
+                    tooltip: {
+                        pointFormatter: volumeFormatter,
+                    },
                 },
             ],
         });
@@ -225,6 +249,47 @@ const CandleChart = ({ symbol, data }) => {
         </div>
     );
 };
+
+// tooltip formatter
+function candleFormatter() {
+    console.log(this);
+
+    const {
+        open,
+        high,
+        low,
+        close,
+        series: { name },
+    } = this;
+
+    return `
+    <div class='tooltip-container'>
+        <div class='tooltip-header'>${name}</div>
+        <table>
+            <tr>
+                <td>open</td>
+                <td><b>${numeral(open).format('$0,0.00')}<b></td>
+            </tr>
+            <tr>
+                <td>high</td>
+                <td><b>${numeral(high).format('$0,0.00')}<b></td>
+            </tr>
+            <tr>
+                <td>low</td>
+                <td><b>${numeral(low).format('$0,0.00')}<b></td>
+            </tr>
+            <tr>
+                <td>close</td>
+                <td><b>${numeral(close).format('$0,0.00')}<b></td>
+            </tr>
+        </table>
+    </div>`;
+}
+
+// volume formatter
+function volumeFormatter() {
+    return `Volume: <b>${numeral(this.y).format('0,0.00a')}</b>`;
+}
 
 CandleChart.propTypes = {
     data: PropTypes.object.isRequired,

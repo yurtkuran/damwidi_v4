@@ -75,7 +75,7 @@ const Technical = ({
                             value={symbol}
                             onChange={onChange}
                         />
-                        <button type='submit' name='submit' class='btn btn-sm btn-success'>
+                        <button type='submit' name='submit' className='btn btn-sm btn-success'>
                             <i className='fa fa-play'></i>
                         </button>
                     </div>
