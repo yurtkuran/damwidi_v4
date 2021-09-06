@@ -20,8 +20,8 @@ import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT to-do
 import setAuthToken from './utils/setAuthToken';
 
 // css files
+import './css/colors.css';
 import './css/style.css';
-// import './css/bootstrap.css';
 
 // if a token exists in local storage, add to global header
 if (localStorage.token) {

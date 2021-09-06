@@ -20,7 +20,6 @@ import AboveBelowChart from './AboveBelowChart';
 const timeFrames = ['1wk', '2wk', '4wk', '8wk', '1qtr', '1yr', 'ytd'];
 
 const TimeFrameButton = ({ timeFrame, current, handleButtonClick }) => {
-    console.log(current);
     return (
         <button className={`timeframe btn ${timeFrame === current ? 'selected' : ''}`} value={timeFrame} onClick={(e) => handleButtonClick(e.target.value)}>
             {timeFrame}
@@ -41,7 +40,7 @@ const AboveBelow = ({
     // load performance data when component loads
     useEffect(() => {
         getAboveBelowData(timeframe);
-    }, [timeframe]);
+    }, [timeframe, getAboveBelowData]);
 
     // timeframe button click handler
     const handleButtonClick = (timeframe) => {

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
-import numeral from 'numeral';
 
 // bring in redux
 import { connect } from 'react-redux';

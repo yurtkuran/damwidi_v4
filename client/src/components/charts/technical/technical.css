@@ -13,14 +13,13 @@
 .symbol-input-containter {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
 }
 
-.symbol-input-containter .btn {
+.symbol-input-containter .btn-go {
     color: hsl(0, 0%, 100%);
     background-color: hsl(120, 98%, 25%);
     border-color: hsl(120, 100%, 25%);
-    margin: 0px;
     border-radius: 0px;
 }
 
@@ -45,14 +44,29 @@
     border: 1px solid var(--table-border) !important;
 }
 
+.recent-symbol-list {
+    display: flex;
+    justify-content: space-around;
+}
+
+.recent-symbol {
+    background-color: hsl(0, 0%, 90%);
+    border-radius: 4px;
+    border: 1px solid hsl(0, 0%, 60%);
+    color: hsl(0, 0%, 40%);
+    margin: 0px 5px;
+    min-width: 60px;
+    padding: 0.1rem 0.4rem;
+}
+
 .comparison-chart-container {
     margin-top: 15px;
     padding: 50px 0px 100px 0px;
 }
 
 .symbolDetailTable {
-    max-width: 750px;
-    margin-right: 30px;
+    /* max-width: 750px; */
+    margin: 25px auto;
     padding-bottom: 30px;
 }
 
@@ -81,7 +95,7 @@
 }
 
 .symbolDetailTable td:not(:first-child) {
-    width: 80px;
+    /* width: 80px; */
 }
 
 .candle-chart-container {

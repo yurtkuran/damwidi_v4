@@ -45,6 +45,15 @@
     width: 600px;
 }
 
+.purchase-table-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.purchase-table-title span {
+    font-weight: bold;
+}
+
 .tradeTable {
     width: 100%;
     font-size: 10pt;

@@ -1,0 +1,12 @@
+/* site colors */
+
+:root {
+    --accent: rgba(57, 122, 152, 0.934); /* used for navbar background and other color accents*/
+    --up: rgba(15, 112, 0, 1);
+    --down: rgba(209, 58, 58, 1);
+
+    --table-border: rgba(0, 0, 0, 0.2);
+    --table-footer-border: rgba(0, 0, 0, 0.6);
+
+    --text-color: rgba(45, 45, 45, 1);
+}

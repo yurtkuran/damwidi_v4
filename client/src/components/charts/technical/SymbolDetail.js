@@ -26,6 +26,7 @@ const SymbolDetail = ({ data: { symbol, companyName, latestPrice, change, change
         <table className='symbolDetailTable'>
             <thead>
                 <tr>
+                    <th className='text-center'>Symbol</th>
                     <th>Name</th>
                     <th className='text-right'>Last</th>
                     <th className='text-right'>Change</th>
@@ -36,6 +37,7 @@ const SymbolDetail = ({ data: { symbol, companyName, latestPrice, change, change
             </thead>
             <tbody>
                 <tr>
+                    <td className='text-center'>{symbol}</td>
                     <td>{companyName}</td>
                     <td className='text-right'>{numeral(latestPrice).format('$0,0.00')}</td>
                     <td className={`text-right ${tickClass}`}>{numeral(change).format('$0.00')}</td>

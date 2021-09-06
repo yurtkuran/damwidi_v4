@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
-import Highcharts, { chart } from 'highcharts/highstock';
-import exportingModule from 'highcharts/modules/exporting';
+import Highcharts from 'highcharts/highstock';
+import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 
 // bring in redux
@@ -43,6 +43,15 @@ const initialChartOptions = {
         enabled: true,
     },
 
+    exporting: {
+        enabled: true,
+        buttons: {
+            contextButton: {
+                menuItems: ['downloadPNG', 'downloadJPEG'],
+            },
+        },
+    },
+
     plotOptions: {
         series: {
             compare: 'percent',
@@ -60,6 +69,9 @@ const initialChartOptions = {
         split: true,
     },
 };
+
+// init highcharts export module
+Highcharts_exporting(Highcharts);
 
 const ComparisonChart = ({ symbol, history, data }) => {
     // state handler for chart options
@@ -109,7 +121,7 @@ const ComparisonChart = ({ symbol, history, data }) => {
             },
             series,
         });
-    }, [history, data]);
+    }, [history, data, symbol]);
 
     return (
         <div className='comparison-chart-container'>

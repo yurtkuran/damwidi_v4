@@ -51,7 +51,6 @@ const initialChartOptions = {
                     borderWidth: 1,
                     backgroundColor: 'rgba(255, 255, 255, 1)',
                     formatter: function (value) {
-                        // console.log(this);
                         return `${numeral(value).format('$0,0.00')}`;
                     },
                     style: { color: '#000' },
@@ -77,6 +76,15 @@ const initialChartOptions = {
         split: true,
         useHTML: true,
         borderColor: 'rgba(0, 0, 0, 0.6)',
+    },
+
+    exporting: {
+        enabled: true,
+        buttons: {
+            contextButton: {
+                menuItems: ['downloadPNG', 'downloadJPEG'],
+            },
+        },
     },
 
     plotOptions: {
@@ -123,9 +131,6 @@ bb(Highcharts);
 const CandleChart = ({ symbol, data }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
-
-    // state for candle data
-    const [loading, setLoading] = useState(true);
 
     // configure data when component loads
     useEffect(() => {
@@ -239,7 +244,7 @@ const CandleChart = ({ symbol, data }) => {
                 },
             ],
         });
-    }, [data]);
+    }, [data, symbol]);
 
     return (
         <div>
@@ -252,8 +257,6 @@ const CandleChart = ({ symbol, data }) => {
 
 // tooltip formatter
 function candleFormatter() {
-    console.log(this);
-
     const {
         open,
         high,

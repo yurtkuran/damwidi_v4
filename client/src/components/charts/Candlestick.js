@@ -112,7 +112,7 @@ const Candlestick = ({ symbol, type, simple }) => {
 
     // load when component loads
     useEffect(() => {
-        console.log(symbol, type, simple);
+        // console.log(symbol, type, simple);
 
         const loadData = async () => {
             try {

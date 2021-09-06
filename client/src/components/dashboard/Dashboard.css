@@ -16,7 +16,6 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-
     border-radius: 3px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     background-color: rgba(210, 210, 210, 0.6);
@@ -26,14 +25,11 @@
 .index-gauge {
     justify-self: stretch;
     padding: 0 0;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     overflow: hidden;
-
     border-radius: 3px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     background-color: rgba(210, 210, 210, 0.6);
@@ -41,11 +37,11 @@
 }
 
 .index-up {
-    color: green;
+    color: var(--up);
 }
 
 .index-down {
-    color: rgba(209, 58, 58, 1);
+    color: var(--down);
 }
 
 .indices .index-card .info {
@@ -66,11 +62,11 @@
 }
 
 .index-card-up {
-    border-left: 6px solid green;
+    border-left: 6px solid var(--up);
 }
 
 .index-card-down {
-    border-left: 6px solid rgba(209, 58, 58, 1);
+    border-left: 6px solid var(--down);
 }
 
 .index-gauge h5.index-down {

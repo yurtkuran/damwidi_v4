@@ -78,6 +78,9 @@ const initialChartOptions = {
     },
 };
 
+// init highcharts export module
+Highcharts_exporting(Highcharts);
+
 const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
@@ -111,7 +114,7 @@ const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
             ],
             series: processData,
         });
-    }, []);
+    }, [chartConfig, data, labels, title]);
 
     return (
         <div className='above-below-chart'>

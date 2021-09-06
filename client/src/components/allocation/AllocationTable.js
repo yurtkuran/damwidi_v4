@@ -82,13 +82,16 @@ const AllocationTable = ({ data, performanceData }) => {
     const postitionTypes = 'ISKY';
 
     // function to render row sub components
-    const renderRowSubComponent = useCallback((symbol) => {
-        return <PurchaseTable performanceData={performanceData[symbol]} />;
-    }, []);
+    const renderRowSubComponent = useCallback(
+        (symbol) => {
+            return <PurchaseTable performanceData={performanceData[symbol]} />;
+        },
+        [performanceData]
+    );
 
     // define data
     const tableData = useMemo(() => {
-        let tableData = Array();
+        let tableData = [];
         for (const symbol in data) {
             if (symbol !== 'DAM') tableData.push(data[symbol]);
         }
@@ -99,97 +102,101 @@ const AllocationTable = ({ data, performanceData }) => {
     const damData = useMemo(() => data['DAM'], [data]);
 
     // build columns
-    const columns = useMemo(() => [
-        {
-            Header: () => null, // No header
-            id: 'expander', // It needs an ID
-            width: '3%',
-            className: 'text-center',
-            Cell: ({ row }) => {
-                console.log(row.original);
-                return (
-                    row.original.shares > 0 &&
-                    postitionTypes.indexOf(row.original.type) !== -1 && (
-                        <span {...row.getToggleRowExpandedProps()}>{row.isExpanded ? <i className='far fa-caret-square-down'></i> : <i className='far fa-caret-square-right'></i>}</span>
-                    )
-                );
+    const columns = useMemo(
+        () => [
+            {
+                Header: () => null, // No header
+                id: 'expander', // It needs an ID
+                width: '3%',
+                className: 'text-center',
+                Cell: ({ row }) => {
+                    return (
+                        row.original.shares > 0 &&
+                        postitionTypes.indexOf(row.original.type) !== -1 && (
+                            <span {...row.getToggleRowExpandedProps()}>
+                                {row.isExpanded ? <i className='far fa-caret-square-down'></i> : <i className='far fa-caret-square-right'></i>}
+                            </span>
+                        )
+                    );
+                },
             },
-        },
-        {
-            accessor: 'symbol',
-            Header: 'Symbol',
-            headerClassName: 'text-left',
-            className: 'text-left',
-            Footer: () => {
-                return damData.sector;
+            {
+                accessor: 'symbol',
+                Header: 'Symbol',
+                headerClassName: 'text-left',
+                className: 'text-left',
+                Footer: () => {
+                    return damData.sector;
+                },
+                footerClassName: 'text-left',
+                width: '10%',
             },
-            footerClassName: 'text-left',
-            width: '10%',
-        },
-        {
-            accessor: 'description',
-            Header: 'Description',
-            headerClassName: 'text-left',
-            className: 'text-left',
-            Footer: () => {
-                return damData.description;
+            {
+                accessor: 'description',
+                Header: 'Description',
+                headerClassName: 'text-left',
+                className: 'text-left',
+                Footer: () => {
+                    return damData.description;
+                },
+                footerClassName: 'text-left',
+                // width: '20%',
             },
-            footerClassName: 'text-left',
-            // width: '20%',
-        },
-        {
-            accessor: 'shares',
-            Header: 'Shares',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '8%',
-        },
-        {
-            accessor: 'currentValue',
-            Header: 'Current Value',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            Footer: () => {
-                return numeral(damData.currentValue).format('$0,0.00');
+            {
+                accessor: 'shares',
+                Header: 'Shares',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '8%',
             },
-            footerClassName: 'text-right',
-            width: '10%',
-        },
-        {
-            accessor: 'change',
-            Header: 'Change',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '10%',
-        },
-        {
-            accessor: 'allocation',
-            Header: 'Allocation',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '8%',
-        },
-        {
-            Header: 'Weight',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '8%',
-            Cell: ({ row: { original } }) => {
-                const { type, weightPercent } = original;
-                return type === 'Y' && `${weightPercent}`;
+            {
+                accessor: 'currentValue',
+                Header: 'Current Value',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                Footer: () => {
+                    return numeral(damData.currentValue).format('$0,0.00');
+                },
+                footerClassName: 'text-right',
+                width: '10%',
             },
-        },
-        {
-            Header: 'Implied',
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '8%',
-            Cell: ({ row: { original } }) => {
-                const { type, impliedPercent } = original;
-                return type === 'Y' && `${impliedPercent}`;
+            {
+                accessor: 'change',
+                Header: 'Change',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '10%',
             },
-        },
-    ]);
+            {
+                accessor: 'allocation',
+                Header: 'Allocation',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '8%',
+            },
+            {
+                Header: 'Weight',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '8%',
+                Cell: ({ row: { original } }) => {
+                    const { type, weightPercent } = original;
+                    return type === 'Y' && `${weightPercent}`;
+                },
+            },
+            {
+                Header: 'Implied',
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '8%',
+                Cell: ({ row: { original } }) => {
+                    const { type, impliedPercent } = original;
+                    return type === 'Y' && `${impliedPercent}`;
+                },
+            },
+        ],
+        [damData.currentValue, damData.sector, damData.description]
+    );
 
     return (
         <div>

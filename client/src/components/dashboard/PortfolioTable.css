@@ -1,15 +1,10 @@
-:root {
-    --table-border: rgba(0, 0, 0, 0.2);
-    --table-footer-border: rgba(0, 0, 0, 0.6);
-}
-
 .heatMapTable {
     vertical-align: middle;
     margin-top: 25px;
     margin-bottom: 100px;
     width: 100%;
     font-size: 10pt;
-    color: rgb(48, 45, 45);
+    color: var(--text-color);
     border-collapse: collapse;
     border-spacing: 2px;
     border-radius: 3px;
@@ -52,11 +47,11 @@
 }
 
 .tickUp {
-    color: rgba(15, 112, 1, 1);
+    color: var(--up);
     background-color: rgba(183, 226, 192, 1);
 }
 
 .tickDown {
-    color: rgba(250, 0, 6, 1);
+    color: var(--down);
     background-color: rgba(241, 185, 192, 1);
 }

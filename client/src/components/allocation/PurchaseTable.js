@@ -58,58 +58,82 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter }) => {
     );
 };
 
-const PurchaseTable = ({ performanceData: { purchases, symbol } }) => {
+// const upArrowClass = `fas fa-caret-up index-up gauge-arrow`;
+// const downArrowClass = `fas fa-caret-down index-down gauge-arrow`;
+
+// arrow component
+const Change = ({ change }) => {
+    return (
+        <span className={`${change < 0 ? 'down' : 'up'}`}>
+            <i className={`fas ${change < 0 ? 'fa-caret-down' : 'fa-caret-up'}`}></i>
+            {numeral(Math.abs(change)).format('0.00')}
+        </span>
+    );
+};
+
+const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, pricePreviousClose } }) => {
+    const change = priceLast - pricePreviousClose;
+
     // build columns
-    const columns = useMemo(() => [
-        {
-            accessor: 'dateBasis',
-            Header: 'Date',
-            headerClassName: 'text-left',
-            className: 'text-left',
-            width: '15%',
-        },
-        {
-            accessor: 'priceBasis',
-            Header: 'Price',
-            headerClassName: 'text-right',
-            Cell: (Price) => `${numeral(Price.value).format('0.00')}`,
-            className: 'text-right',
-            width: '15%',
-        },
-        {
-            accessor: 'priceGain',
-            Header: 'Gain',
-            headerClassName: 'text-right',
-            Cell: (priceGain) => `${numeral(priceGain.value).format('0.00')}%`,
-            className: 'text-right',
-            width: '15%',
-        },
-        {
-            accessor: 'spyGain',
-            Header: 'SPY Gain',
-            headerClassName: 'text-right',
-            Cell: (spyGain) => `${numeral(spyGain.value).format('0.00')}%`,
-            className: 'text-right',
-            width: '15%',
-        },
-        {
-            Header: 'Above/Below',
-            Cell: ({
-                row: {
-                    original: { priceGain, spyGain },
-                },
-            }) => {
-                const gain = priceGain - spyGain;
-                return `${numeral(gain).format('0.00')}% `;
+    const columns = useMemo(
+        () => [
+            {
+                accessor: 'dateBasis',
+                Header: 'Date',
+                headerClassName: 'text-left',
+                className: 'text-left',
+                width: '15%',
             },
-            headerClassName: 'text-right',
-            className: 'text-right',
-            width: '15%',
-        },
-    ]);
+            {
+                accessor: 'priceBasis',
+                Header: 'Price',
+                headerClassName: 'text-right',
+                Cell: (Price) => `${numeral(Price.value).format('0.00')}`,
+                className: 'text-right',
+                width: '15%',
+            },
+            {
+                accessor: 'priceGain',
+                Header: 'Gain',
+                headerClassName: 'text-right',
+                Cell: (priceGain) => `${numeral(priceGain.value).format('0.00')}%`,
+                className: 'text-right',
+                width: '15%',
+            },
+            {
+                accessor: 'spyGain',
+                Header: 'SPY Gain',
+                headerClassName: 'text-right',
+                Cell: (spyGain) => `${numeral(spyGain.value).format('0.00')}%`,
+                className: 'text-right',
+                width: '15%',
+            },
+            {
+                Header: 'Above/Below',
+                Cell: ({
+                    row: {
+                        original: { priceGain, spyGain },
+                    },
+                }) => {
+                    const gain = priceGain - spyGain;
+                    return `${numeral(gain).format('0.00')}% `;
+                },
+                headerClassName: 'text-right',
+                className: 'text-right',
+                width: '15%',
+            },
+        ],
+        []
+    );
     return (
         <div className='purchaseTableContainer'>
-            <h6>{symbol} purchases</h6>
+            <div className='purchase-table-title'>
+                <h6>{symbol} purchases</h6>
+                <h6>
+                    {/* last: {`${numeral(priceLast).format('$0.00')}`} <span className='up'> {`${numeral(change).format('+0.00')}`}</span>  */}
+                    last: {`${numeral(priceLast).format('$0.00')}`} <Change change={change} />
+                </h6>
+            </div>
             <Table
                 columns={columns}
                 data={purchases}
@@ -119,7 +143,6 @@ const PurchaseTable = ({ performanceData: { purchases, symbol } }) => {
                         row: {
                             original: { priceGain, spyGain },
                         },
-                        value,
                     } = cellInfo;
 
                     let cellClass = '';

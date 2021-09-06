@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
+import Metrics from './Metrics';
 
 // bring in redux
 
@@ -83,8 +84,9 @@ const initialChartOptions = {
 Highcharts_exporting(Highcharts);
 
 const SectorTimeframeChart = ({ timeframe, data }) => {
-    const [loading, setLoading] = useState(true);
-    const [timeframeData, setTimeframeData] = useState({});
+    const valueSPY = parseFloat(data.SPY[timeframe]);
+    const valueDAM = parseFloat(data.DAM[timeframe]);
+
     const [arrowClass, setArrowClass] = useState('');
 
     // state handler for chart options
@@ -92,10 +94,8 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
 
     // set timeframe arrow and color
     useEffect(() => {
-        const valueSPY = parseFloat(data.SPY[timeframe]);
-        const valueDAM = parseFloat(data.DAM[timeframe]);
         setArrowClass(`${valueDAM > valueSPY ? 'fa-arrow-circle-up' : 'fa-arrow-circle-down'} ${valueDAM >= 0 ? 'arrowGreen' : 'arrowRed'}`);
-    }, []);
+    }, [valueDAM, valueSPY]);
 
     // chart callback
     const afterChartCreated = (chart) => {
@@ -115,8 +115,6 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
             if (firstSectorIdx === null) if (data[sector].type === 'S') firstSectorIdx = sector;
             if (firstSectorIdx !== null && lastSectorIdx === null) if (data[sector].type !== 'S') lastSectorIdx = sector;
         }
-
-        console.log(firstSectorIdx, lastSectorIdx);
 
         setChartOptions({
             xAxis: {
@@ -165,12 +163,16 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
 
     return (
         <div className='timeframe_chart'>
-            <span>
+            <div className='timeframe_chart_header'>
                 <h6>
                     {timeframe}
                     <i className={`fa ${arrowClass}`} />
                 </h6>
-            </span>
+                <div className='metrics'>
+                    <Metrics value={valueDAM} label={'DAM'} />
+                    <Metrics value={valueDAM - valueSPY} label={'A/B'} />
+                </div>
+            </div>
             <div className=''>
                 <HighchartsReact highcharts={Highcharts} options={chartOptions} oneToOne={true} callback={afterChartCreated} />
             </div>
