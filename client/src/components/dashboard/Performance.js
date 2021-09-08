@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
 // bring in dependencies
+import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
 import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';

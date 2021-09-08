@@ -40,7 +40,7 @@ const PositionDetail = ({ symbol, performanceData }) => {
 
     return (
         !loading && (
-            <div className='charts'>
+            <div className='charts charts-secondary'>
                 <Candlestick symbol={symbol} type={'intraday'} simple={true} />
                 <Performance categories={categories} seriesSPY={seriesSPY} seriesPrice={seriesPrice} />
             </div>

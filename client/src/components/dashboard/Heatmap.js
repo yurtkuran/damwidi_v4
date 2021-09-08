@@ -93,7 +93,7 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
         series: [
             {
                 data,
-                pointWidth: 14,
+                pointWidth: 12,
             },
         ],
     });

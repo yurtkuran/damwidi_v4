@@ -93,11 +93,18 @@ i.gauge-arrow:before {
 
 .charts {
     display: grid;
-    grid-template-columns: 3fr 1fr;
     grid-gap: 15px;
     width: 100%;
     margin: 10px auto;
     height: 400px;
+}
+
+.charts-primary {
+    grid-template-columns: 3fr 2fr;
+}
+
+.charts-secondary {
+    grid-template-columns: 3fr 1fr;
 }
 
 .chart {
@@ -110,6 +117,7 @@ i.gauge-arrow:before {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 3px;
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .heatmap {

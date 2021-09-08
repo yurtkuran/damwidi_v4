@@ -10,6 +10,7 @@ const Stock = require('../models/Stock');
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
 const { company, keyStats, quote, intraDay } = require('../services/iexCloud');
 const { scrapeFidelity } = require('../services/scrapeGics');
+const { profile } = require('../services/finnHub');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -203,9 +204,10 @@ router.post('/updateStockInfo', auth, ensureAdmin, async (req, res) => {
 });
 
 // @route:  GET api/marketData/stockInfo
-// @desc:   get all stocks
+// @desc:   get all stocks from MongoDB
 // @access: private
 // @role:   member
+// @source: mongoDB document
 router.get('/stockInfo', auth, ensureMember, async (req, res) => {
     try {
         // retrieve stocks (from MongoDB)
@@ -221,7 +223,7 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @desc:   retrieve intraday quote
 // @access: private
 // @role:   member
-// @source: iex
+// @source: iex - https://iexcloud.io/docs/api/#quote
 router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
     const symbol = req.params.symbol;
 
@@ -233,10 +235,6 @@ router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
         } else {
             const url = damwidiBaseURL + 'returnIntraDayData';
             const damwidi = await axios.get(url);
-
-            // console.log(symbol);
-            // console.log(damwidi.data.intraDay.DAM);
-
             const { currentValue, prevClose, gain } = damwidi.data.intraDay.DAM;
 
             iex = {
@@ -256,7 +254,7 @@ router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
 // @desc:   retrieve intraday candle
 // @access: private
 // @role:   member
-// @source: iex
+// @source: iex - https://iexcloud.io/docs/api/#intraday-prices
 router.get('/intraday/:symbol', auth, ensureMember, async (req, res) => {
     try {
         iex = await intraDay(req.params.symbol);
@@ -268,15 +266,31 @@ router.get('/intraday/:symbol', auth, ensureMember, async (req, res) => {
 });
 
 // @route:  GET api/marketData/keystats/:symbol?stat=
-// @desc:   retrieve intraday candle
+// @desc:   retrieve key all key stats or a specific keystat (e.g. week52high) from IEX Cloud
 // @access: private
 // @role:   member
-// @source: iex
+// @source: iex - https://iexcloud.io/docs/api/#stats-basic
 router.get('/keystats/:symbol', auth, ensureMember, async (req, res) => {
     const stat = req.query.stat;
     try {
         iex = await keyStats(req.params.symbol, stat);
         res.json(iex);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/marketData/profile/:symbol
+// @desc:   retrieve general company information (e.g. weg url) from Finnhub
+// @access: private
+// @role:   authenticated
+// @source: finnhub - https://finnhub.io/docs/api/company-profile2
+router.get('/profile/:symbol', auth, async (req, res) => {
+    const stat = req.query.stat;
+    try {
+        finnhub = await profile(req.params.symbol, stat);
+        res.json(finnhub);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

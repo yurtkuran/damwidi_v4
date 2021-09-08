@@ -120,7 +120,7 @@ const Technical = ({
                 </form>
                 {recentSymbols.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
             </div>
-            {!marketLoading && <SymbolDetail data={quote} />}
+            {!marketLoading && <SymbolDetail symbol={symbol} data={quote} />}
             {!loading && daily.hasOwnProperty('Time Series (Daily)') && (
                 <>
                     <CandleChart symbol={symbol} data={daily['Time Series (Daily)']} />

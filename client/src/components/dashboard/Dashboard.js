@@ -10,8 +10,9 @@ import { connect } from 'react-redux';
 // bring in components
 import IndexCard from './IndexCard';
 import IndexGauge from './IndexGauge';
-import Performance from './Performance';
 import Heatmap from './Heatmap';
+import Performance from './Performance';
+import PieChart from './PieChart';
 import PortfolioTable from './PortfolioTable';
 
 // bring in actions
@@ -50,13 +51,14 @@ const Dashboard = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
                 </div>
                 {!loading && (
                     <>
-                        <div className='charts'>
+                        <div className='charts charts-primary'>
                             <Heatmap categories={intraDay.graphHeatMap.labels} data={intraDay.graphHeatMap.datasets[0].data} title={intraDay.time} portfolio={intraDay.portfolioTable} />
-                            <Performance
+                            {/* <Performance
                                 categories={intraDay.performanceData.categories}
                                 seriesSPY={intraDay.performanceData.seriesSPY}
                                 seriesPrice={intraDay.performanceData.seriesPrice}
-                            />
+                            /> */}
+                            <PieChart data={intraDay.allocationTable} />
                         </div>
                         <div className='portfolio-table'>
                             <PortfolioTable data={intraDay.heatMapData} />

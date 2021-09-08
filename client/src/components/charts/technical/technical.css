@@ -91,7 +91,7 @@
 }
 
 .symbolDetailTable td:first-child {
-    padding-right: 20px;
+    /* padding-right: 20px; */
 }
 
 .symbolDetailTable td:not(:first-child) {
