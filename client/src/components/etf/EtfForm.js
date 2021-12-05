@@ -68,7 +68,7 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
                         const companyData = await validateSymbol({ symbol });
                         if (companyData) {
                             setFormData((prevFormData) => {
-                                return { ...prevFormData, description: companyData.companyName, disabled: true };
+                                return { ...prevFormData, description: companyData.issueType === 'et' ? companyData.securityName : companyData.companyName, disabled: true };
                             });
                         } else {
                             setFormData((prevFormData) => {

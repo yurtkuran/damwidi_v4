@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import IndexCard from './IndexCard';
 import IndexGauge from './IndexGauge';
 import Heatmap from './Heatmap';
-import Performance from './Performance';
 import PieChart from './PieChart';
 import PortfolioTable from './PortfolioTable';
 

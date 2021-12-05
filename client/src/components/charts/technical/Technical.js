@@ -22,6 +22,7 @@ import SymbolDetail from './SymbolDetail';
 import useLocalStorage from '../../../customHooks/useLocalStorage';
 
 // set initial state
+const sectors = ['XLK', 'XLV', 'XLY', 'XLC', 'XLF', 'XLI', 'XLP', 'XLRE', 'XLB', 'XLU', 'XLE'];
 
 const Technical = ({
     alphaVantage: { daily, loading },
@@ -49,6 +50,7 @@ const Technical = ({
         getDaily(ticker);
         getQuote(ticker);
         getHistoryData();
+        setErrorMessage('');
     };
 
     // load SPY when page loads
@@ -63,8 +65,8 @@ const Technical = ({
                 setErrorMessage(daily.error);
             } else {
                 // do not store SPY to recents
-                if (symbol !== 'SPY' && symbol.trim !== '') {
-                    const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 9);
+                if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol)) {
+                    const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
                     setRecentSymbols([symbol, ...prevSymbols]);
                 }
             }
@@ -74,7 +76,9 @@ const Technical = ({
     // recent symbol button handler
     const handleRecenSymbol = (ticker) => {
         processSymbol(ticker);
-        console.log(ticker);
+
+        // clear symbol input
+        setSymbolInput('');
     };
 
     // on change handler
@@ -116,16 +120,21 @@ const Technical = ({
                             <i className='fa fa-play'></i>
                         </button>
                     </div>
-                    {/* <h6 className='small text-danger'>{errorMessage !== '' && errorMessage}</h6> */}
+                    <h6 className='small text-danger'>{errorMessage !== '' && errorMessage}</h6>
                 </form>
-                {recentSymbols.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
+                <div className='recent-symbol-buttons'>
+                    {sectors.length > 0 && <RecentSymbols symbols={sectors} handleRecenSymbol={handleRecenSymbol} />}
+                    {recentSymbols.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
+                </div>
             </div>
-            {!marketLoading && <SymbolDetail symbol={symbol} data={quote} />}
-            {!loading && daily.hasOwnProperty('Time Series (Daily)') && (
+            {!loading && daily.hasOwnProperty('Time Series (Daily)') ? (
                 <>
+                    {!marketLoading && <SymbolDetail symbol={symbol} data={quote} />}
                     <CandleChart symbol={symbol} data={daily['Time Series (Daily)']} />
                     {!historyLoading && <ComparisonChart symbol={symbol} history={historyData} data={daily['Time Series (Daily)']} />}
                 </>
+            ) : (
+                <h3>loading</h3>
             )}
         </div>
     );

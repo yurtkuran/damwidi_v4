@@ -132,7 +132,7 @@ const PortfolioTable = ({ data }) => {
                 Header: 'Shares',
                 accessor: 'shares',
                 headerClassName: 'text-right',
-                Cell: (prevClose) => numeral(prevClose.value).format('0,0'),
+                Cell: (prevClose) => numeral(prevClose.value).format('0,0.000'),
                 className: 'text-right',
             },
             {

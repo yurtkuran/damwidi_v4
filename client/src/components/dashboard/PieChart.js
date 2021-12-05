@@ -124,7 +124,6 @@ const PieChart = ({ data }) => {
 
         // seperate the largest slice
         pieData[0].sliced = true;
-        console.log(pieData);
 
         setChartOptions({
             series: [

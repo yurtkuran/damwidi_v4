@@ -77,7 +77,6 @@ const EtfList = ({ etf: { etfs, loading }, getETFs }) => {
 
         setEtfSymbol(etf.symbol);
         setHoldings(holdingList);
-        console.log(holdingList);
         setViewETFs(false);
     };
 
@@ -154,23 +153,23 @@ const EtfList = ({ etf: { etfs, loading }, getETFs }) => {
                 disableFilters: true,
                 width: '10%',
             },
-            {
-                Header: 'YTD',
-                id: 'YTD',
-                // accessor: (d) => Number(d.ytdChangePercent),
+            // {
+            //     Header: 'YTD!',
+            //     id: 'YTD',
+            //     // accessor: (d) => Number(d.ytdChangePercent),
 
-                accessor: (d) => Number(d.ytdChangePercent).toFixed(2),
-                sortMethod: (a, b) => Number(a) - Number(b),
+            //     accessor: (d) => Number(d.ytdChangePercent).toFixed(2),
+            //     sortMethod: (a, b) => Number(a) - Number(b),
 
-                // accessor: ytdChangePercent,
-                headerClassName: 'text-right',
-                className: 'text-right',
-                sortDescFirst: true,
-                // sortMethod: (a, b) => Number(a) - Number(b),
-                // Cell: (ytdChangePercent) => `${numeral(ytdChangePercent.value * 100).format('0.00')}%`,
-                disableFilters: true,
-                width: '10%',
-            },
+            //     // accessor: ytdChangePercent,
+            //     headerClassName: 'text-right',
+            //     className: 'text-right',
+            //     sortDescFirst: true,
+            //     // sortMethod: (a, b) => Number(a) - Number(b),
+            //     // Cell: (ytdChangePercent) => `${numeral(ytdChangePercent.value * 100).format('0.00')}%`,
+            //     disableFilters: true,
+            //     width: '10%',
+            // },
         ],
         []
     );

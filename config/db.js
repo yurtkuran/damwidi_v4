@@ -25,7 +25,7 @@ const connectMySQL = async () => {
 };
 
 const connectMongoDB = async () => {
-    const db = `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@cluster0-j2v6w.mongodb.net/damwidi?retryWrites=true&w=majority`;
+    const db = `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@cluster0.j2v6w.mongodb.net/damwidi?retryWrites=true&w=majority`;
 
     try {
         const conn = await mongoose.connect(db, {
@@ -36,7 +36,7 @@ const connectMongoDB = async () => {
         });
         console.log(`MongoDB Connected: ${conn.connection.name} on ${conn.connection.host}`);
     } catch (err) {
-        console.error(err.message);
+        console.error(`MongoDB error: ${err.message}`);
 
         // exit process with error
         process.exit(1);
