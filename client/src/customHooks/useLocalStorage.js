@@ -19,7 +19,7 @@ const useLocalStorage = (key, initialValue) => {
     // save to local storage
     useEffect(() => {
         localStorage.setItem(key, JSON.stringify(value));
-    }, [value]);
+    }, [key, value]);
 
     return [value, setValue];
 };

@@ -44,7 +44,7 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
     useEffect(() => {
         if (errorMessages) {
             errorMessages.forEach((error) => {
-                setErrorMessage({ ...errorMessage, [error.field]: error.msg });
+                setErrorMessage((errorMessage) => ({ ...errorMessage, [error.field]: error.msg }));
                 clearMessages(error.field);
             });
         }
@@ -111,30 +111,12 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
                     <div className='form-group row'>
                         <div className='col-sm-6'>
                             <label for='inputFirstname'>First Name</label>
-                            <input
-                                type='text'
-                                id='inputFirstname'
-                                name='firstName'
-                                className='form-control'
-                                placeholder='Enter First Name'
-                                value={firstName}
-                                onChange={onChange}
-                                onBlur={async (e) => await validateFields(e.target.name)}
-                            />
+                            <input type='text' id='inputFirstname' name='firstName' className='form-control' placeholder='Enter First Name' value={firstName} onChange={onChange} onBlur={async (e) => await validateFields(e.target.name)} />
                             <h6 className='small text-danger'>{errorMessage.firstName !== '' && errorMessage.firstName}</h6>
                         </div>
                         <div className='col-sm-6'>
                             <label for='inputLastname'>Last Name</label>
-                            <input
-                                type='text'
-                                id='inputLastname'
-                                name='lastName'
-                                className='form-control'
-                                placeholder='Enter Last Name'
-                                value={lastName}
-                                onChange={onChange}
-                                onBlur={async (e) => await validateFields(e.target.name)}
-                            />
+                            <input type='text' id='inputLastname' name='lastName' className='form-control' placeholder='Enter Last Name' value={lastName} onChange={onChange} onBlur={async (e) => await validateFields(e.target.name)} />
                             <h6 className='small text-danger'>{errorMessage.lastName !== '' && errorMessage.lastName}</h6>
                         </div>
                     </div>
@@ -142,16 +124,7 @@ const UserForm = ({ updateUser, validate, clearMessages, current, errorMessages,
                     <div className='form-group row'>
                         <div className='col-sm-12'>
                             <label for='inputEmail'>Email</label>
-                            <input
-                                type='text'
-                                id='inputEmail'
-                                name='email'
-                                className='form-control'
-                                placeholder='Enter Email'
-                                value={email}
-                                onChange={onChange}
-                                onBlur={async (e) => await validateFields(e.target.name)}
-                            />
+                            <input type='text' id='inputEmail' name='email' className='form-control' placeholder='Enter Email' value={email} onChange={onChange} onBlur={async (e) => await validateFields(e.target.name)} />
                             <h6 className='small text-danger'>{errorMessage.email !== '' && errorMessage.email}</h6>
                         </div>
                     </div>

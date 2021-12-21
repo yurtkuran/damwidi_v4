@@ -50,5 +50,5 @@
             "last 1 safari version"
         ]
     },
-    "proxy": "http://172.16.105.129:5000"
+    "proxy": "http://192.168.56.30:5000"
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
@@ -19,19 +19,13 @@ import { getQuote } from '../../../actions/marketActions';
 import SymbolDetail from './SymbolDetail';
 
 // bring in functions and hooks
-import useLocalStorage from '../../../customHooks/useLocalStorage';
+// import useLocalStorage from '../../../customHooks/useLocalStorage';
+import { useLocalStorage } from '../../../customHooks/useStorage';
 
 // set initial state
 const sectors = ['XLK', 'XLV', 'XLY', 'XLC', 'XLF', 'XLI', 'XLP', 'XLRE', 'XLB', 'XLU', 'XLE'];
 
-const Technical = ({
-    alphaVantage: { daily, loading },
-    damwidi: { historyData, loading: historyLoading },
-    market: { quote, loading: marketLoading },
-    getDaily,
-    getHistoryData,
-    getQuote,
-}) => {
+const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, loading: historyLoading }, market: { quote, loading: marketLoading }, getDaily, getHistoryData, getQuote }) => {
     // symbol state
     const [symbol, setSymbol] = useState('');
     const [symbolInput, setSymbolInput] = useState('');
@@ -45,18 +39,21 @@ const Technical = ({
     //error message state
     const [errorMessage, setErrorMessage] = useState('');
 
-    const processSymbol = (ticker) => {
-        setSymbol(ticker);
-        getDaily(ticker);
-        getQuote(ticker);
-        getHistoryData();
-        setErrorMessage('');
-    };
+    const processSymbol = useCallback(
+        (ticker) => {
+            setSymbol(ticker);
+            getDaily(ticker);
+            getQuote(ticker);
+            getHistoryData();
+            setErrorMessage('');
+        },
+        [getDaily, getQuote, getHistoryData]
+    );
 
     // load SPY when page loads
     useEffect(() => {
         processSymbol('SPY');
-    }, []);
+    }, [processSymbol]);
 
     // display error if invalid symbol, else store symbol to local storage
     useEffect(() => {
@@ -106,16 +103,7 @@ const Technical = ({
             <div className='symbol-input-containter'>
                 <form onSubmit={onSubmit}>
                     <div className='form-row'>
-                        <input
-                            ref={inputRef}
-                            type='text'
-                            id='inputStockSymbol'
-                            name='symbol'
-                            className='form-control form-control-sm symbol-input input'
-                            placeholder='Enter Symbol...'
-                            value={symbolInput}
-                            onChange={onChange}
-                        />
+                        <input ref={inputRef} type='text' id='inputStockSymbol' name='symbol' className='form-control form-control-sm symbol-input input' placeholder='Enter Symbol...' value={symbolInput} onChange={onChange} />
                         <button type='submit' name='submit' className='btn btn-sm btn-go'>
                             <i className='fa fa-play'></i>
                         </button>

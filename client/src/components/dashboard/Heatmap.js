@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // bring in dependencies
 import Highcharts from 'highcharts';
@@ -20,7 +20,7 @@ Highcharts_exporting(Highcharts);
 
 const Heatmap = ({ title, categories, data, portfolio }) => {
     // state handler for chart options
-    const [chartOptions, setChartOptions] = useState({
+    const chartOptions = {
         chart: {
             type: 'column',
             height: 360,
@@ -96,7 +96,7 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
                 pointWidth: 12,
             },
         ],
-    });
+    };
 
     // chart callback
     const afterChartCreated = (chart) => {

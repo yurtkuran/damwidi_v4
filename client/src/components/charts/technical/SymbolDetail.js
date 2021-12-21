@@ -19,7 +19,7 @@ import useFetch from '../../../customHooks/useFetch';
 const CompanyName = ({ companyName, profile, isLoading }) => {
     const name =
         !isLoading && profile && profile.weburl ? (
-            <a href={`${profile.weburl}`} target='_blank'>
+            <a href={`${profile.weburl}`} target='_blank' rel='noopener noreferrer'>
                 {companyName}
             </a>
         ) : (
@@ -30,7 +30,7 @@ const CompanyName = ({ companyName, profile, isLoading }) => {
 
 const SymbolDetail = ({ symbol, data: { companyName, latestPrice, change, changePercent, week52High, week52Low } }) => {
     // load company profile
-    const { data: profile, isLoading, error } = useFetch(`api/marketData/profile/${symbol}`);
+    const { data: profile, isLoading } = useFetch(`api/marketData/profile/${symbol}`);
 
     // set class based on value, used to set color either red or green
     let tickClass = '';

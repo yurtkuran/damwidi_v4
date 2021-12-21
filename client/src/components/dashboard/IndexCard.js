@@ -36,7 +36,7 @@ const IndexCard = ({ index, label, handleSetIndex }) => {
             }
         };
         loadStockData();
-    }, []);
+    }, [handleSetIndex, index]);
 
     return loading ? (
         <Spinner />

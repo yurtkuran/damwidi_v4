@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
@@ -31,11 +31,14 @@ const Dashboard = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
     }, [getIntraDayData]);
 
     // handler for index returns
-    const handleSetIndex = (index, gain) => {
-        setIndexReturn((prevIndexData) => {
-            return { ...prevIndexData, [index]: gain };
-        });
-    };
+    const handleSetIndex = useCallback(
+        (index, gain) => {
+            setIndexReturn((prevIndexData) => {
+                return { ...prevIndexData, [index]: gain };
+            });
+        },
+        [setIndexReturn]
+    );
 
     return (
         <div style={divStyle}>

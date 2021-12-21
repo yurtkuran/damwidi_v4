@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // bring in dependencies
 import numeral from 'numeral';
@@ -15,9 +15,7 @@ import useFetch from '../../customHooks/useFetch';
 // set initial state
 
 const StockInfo = ({ stockData }) => {
-    const [loading, setLoading] = useState(true);
-
-    const { data: keyStats, isLoading, error } = useFetch(`api/marketData/keystats/${stockData.symbol}`);
+    const { data: keyStats, isLoading } = useFetch(`api/marketData/keystats/${stockData.symbol}`);
 
     // destructure
     const { companyName, description, country, exchange, componentOf } = stockData;
