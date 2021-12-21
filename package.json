@@ -20,7 +20,7 @@
     },
     "homepage": "https://github.com/yurtkuran/damwidi_v4#readme",
     "dependencies": {
-        "axios": "^0.20.0",
+        "axios": "^0.21.2",
         "bcryptjs": "^2.4.3",
         "cheerio": "^1.0.0-rc.3",
         "dayjs": "^1.9.8",
