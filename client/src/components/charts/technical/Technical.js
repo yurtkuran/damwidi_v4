@@ -19,7 +19,6 @@ import { getQuote } from '../../../actions/marketActions';
 import SymbolDetail from './SymbolDetail';
 
 // bring in functions and hooks
-// import useLocalStorage from '../../../customHooks/useLocalStorage';
 import { useLocalStorage } from '../../../customHooks/useStorage';
 
 // set initial state
@@ -60,14 +59,13 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
         if (!loading) {
             if (daily.hasOwnProperty('error')) {
                 setErrorMessage(daily.error);
-            } else {
+            } else if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol)) {
                 // do not store SPY to recents
-                if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol)) {
-                    const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
-                    setRecentSymbols([symbol, ...prevSymbols]);
-                }
+                const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
+                setRecentSymbols([...prevSymbols, symbol]);
             }
         }
+        // eslint-disable-next-line
     }, [daily, loading, symbol]);
 
     // recent symbol button handler
@@ -112,7 +110,7 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
                 </form>
                 <div className='recent-symbol-buttons'>
                     {sectors.length > 0 && <RecentSymbols symbols={sectors} handleRecenSymbol={handleRecenSymbol} />}
-                    {recentSymbols.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
+                    {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
                 </div>
             </div>
             {!loading && daily.hasOwnProperty('Time Series (Daily)') ? (

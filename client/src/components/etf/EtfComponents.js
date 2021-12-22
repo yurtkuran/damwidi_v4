@@ -184,22 +184,13 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
         let validField = true;
         let componentArray = components;
 
-        // this code generates “Function declared in a loop contains unsafe references to variable(s)…no-loop-func” warning, changed to for loopp below
-        // for (let component of componentArray) {
-        //     for (const field of fieldList) {
-        //         [validField, component] = await validateFields(field, component._id, componentArray, false, false);
-        //         componentArray = componentArray.map((componentItem) => (componentItem._id === component._id ? component : componentItem));
-        //         isFormValid = isFormValid && !validField;
-        //     }
-        // }
-
         for (let i = 0; i < componentArray.length; i++) {
             let component = componentArray[i];
             for (let j = 0; j < fieldList.length; j++) {
                 [validField, component] = await validateFields(fieldList[j], component._id, componentArray, false, false);
+                // eslint-disable-next-line
                 componentArray = componentArray.map((componentItem) => (componentItem._id === component._id ? component : componentItem));
                 isFormValid = isFormValid && !validField;
-                // console.log(`${j}: validField: ${validField}, valid form: ${isFormValid}`);
             }
         }
 
@@ -225,19 +216,8 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
                     <div className='buttonWrapper'>
                         <FormButton click={onClickAdd} innerHtml={<i className='fas fa-plus'></i>} buttonText='Add Component' classModifier=' ghost_button' />
                         <div>
-                            <FormButton
-                                click={onClickViewAll}
-                                innerHtml={<i className='fa fa-list-alt mr-2'></i>}
-                                buttonText='View All'
-                                classModifier='btn btn-secondary mr-2 rounded'
-                            />
-                            <FormButton
-                                click={onSubmit}
-                                innerHtml={<i className='fa fa-database mr-2'></i>}
-                                buttonText='Submit'
-                                classModifier='btn btn-primary mr-3 rounded'
-                                buttonDisabled={components.length === 0 ? true : false}
-                            />
+                            <FormButton click={onClickViewAll} innerHtml={<i className='fa fa-list-alt mr-2'></i>} buttonText='View All' classModifier='btn btn-secondary mr-2 rounded' />
+                            <FormButton click={onSubmit} innerHtml={<i className='fa fa-database mr-2'></i>} buttonText='Submit' classModifier='btn btn-primary mr-3 rounded' buttonDisabled={components.length === 0 ? true : false} />
                         </div>
                     </div>
 
@@ -289,15 +269,7 @@ const FormGroup = ({ onChange, onBlur, buttonClick, buttonDisabled, weightDisabl
                 <span>{index + 1}</span>
             </div>
             <div className='col px-1 '>
-                <input
-                    type='text'
-                    name='symbol'
-                    className={`form-control ${errorSymbol ? 'inputError' : ''}`}
-                    placeholder='Symbol'
-                    value={symbol}
-                    onChange={(e) => onChange(e, _id)}
-                    onBlur={async (e) => await onBlur(e.target.name, _id)}
-                />
+                <input type='text' name='symbol' className={`form-control ${errorSymbol ? 'inputError' : ''}`} placeholder='Symbol' value={symbol} onChange={(e) => onChange(e, _id)} onBlur={async (e) => await onBlur(e.target.name, _id)} />
             </div>
             <div className='col px-1'>
                 <input
