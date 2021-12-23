@@ -14,7 +14,7 @@ const connectDB = require('./config/db');
 
 // connect to database
 connectDB.connectMongoDB(); // mongo database
-connectDB.connectMySQL(); // MySQL database
+// connectDB.connectMySQL(); // MySQL database
 
 // initalize app
 const app = express();
@@ -36,7 +36,7 @@ app.use('/api/marketData', require('./routes/marketData'));
 app.use('/api/iex', require('./routes/iex'));
 app.use('/api/sectors', require('./routes/sectors'));
 app.use('/api/stocks', require('./routes/stocks'));
-app.use('/api/stockdata', require('./routes/stockdata'));
+// app.use('/api/stockdata', require('./routes/stockdata'));  // to-do: remove from code
 app.use('/api/users', require('./routes/users'));
 
 // server static assets in production
@@ -50,3 +50,5 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
+
+console.log(process.env.NODE_ENV);

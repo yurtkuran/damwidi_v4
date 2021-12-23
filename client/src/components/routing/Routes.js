@@ -36,8 +36,6 @@ import Technical from '../charts/technical/Technical';
 // bring in helpers
 import PrivateRoute from '../routing/PrivateRoute';
 
-// to-do update to private routes
-
 const Routes = () => {
     return (
         <section className=''>

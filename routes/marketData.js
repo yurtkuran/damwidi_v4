@@ -147,19 +147,7 @@ router.post('/updateStockInfo', auth, ensureAdmin, async (req, res) => {
 
             // retrieve IEX key stats
             const iexKeyStats = await keyStats(symbol);
-            const {
-                sharesOutstanding,
-                peRatio,
-                year5ChangePercent,
-                year2ChangePercent,
-                year1ChangePercent,
-                ytdChangePercent,
-                month6ChangePercent,
-                month3ChangePercent,
-                month1ChangePercent,
-                day30ChangePercent,
-                day5ChangePercent,
-            } = iexKeyStats;
+            const { sharesOutstanding, peRatio, year5ChangePercent, year2ChangePercent, year1ChangePercent, ytdChangePercent, month6ChangePercent, month3ChangePercent, month1ChangePercent, day30ChangePercent, day5ChangePercent } = iexKeyStats;
 
             if (sector === '') {
                 sector = iexCompany.sector;
@@ -291,41 +279,6 @@ router.get('/profile/:symbol', auth, async (req, res) => {
     try {
         finnhub = await profile(req.params.symbol, stat);
         res.json(finnhub);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('server error');
-    }
-});
-
-//
-// to-do, remove before deployment
-//  TEST FUNCTIONS & ROUTES
-
-// to-do
-// @source: iex
-router.get('/company/:symbol', async (req, res) => {
-    const stat = req.query.stat;
-    try {
-        iex = await company(req.params.symbol);
-        res.json(iex);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('server error');
-    }
-});
-
-// to-do
-router.get('/test2/:symbol', async (req, res) => {
-    try {
-        // scrape S&P 500 list from stock market MBA
-        const spyMBA = await scrapeStockMBA();
-
-        const obj = spyMBA.find((o) => o.symbol === req.params.symbol.toUpperCase());
-
-        // res.json(spyMBA);
-        console.log(obj.sector);
-        console.log(obj.market);
-        res.json(obj ? obj : 'not found');
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

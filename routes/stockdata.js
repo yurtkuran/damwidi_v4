@@ -27,8 +27,8 @@ router.get('/', auth, ensureAdmin, async (req, res) => {
 // @route:  POST api/stockdata
 // @desc:   create or update stock
 // @access: private
-// @role:   admin to-do
-router.post('/', async (req, res) => {
+// @role:   admin
+router.post('/', auth, ensureAdmin, async (req, res) => {
     // destructure request body
     let { _id, symbol, sector, industry } = req.body;
     symbol = symbol.toUpperCase(); // make symbol always uppercase

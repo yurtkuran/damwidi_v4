@@ -254,10 +254,4 @@ router.get('/log', auth, ensureAdmin, async (req, res) => {
     }
 });
 
-// remove before deployment to-do
-router.get('/test', (req, res) => {
-    sendRegistrationEmail('this is a test!');
-    res.send('OK');
-});
-
 module.exports = router;
