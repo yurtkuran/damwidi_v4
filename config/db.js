@@ -26,6 +26,8 @@ const connectMySQL = async () => {
 
 const connectMongoDB = async () => {
     const db = `mongodb+srv://${process.env.DB_MONGO_USER}:${process.env.DB_MONGO_PASS}@cluster0.j2v6w.mongodb.net/damwidi?retryWrites=true&w=majority`;
+    console.log(process.env.DB_MONGO_USER);
+    console.log(process.env.DB_MONGO_PASS);
 
     try {
         const conn = await mongoose.connect(db, {

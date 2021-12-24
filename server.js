@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 // clear console
 console.clear();
@@ -16,9 +17,6 @@ const connectDB = require('./config/db');
 connectDB.connectMongoDB(); // mongo database
 // connectDB.connectMySQL(); // MySQL database
 
-console.log(process.env.DB_MONGO_USER);
-console.log(process.env.DB_MONGO_PASS);
-
 // initalize app
 const app = express();
 
@@ -26,7 +24,7 @@ const app = express();
 app.use(express.json({ extended: false }));
 
 // inital route
-app.get('/', (req, res) => res.send('api running...!'));
+app.get('/', (req, res) => res.send('api running...'));
 
 // define routes
 app.use('/api/auth', require('./routes/auth'));
