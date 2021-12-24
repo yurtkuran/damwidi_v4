@@ -13,8 +13,11 @@ process.env.TZ = 'America/New_York';
 const connectDB = require('./config/db');
 
 // connect to database
-connectDB.connectMongoDB(); // mongo database
+// connectDB.connectMongoDB(); // mongo database
 // connectDB.connectMySQL(); // MySQL database
+
+console.log(process.env.DB_MONGO_USER);
+console.log(process.env.DB_MONGO_PASS);
 
 // initalize app
 const app = express();
