@@ -10,7 +10,7 @@ require('dotenv').config();
 process.env.TZ = 'America/New_York';
 
 // bring in local modules
-// const connectDB = require('./config/db');
+const connectDB = require('./config/db');
 
 // connect to database
 // connectDB.connectMongoDB(); // mongo database
@@ -23,7 +23,7 @@ const app = express();
 app.use(express.json({ extended: false }));
 
 // inital route
-app.get('/', (req, res) => res.send('api running...'));
+app.get('/', (req, res) => res.send('api running...!'));
 
 // define routes
 app.use('/api/auth', require('./routes/auth'));
