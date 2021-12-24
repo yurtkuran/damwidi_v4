@@ -13,7 +13,7 @@ process.env.TZ = 'America/New_York';
 // const connectDB = require('./config/db');
 
 // connect to database
-connectDB.connectMongoDB(); // mongo database
+// connectDB.connectMongoDB(); // mongo database
 // connectDB.connectMySQL(); // MySQL database
 
 // initalize app
