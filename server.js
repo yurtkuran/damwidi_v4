@@ -24,7 +24,7 @@ const app = express();
 app.use(express.json({ extended: false }));
 
 // inital route
-app.get('/', (req, res) => res.send('api running...'));
+// app.get('/', (req, res) => res.send('api running...'));
 
 // define routes
 app.use('/api/auth', require('./routes/auth'));
