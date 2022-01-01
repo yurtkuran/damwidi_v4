@@ -34,8 +34,8 @@ const App = () => {
         // const email = 'marge@springfield.com';
         // const password = '111111';
         // store.dispatch(login({ email, password }));
+        // setAuthToken(localStorage.token);
 
-        setAuthToken(localStorage.token);
         store.dispatch(loadUser());
     }, []);
 

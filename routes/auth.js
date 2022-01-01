@@ -63,14 +63,15 @@ router.post('/', [userValidation], async (req, res) => {
         const payload = {
             user: {
                 id: user.id,
-                isMember: user.isMember,
+                isMember: user?.isMember || false,
                 isAdmin: user.isAdmin,
+                isVerified: user.isVerified,
             },
         };
 
         jwt.sign(payload, process.env.SECRET, { expiresIn: '1d' }, (err, token) => {
             if (err) throw err;
-            writeLogUpdate(user, 'I');
+            writeLogUpdate(user, 'I', req.connection.remoteAddress);
             res.json({ token });
         });
     } catch (err) {
@@ -79,11 +80,12 @@ router.post('/', [userValidation], async (req, res) => {
     }
 });
 
-const writeLogUpdate = (user, type) => {
+const writeLogUpdate = (user, type, address) => {
     const newLog = new Log({
         userID: user.id.toString(),
         name: `${user.lastName}, ${user.firstName}`,
         type,
+        address,
     });
 
     newLog.save((err, log) => {

@@ -23,9 +23,6 @@ const app = express();
 // body parser middleware
 app.use(express.json({ extended: false }));
 
-// inital route
-// app.get('/', (req, res) => res.send('api running...'));
-
 // define routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/alphaVantage', require('./routes/alphaVantage'));
@@ -46,6 +43,9 @@ if (process.env.NODE_ENV === 'production') {
 
     // set default 'route'
     app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html')));
+} else {
+    // inital route - development
+    app.get('/', (req, res) => res.send('api running...'));
 }
 
 const PORT = process.env.PORT || 5000;

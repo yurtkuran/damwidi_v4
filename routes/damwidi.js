@@ -51,12 +51,42 @@ router.get('/tradeHistory', auth, ensureMember, async (req, res) => {
 // @route:  GET api/damwidi/intraDayData
 // @desc:   retrieve intraday data
 // @access: private
-// @role:   member
-router.get('/intraDayData', auth, ensureMember, async (req, res) => {
+// @role:   verified, member or admin; data returned will vary by role
+router.get('/intraDayData', auth, async (req, res) => {
     const url = damwidiBaseURL + 'returnIntraDayData';
 
     try {
         const damwidi = await axios.get(url);
+        if (!req.user.isMember) {
+            // rebuild allocation data removing amounts and shares for non-member viewing
+            let trimmedAllocationTable = {};
+            for (const item in damwidi.data.allocationTable) {
+                const { name, impliedPercent, allocation, type, symbol } = damwidi.data.allocationTable[item];
+                trimmedAllocationTable[item] = {
+                    name,
+                    impliedPercent,
+                    allocation,
+                    type,
+                    symbol,
+                };
+            }
+            damwidi.data.allocationTable = trimmedAllocationTable;
+
+            // rebuild portfolioTable data removing amounts and shares for non-member viewing
+            let trimmedPortfolioTable = {};
+            for (const item in damwidi.data.portfolioTable) {
+                const { sector } = damwidi.data.portfolioTable[item];
+                trimmedPortfolioTable[item] = {
+                    sector,
+                };
+            }
+            damwidi.data.portfolioTable = trimmedPortfolioTable;
+
+            // remove other data for non-member viewing
+            delete damwidi.data.intraDay;
+            delete damwidi.data.performanceData;
+            delete damwidi.data.heatMapData;
+        }
         res.json(damwidi.data);
     } catch (err) {
         console.error(err.message);

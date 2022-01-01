@@ -13,7 +13,7 @@ const { scrapeFidelity } = require('../services/scrapeGics');
 const { profile } = require('../services/finnHub');
 
 // authorization middleware
-const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
+const { auth, ensureAdmin, ensureMember, ensureVerified } = require('../middleware/auth');
 
 // express validator middleware
 const { check, validationResult } = require('express-validator');
@@ -38,7 +38,7 @@ router.get('/sp500', auth, ensureMember, async (req, res) => {
     }
 });
 
-// @route:  GET api/marketData/sp500
+// @route:  GET api/marketData/sp500/refresh
 // @desc:   retrieve S&P500 companies
 // @access: private
 // @role:   admin
@@ -210,9 +210,9 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @route:  GET api/marketData/quote/:symbol
 // @desc:   retrieve intraday quote
 // @access: private
-// @role:   member
+// @role:   verified
 // @source: iex - https://iexcloud.io/docs/api/#quote
-router.get('/quote/:symbol', auth, ensureMember, async (req, res) => {
+router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
     const symbol = req.params.symbol;
 
     let iex = {};

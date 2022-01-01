@@ -14,7 +14,7 @@ import setAuthToken from '../utils/setAuthToken';
 export const loadUser = () => async (dispatch) => {
     // if a token exists in local storage, add to global header
     if (localStorage.token) {
-        setAuthToken(localStorage.token);
+        await setAuthToken(localStorage.token);
     }
 
     try {
@@ -26,64 +26,68 @@ export const loadUser = () => async (dispatch) => {
 };
 
 // register user
-export const register = ({ firstName, lastName, email, password, history }) => async (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
+export const register =
+    ({ firstName, lastName, email, password, history }) =>
+    async (dispatch) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
 
-    const body = JSON.stringify({ firstName, lastName, email, password });
+        const body = JSON.stringify({ firstName, lastName, email, password });
 
-    try {
-        const res = await axios.post('/api/users', body, config);
-        dispatch({
-            type: REGISTER_SUCCESS,
-            payload: res.data,
-        });
-        history.push('./login');
-        // dispatch(loadUser());
-    } catch (err) {
-        // loop through errors
-        const errors = err.response.data.errors;
-        if (errors) {
-            errors.forEach((error) => dispatch(setMessage(error.param, error.msg)));
+        try {
+            const res = await axios.post('/api/users', body, config);
+            dispatch({
+                type: REGISTER_SUCCESS,
+                payload: res.data,
+            });
+            history.push('./login');
+            // dispatch(loadUser());
+        } catch (err) {
+            // loop through errors
+            const errors = err.response.data.errors;
+            if (errors) {
+                errors.forEach((error) => dispatch(setMessage(error.param, error.msg)));
+            }
+
+            dispatch({ type: REGISTER_FAIL, payload: errors });
         }
-
-        dispatch({ type: REGISTER_FAIL, payload: errors });
-    }
-};
+    };
 
 // login user
-export const login = ({ email, password }) => async (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
+export const login =
+    ({ email, password }) =>
+    async (dispatch) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
 
-    const body = JSON.stringify({ email, password });
+        const body = JSON.stringify({ email, password });
 
-    try {
-        const res = await axios.post('/api/auth', body, config);
-        dispatch({
-            type: LOGIN_SUCCESS,
-            payload: res.data,
-        });
-        dispatch(loadUser());
-    } catch (err) {
-        // loop through errors
-        const errors = err.response.data.errors;
+        try {
+            const res = await axios.post('/api/auth', body, config);
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data,
+            });
+            dispatch(loadUser());
+        } catch (err) {
+            // loop through errors
+            const errors = err.response.data.errors;
 
-        if (errors) {
-            errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+            if (errors) {
+                errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+            }
+
+            dispatch({
+                type: LOGIN_FAIL,
+            });
         }
-
-        dispatch({
-            type: LOGIN_FAIL,
-        });
-    }
-};
+    };
 
 // confirm JWT
 export const confirmToken = (token) => async (dispatch) => {

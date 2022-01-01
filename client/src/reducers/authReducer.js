@@ -1,4 +1,5 @@
 import { REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, EMAIL_VERIFIED } from '../actions/types';
+import axios from 'axios';
 
 const initialState = {
     token: localStorage.getItem('token'),
@@ -29,6 +30,7 @@ export default (state = initialState, action) => {
             };
 
         case LOGIN_SUCCESS:
+            axios.defaults.headers.common['x-auth-token'] = payload.token; // set axios header with user token
             localStorage.setItem('token', payload.token);
             return {
                 ...state,

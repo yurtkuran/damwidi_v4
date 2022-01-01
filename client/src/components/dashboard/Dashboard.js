@@ -21,7 +21,7 @@ import { getIntraDayData } from '../../actions/damwidiActions';
 
 // set initial state
 
-const Dashboard = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
+const Dashboard = ({ auth: { isAuthenticated, loading: authLoading, user }, damwidi: { intraDay, loading }, getIntraDayData }) => {
     // state for indicies
     const [indexReturn, setIndexReturn] = useState([]);
 
@@ -43,31 +43,30 @@ const Dashboard = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
     return (
         <div style={divStyle}>
             <h4>dashboard</h4>
-            <div className='dashboad-wrapper'>
-                <div className='indices'>
-                    <IndexGauge indexReturn={indexReturn} />
-                    <IndexCard index={'DAM'} label={'damwidi'} handleSetIndex={handleSetIndex} />
-                    <IndexCard index={'SPY'} label={'S&P 500'} handleSetIndex={handleSetIndex} />
-                    <IndexCard index={'QQQ'} label={'NASDAQ'} handleSetIndex={handleSetIndex} />
-                    <IndexCard index={'DIA'} label={'DOW 30'} handleSetIndex={handleSetIndex} />
+            {!authLoading && isAuthenticated && (
+                <div className='dashboad-wrapper'>
+                    <div className='indices'>
+                        <IndexGauge indexReturn={indexReturn} />
+                        <IndexCard index={'DAM'} label={'damwidi'} handleSetIndex={handleSetIndex} />
+                        <IndexCard index={'SPY'} label={'S&P 500'} handleSetIndex={handleSetIndex} />
+                        <IndexCard index={'QQQ'} label={'NASDAQ'} handleSetIndex={handleSetIndex} />
+                        <IndexCard index={'DIA'} label={'DOW 30'} handleSetIndex={handleSetIndex} />
+                    </div>
+                    {!loading && (
+                        <>
+                            <div className='charts charts-primary'>
+                                <Heatmap categories={intraDay.graphHeatMap.labels} data={intraDay.graphHeatMap.datasets[0].data} title={intraDay.time} portfolio={intraDay.portfolioTable} />
+                                <PieChart data={intraDay.allocationTable} />
+                            </div>
+                            {user !== null && user.isMember !== null && user.isMember && (
+                                <div className='portfolio-table'>
+                                    <PortfolioTable data={intraDay.heatMapData} />
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
-                {!loading && (
-                    <>
-                        <div className='charts charts-primary'>
-                            <Heatmap categories={intraDay.graphHeatMap.labels} data={intraDay.graphHeatMap.datasets[0].data} title={intraDay.time} portfolio={intraDay.portfolioTable} />
-                            {/* <Performance
-                                categories={intraDay.performanceData.categories}
-                                seriesSPY={intraDay.performanceData.seriesSPY}
-                                seriesPrice={intraDay.performanceData.seriesPrice}
-                            /> */}
-                            <PieChart data={intraDay.allocationTable} />
-                        </div>
-                        <div className='portfolio-table'>
-                            <PortfolioTable data={intraDay.heatMapData} />
-                        </div>
-                    </>
-                )}
-            </div>
+            )}
         </div>
     );
 };
@@ -83,6 +82,7 @@ Dashboard.propTypes = {
 
 const mapStatetoProps = (state) => ({
     damwidi: state.damwidi,
+    auth: state.auth,
 });
 
 export default connect(mapStatetoProps, { getIntraDayData })(Dashboard);

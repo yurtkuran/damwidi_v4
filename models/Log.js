@@ -16,6 +16,9 @@ const logSchema = new mongoose.Schema(
         type: {
             type: String,
         },
+        address: {
+            type: String,
+        },
         date: {
             type: Date,
             default: Date.now,

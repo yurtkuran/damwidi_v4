@@ -23,7 +23,7 @@ const ensureAdmin = (req, res, next) => {
     if (req.user.isAdmin) {
         return next();
     } else {
-        res.status(401).json({ msg: 'permission denied' });
+        res.status(401).json({ msg: 'permission denied - not admin' });
     }
 };
 
@@ -31,7 +31,15 @@ const ensureMember = (req, res, next) => {
     if (req.user.isMember) {
         return next();
     } else {
-        res.status(401).json({ msg: 'permission denied' });
+        res.status(401).json({ msg: 'permission denied - not member' });
+    }
+};
+
+const ensureVerified = (req, res, next) => {
+    if (req.user.isVerified) {
+        return next();
+    } else {
+        res.status(401).json({ msg: 'permission denied - not verified' });
     }
 };
 
@@ -39,4 +47,5 @@ module.exports = {
     auth,
     ensureAdmin,
     ensureMember,
+    ensureVerified,
 };

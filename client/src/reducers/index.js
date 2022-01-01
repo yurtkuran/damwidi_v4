@@ -16,7 +16,7 @@ import sectorReducer from './sectorReducer';
 import stockReducer from './stockReducer';
 import userReducer from './userReducer';
 
-export default combineReducers({
+const appReducer = combineReducers({
     alert: alertReducer,
     alphaVantage: alphaVantageReducer,
     auth: authReducer,
@@ -31,3 +31,13 @@ export default combineReducers({
     stock: stockReducer,
     user: userReducer,
 });
+
+const rootReducer = (state, action) => {
+    if (action.type === 'LOGOUT') {
+        state = undefined;
+    }
+
+    return appReducer(state, action);
+};
+
+export default rootReducer;
