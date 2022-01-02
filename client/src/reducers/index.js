@@ -1,3 +1,7 @@
+// References
+// Reset Redux State with a Root Reducer
+// https://www.digitalocean.com/community/tutorials/redux-reset-state-redux
+
 // root reducer
 import { combineReducers } from 'redux';
 

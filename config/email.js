@@ -36,6 +36,6 @@ exports.sendRegistrationEmail = async (user) => {
             html: output,
         });
 
-        // console.log('Message sent: %s', info.messageId);
+        console.log('Message sent: %s', info.messageId);
     });
 };

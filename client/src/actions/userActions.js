@@ -41,9 +41,9 @@ export const updateUser = ({ _id, firstName, lastName, email, isAdmin, isMember,
 
 // delete user with admin privileges
 export const deleteUser = (userID) => async (dispatch) => {
-    const test = '5edb7a773329b379e06d752';
+    // const test = '5edb7a773329b379e06d752';
     try {
-        await axios.delete(`/api/users/${test}`);
+        await axios.delete(`/api/users/${userID}`);
         dispatch({ type: REMOVE_USER, payload: userID });
     } catch (err) {
         const errMsg = err ? `status: ${err.response.status}: ${err.response.data}` : 'unknown error with delete user';
