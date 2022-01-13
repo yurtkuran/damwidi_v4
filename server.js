@@ -10,12 +10,14 @@ require('dotenv').config();
 // set timezone
 process.env.TZ = 'America/New_York';
 
-// bring in local modules
+// bring in local dependencies
+const { logTime } = require('./services/knowMoment');
+const { writeLog } = require('./services/writeLog');
 const connectDB = require('./config/db');
 
 // connect to database
 connectDB.connectMongoDB(); // mongo database
-// connectDB.connectMySQL(); // MySQL database
+connectDB.connectMySQL(); // MySQL database
 
 // initalize app
 const app = express();
@@ -48,4 +50,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`${logTime()}: Server started on port ${PORT}`);
+    writeLog('system', `Server started on port ${PORT}`);
+});

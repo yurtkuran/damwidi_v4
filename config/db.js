@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Sequelize = require('sequelize');
 
+// bring in local dependencies
+const { logTime } = require('../services/knowMoment');
+
 DB_MySQL = new Sequelize(process.env.DB_MYSQL_DATABASE, process.env.DB_MYSQL_USER, process.env.DB_MYSQL_PASS, {
     host: process.env.DB_MYSQL_HOST,
     dialect: 'mysql',
@@ -17,7 +20,7 @@ DB_MySQL = new Sequelize(process.env.DB_MYSQL_DATABASE, process.env.DB_MYSQL_USE
 const connectMySQL = async () => {
     try {
         const conn = await DB_MySQL.authenticate();
-        console.log(`MySQL connected:   ${DB_MySQL.config.database} on ${DB_MySQL.config.host}`);
+        console.log(`${logTime()}: MySQL connected:   ${DB_MySQL.config.database} on ${DB_MySQL.config.host}`);
     } catch (error) {
         console.error(error);
         process.exit(1);
@@ -34,9 +37,9 @@ const connectMongoDB = async () => {
             // useFindAndModify: false,
             useUnifiedTopology: true,
         });
-        console.log(`MongoDB Connected: ${conn.connection.name} on ${conn.connection.host}`);
+        console.log(`${logTime()}: MongoDB Connected: ${conn.connection.name} on ${conn.connection.host}`);
     } catch (err) {
-        console.error(`MongoDB error: ${err.message}`);
+        console.error(`${logTime()}: MongoDB error: ${err.message}`);
 
         // exit process with error
         process.exit(1);
