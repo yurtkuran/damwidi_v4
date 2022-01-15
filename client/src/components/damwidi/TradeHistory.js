@@ -194,7 +194,7 @@ const TradeHistory = ({ damwidi: { history, loading }, getTradeHistory }) => {
                 accessor: 'shares',
                 headerClassName: 'text-right',
                 className: 'text-right',
-                Cell: (shares) => numeral(shares.value).format('0,0'),
+                Cell: (shares) => numeral(shares.value).format('0,0.000'),
                 disableGlobalFilter: true,
                 disableSortBy: true,
                 width: '40px',
