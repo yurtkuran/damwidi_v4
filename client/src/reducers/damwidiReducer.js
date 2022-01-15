@@ -1,4 +1,4 @@
-import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, RESET_DAMWIDI_LOADING } from '../actions/types';
+import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, GET_OPEN_POSITIONS, RESET_DAMWIDI_LOADING } from '../actions/types';
 
 const initialState = {
     unstick: [],
@@ -7,6 +7,8 @@ const initialState = {
     performance: {},
     abovebelow: {},
     historyData: {},
+    openPositions: {},
+    openPositionsLoading: true,
     loading: true,
 };
 
@@ -54,6 +56,13 @@ export default (state = initialState, action) => {
                 ...state,
                 historyData: payload,
                 loading: false,
+            };
+
+        case GET_OPEN_POSITIONS:
+            return {
+                ...state,
+                openPositions: payload,
+                openPositionsLoading: false,
             };
 
         case RESET_DAMWIDI_LOADING:

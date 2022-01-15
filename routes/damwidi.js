@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const { Op } = require('sequelize');
 
 // database models
 const History = require('../models/History.model');
 const Value = require('../models/Value.model');
+const Sector = require('../models/Sector.model');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -135,6 +137,20 @@ router.get('/history', auth, async (req, res) => {
         const spy = await History.findAll({ attributes: ['date', 'open', 'high', 'low', 'close'], where: { symbol: 'SPY' }, order: [['date', 'ASC']] });
         const value = await Value.findAll({ attributes: ['date', 'open', 'high', 'low', 'close'], order: [['date', 'ASC']] });
         res.json({ spy, value });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/damwidi/openPositions
+// @desc:   retrieve open positions other than sectors, indicies and cash
+// @access: private
+// @role:   authenticated
+router.get('/openPositions', async (req, res) => {
+    try {
+        const openPositions = await Sector.findAll({ attributes: ['symbol', 'shares', 'type'], where: { shares: { [Op.gt]: 0 }, type: 'K' }, order: [['symbol', 'ASC']] });
+        res.json(openPositions);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

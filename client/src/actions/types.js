@@ -55,6 +55,7 @@ export const GET_INTRADAY_DATA      = 'GET_INTRADAY_DATA';
 export const GET_PERFORMANCE_DATA   = 'GET_PERFORMANCE_DATA';
 export const GET_ABOVEBELOW_DATA    = 'GET_ABOVEBELOW_DATA';
 export const GET_HISTORY            = 'GET_HISTORY';
+export const GET_OPEN_POSITIONS     = 'GET_OPEN_POSITIONS';
 export const RESET_DAMWIDI_LOADING  = 'RESET_DAMWIDI_LOADING';
 
 // etf actions

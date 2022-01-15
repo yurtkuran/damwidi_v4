@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, RESET_DAMWIDI_LOADING } from './types';
+import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, GET_OPEN_POSITIONS, RESET_DAMWIDI_LOADING } from './types';
 
 // get unstick log
 export const getUnstick = () => async (dispatch) => {
@@ -59,6 +59,16 @@ export const getHistoryData = () => async (dispatch) => {
     try {
         const res = await axios.get(`/api/damwidi/history`);
         dispatch({ type: GET_HISTORY, payload: res.data });
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+// get open positions
+export const getOpenPositions = () => async (dispatch) => {
+    try {
+        const res = await axios.get(`/api/damwidi/openPositions`);
+        dispatch({ type: GET_OPEN_POSITIONS, payload: res.data });
     } catch (err) {
         console.log(err);
     }

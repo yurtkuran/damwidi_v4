@@ -14,7 +14,7 @@ import RecentSymbols from './RecentSymbols';
 
 // bring in actions
 import { getDaily } from '../../../actions/alphaVantageActions';
-import { getHistoryData } from '../../../actions/damwidiActions';
+import { getHistoryData, getOpenPositions } from '../../../actions/damwidiActions';
 import { getQuote } from '../../../actions/marketActions';
 import SymbolDetail from './SymbolDetail';
 
@@ -24,7 +24,7 @@ import { useLocalStorage } from '../../../customHooks/useStorage';
 // set initial state
 const sectors = ['XLK', 'XLV', 'XLY', 'XLC', 'XLF', 'XLI', 'XLP', 'XLRE', 'XLB', 'XLU', 'XLE'];
 
-const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, loading: historyLoading }, market: { quote, loading: marketLoading }, getDaily, getHistoryData, getQuote }) => {
+const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, loading: historyLoading, openPositions, openPositionsLoading }, market: { quote, loading: marketLoading }, getDaily, getHistoryData, getQuote, getOpenPositions }) => {
     // symbol state
     const [symbol, setSymbol] = useState('');
     const [symbolInput, setSymbolInput] = useState('');
@@ -50,16 +50,18 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
     );
 
     // load SPY when page loads
+    // load open positions when page loads
     useEffect(() => {
         processSymbol('SPY');
-    }, [processSymbol]);
+        getOpenPositions();
+    }, [processSymbol, getOpenPositions]);
 
     // display error if invalid symbol, else store symbol to local storage
     useEffect(() => {
         if (!loading) {
             if (daily.hasOwnProperty('error')) {
                 setErrorMessage(daily.error);
-            } else if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol)) {
+            } else if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol) && !openPositions.map((position) => position.symbol).includes(symbol)) {
                 // do not store SPY to recents
                 const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
                 setRecentSymbols([...prevSymbols, symbol]);
@@ -110,6 +112,7 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
                 </form>
                 <div className='recent-symbol-buttons'>
                     {sectors.length > 0 && <RecentSymbols symbols={sectors} handleRecenSymbol={handleRecenSymbol} />}
+                    {!openPositionsLoading && <RecentSymbols symbols={openPositions.map((position) => position.symbol)} handleRecenSymbol={handleRecenSymbol} />}
                     {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
                 </div>
             </div>
@@ -130,6 +133,7 @@ Technical.propTypes = {
     getDaily: PropTypes.func.isRequired,
     getHistoryData: PropTypes.func.isRequired,
     getQuote: PropTypes.func.isRequired,
+    getOpenPositions: PropTypes.func.isRequired,
     alphaVantage: PropTypes.object.isRequired,
     damwidi: PropTypes.object.isRequired,
     market: PropTypes.object.isRequired,
@@ -141,4 +145,4 @@ const mapStatetoProps = (state) => ({
     market: state.market,
 });
 
-export default connect(mapStatetoProps, { getDaily, getHistoryData, getQuote })(Technical);
+export default connect(mapStatetoProps, { getDaily, getHistoryData, getQuote, getOpenPositions })(Technical);
