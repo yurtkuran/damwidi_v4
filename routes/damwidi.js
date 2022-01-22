@@ -147,7 +147,7 @@ router.get('/history', auth, async (req, res) => {
 // @desc:   retrieve open positions other than sectors, indicies and cash
 // @access: private
 // @role:   authenticated
-router.get('/openPositions', async (req, res) => {
+router.get('/openPositions', auth, async (req, res) => {
     try {
         const openPositions = await Sector.findAll({ attributes: ['symbol', 'shares', 'type'], where: { shares: { [Op.gt]: 0 }, type: 'K' }, order: [['symbol', 'ASC']] });
         res.json(openPositions);
