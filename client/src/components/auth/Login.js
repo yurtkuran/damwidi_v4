@@ -65,7 +65,7 @@ const Login = ({ setAlert, login, clearMessages, isAuthenticated }) => {
                     </nav>
                 </div>
 
-                <div className='landing-inner-form row'>
+                <div className='landing-inner-form'>
                     <div className='col-md-6 m-auto'>
                         <div className='card card-body border-dark card-shadow'>
                             <h1 className='text-center mb-3'>

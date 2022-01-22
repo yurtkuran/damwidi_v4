@@ -51,7 +51,13 @@ body {
 }
 
 .landing-inner-form {
-    height: 100%;
+    /* height: 100%; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    /* resize: vertical; */
 }
 
 .landing-inner {
@@ -77,7 +83,7 @@ body {
 /* Overlay */
 .dark-overlay {
     background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
