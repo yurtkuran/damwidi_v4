@@ -30,8 +30,8 @@ exports.sendRegistrationEmail = async (user) => {
         <p>Please click here to confirm your email: <a href="${url}">${url}</a></p>`;
 
         let info = await transporter.sendMail({
-            from: 'DAMWIDI Registrtion <test@damwidi.com>',
-            to: 'erol@yurtkuran.net',
+            from: 'DAMWIDI Registrtion <register@damwidi.com>',
+            to: user.email,
             subject: 'Confirm Email',
             html: output,
         });
