@@ -52,7 +52,7 @@ const validateFormSymbol = async (component, componentArray, error, updateStatus
         }
     }
 
-    // check if valid symbol an update company name
+    // check if valid symbol and update company name
     if (error === false) {
         const companyData = await validateSymbol({ symbol: component.symbol.toUpperCase() });
         if (!companyData) {
@@ -98,7 +98,10 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
     // calculate total weight from fields
     useEffect(() => {
         let total = 0;
-        components.map((component) => (total += component.weight === '' || isNaN(component.weight) || component.weight === null ? 0 : parseFloat(component.weight)));
+        components.map(
+            (component) =>
+                (total += component.weight === '' || isNaN(component.weight) || component.weight === null ? 0 : parseFloat(component.weight))
+        );
 
         setErrorMessage(total !== 100 && components.length !== 0 ? `ETF weights sum to ${total}%` : '');
     }, [components]);
@@ -131,6 +134,8 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
             const dataKeys = Object.keys(result.data[0]);
             const componentArray = result.data.map((row) => ({ _id: uuidv4(), symbol: row[dataKeys[0]], weight: row[dataKeys[1]] }));
             setComponents(componentArray);
+        } else {
+            console.log(result.errors);
         }
     };
 
@@ -138,7 +143,9 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
     const onChange = useCallback((e, componentId) => {
         const value = e.target.value;
         const field = e.target.name;
-        setComponents((currComponents) => currComponents.map((component) => (component._id === componentId ? { ...component, [field]: value } : component)));
+        setComponents((currComponents) =>
+            currComponents.map((component) => (component._id === componentId ? { ...component, [field]: value } : component))
+        );
     }, []);
 
     // onBlur validate symbol
@@ -148,7 +155,7 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
 
         switch (field) {
             case 'symbol':
-                component = { ...component, symbol: component.symbol.toUpperCase() }; // make symbol uppercase
+                component = { ...component, symbol: component.symbol.toUpperCase().trim() }; // make symbol uppercase
                 error = await validateFormSymbol(component, components, error, updateStatus, setStatusMessage);
                 break;
             case 'weight':
@@ -214,10 +221,26 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
                 <h4 className='text-center'>{`${symbol} Components`}</h4>
                 <form className='dynamicForm card-shadow'>
                     <div className='buttonWrapper'>
-                        <FormButton click={onClickAdd} innerHtml={<i className='fas fa-plus'></i>} buttonText='Add Component' classModifier=' ghost_button' />
+                        <FormButton
+                            click={onClickAdd}
+                            innerHtml={<i className='fas fa-plus'></i>}
+                            buttonText='Add Component'
+                            classModifier=' ghost_button'
+                        />
                         <div>
-                            <FormButton click={onClickViewAll} innerHtml={<i className='fa fa-list-alt mr-2'></i>} buttonText='View All' classModifier='btn btn-secondary mr-2 rounded' />
-                            <FormButton click={onSubmit} innerHtml={<i className='fa fa-database mr-2'></i>} buttonText='Submit' classModifier='btn btn-primary mr-3 rounded' buttonDisabled={components.length === 0 ? true : false} />
+                            <FormButton
+                                click={onClickViewAll}
+                                innerHtml={<i className='fa fa-list-alt mr-2'></i>}
+                                buttonText='View All'
+                                classModifier='btn btn-secondary mr-2 rounded'
+                            />
+                            <FormButton
+                                click={onSubmit}
+                                innerHtml={<i className='fa fa-database mr-2'></i>}
+                                buttonText='Submit'
+                                classModifier='btn btn-primary mr-3 rounded'
+                                buttonDisabled={components.length === 0 ? true : false}
+                            />
                         </div>
                     </div>
 
@@ -245,7 +268,9 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
                     )}
                 </form>
                 <div className='messageBar'>
-                    <h6 className={`small text-success text-left pt-3 ${statusMessage !== '' && statusMessage.type}`}>{statusMessage !== '' && statusMessage.message}</h6>
+                    <h6 className={`small text-success text-left pt-3 ${statusMessage !== '' && statusMessage.type}`}>
+                        {statusMessage !== '' && statusMessage.message}
+                    </h6>
                     <h6 className='small text-danger text-right pt-3'>{errorMessage !== '' && errorMessage}</h6>
                 </div>
             </div>
@@ -269,7 +294,15 @@ const FormGroup = ({ onChange, onBlur, buttonClick, buttonDisabled, weightDisabl
                 <span>{index + 1}</span>
             </div>
             <div className='col px-1 '>
-                <input type='text' name='symbol' className={`form-control ${errorSymbol ? 'inputError' : ''}`} placeholder='Symbol' value={symbol} onChange={(e) => onChange(e, _id)} onBlur={async (e) => await onBlur(e.target.name, _id)} />
+                <input
+                    type='text'
+                    name='symbol'
+                    className={`form-control ${errorSymbol ? 'inputError' : ''}`}
+                    placeholder='Symbol'
+                    value={symbol}
+                    onChange={(e) => onChange(e, _id)}
+                    onBlur={async (e) => await onBlur(e.target.name, _id)}
+                />
             </div>
             <div className='col px-1'>
                 <input

@@ -109,7 +109,9 @@ router.post('/components', auth, ensureAdmin, async (req, res) => {
 
         // set weights for market weight ETFs to-do
         if (etf.weightType === 'market') {
-            components = components.map((component) => (isNaN(component.weight) || component.weight === '' || component.weight === null ? { ...component, weight: 0 } : component));
+            components = components.map((component) =>
+                isNaN(component.weight) || component.weight === '' || component.weight === null ? { ...component, weight: 0 } : component
+            );
         }
 
         etf.holdings = components;

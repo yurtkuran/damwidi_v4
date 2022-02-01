@@ -38,7 +38,7 @@ const Etf = ({ etf: { etfs, current, loading }, getETFs, deleteETF, clearCurrent
     ) : (
         <>
             <ModalConfirm show={show} setShow={setShow} handleClose={handleClose} message={message} title={'Confirm Deletion'} />
-            <div className='col-sm-10 m-auto'>
+            <div className='col-sm-12 m-auto'>
                 <h4 className=''>
                     <Link to='/etfform'>
                         <i className='fas fa-plus mr-3'></i>
@@ -50,6 +50,7 @@ const Etf = ({ etf: { etfs, current, loading }, getETFs, deleteETF, clearCurrent
                         <tr>
                             <th className='text-center'>Symbol</th>
                             <th className='text-left'>Description</th>
+                            <th className='text-center'>As-Of</th>
                             <th className='text-center' colSpan='3'>
                                 Controls
                             </th>

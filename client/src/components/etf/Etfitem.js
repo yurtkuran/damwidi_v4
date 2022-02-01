@@ -5,12 +5,15 @@ import { Link } from 'react-router-dom';
 // bring in redux
 import { connect } from 'react-redux';
 
+// bring in dependencies
+import moment from 'moment';
+
 // bring in actions
 import { setCurrent } from '../../actions/etfActions';
 
 const EtfItem = ({ etf, setCurrent, setShow, setMessage }) => {
     // destructure stock object
-    const { _id, symbol, description } = etf;
+    const { _id, symbol, description, updatedAt } = etf;
 
     const handleDelete = (id) => {
         setCurrent(etf);
@@ -22,6 +25,7 @@ const EtfItem = ({ etf, setCurrent, setShow, setMessage }) => {
         <tr key={_id}>
             <td className='text-center'>{symbol} </td>
             <td className='text-left'>{description}</td>
+            <td className='text-center'>{moment(updatedAt).format('YYYY-MM-DD')}</td>
             <td className='text-center text-primary'>
                 <Link to='/etfform' onClick={() => setCurrent(etf)}>
                     <i className='far fa-edit'></i>

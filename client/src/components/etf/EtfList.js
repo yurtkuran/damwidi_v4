@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { useTable } from 'react-table';
 import BTable from 'react-bootstrap/Table';
 import numeral from 'numeral';
+import moment from 'moment';
 
 // bring in redux
 import { connect } from 'react-redux';
@@ -69,6 +70,7 @@ const EtfList = ({ etf: { etfs, loading }, getETFs }) => {
     const onClickRow = (etf) => {
         let holdingList = etf.holdings;
         for (let holding of holdingList) {
+            console.log(holding);
             const { _id, weight, stock } = holding;
             const { symbol, ...stockDetail } = stock;
             holding = { _id, symbol, weight, ...stockDetail };
@@ -96,17 +98,18 @@ const EtfList = ({ etf: { etfs, loading }, getETFs }) => {
                 className: 'text-left',
             },
             {
-                Header: 'Weight Type',
-                accessor: 'weightType',
+                Header: 'As-Of',
+                accessor: 'updatedAt',
                 headerClassName: 'text-center',
                 className: 'text-center',
+                Cell: (updatedAt) => moment(updatedAt.value).format('YYYY-MM-DD'),
             },
             {
                 Header: 'Component Count',
                 accessor: 'holdings',
                 headerClassName: 'text-right',
                 className: 'text-right',
-                Cell: (holdings) => numeral(holdings.value.length).format('00'),
+                Cell: (holdings) => holdings.value.length,
             },
         ],
         []
