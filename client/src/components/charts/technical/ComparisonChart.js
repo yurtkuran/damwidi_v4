@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 // bring in dependencies
 import Highcharts from 'highcharts/highstock';
 import Highcharts_exporting from 'highcharts/modules/exporting';
+import Highcharts_exportdata from 'highcharts/modules/export-data';
 import HighchartsReact from 'highcharts-react-official';
 
 // bring in redux
@@ -47,7 +48,30 @@ const initialChartOptions = {
         enabled: true,
         buttons: {
             contextButton: {
-                menuItems: ['downloadPNG', 'downloadJPEG'],
+                menuItems: [
+                    {
+                        text: 'Export PNG',
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/png',
+                            });
+                        },
+                    },
+                    {
+                        text: 'Export JPG',
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/jpeg',
+                            });
+                        },
+                    },
+                    {
+                        text: 'Export CSV',
+                        onclick: function () {
+                            this.downloadCSV();
+                        },
+                    },
+                ],
             },
         },
     },
@@ -70,8 +94,11 @@ const initialChartOptions = {
     },
 };
 
-// init highcharts export module
-Highcharts_exporting(Highcharts);
+// init highcharts export modules
+if (typeof Highcharts === 'object') {
+    Highcharts_exporting(Highcharts);
+    Highcharts_exportdata(Highcharts);
+}
 
 const ComparisonChart = ({ symbol, history, data }) => {
     // state handler for chart options
@@ -116,6 +143,9 @@ const ComparisonChart = ({ symbol, history, data }) => {
         });
 
         setChartOptions({
+            exporting: {
+                filename: `${symbol}-comparison`,
+            },
             rangeSelector: {
                 selected: 2,
             },

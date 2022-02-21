@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 // bring in dependencies
 import Highcharts from 'highcharts/highstock';
-import exportingModule from 'highcharts/modules/exporting';
+import Highcharts_exporting from 'highcharts/modules/exporting';
+import Highcharts_exportdata from 'highcharts/modules/export-data';
 import indicators from 'highcharts/indicators/indicators';
 import bb from 'highcharts/indicators/bollinger-bands';
 import HighchartsReact from 'highcharts-react-official';
@@ -82,7 +83,30 @@ const initialChartOptions = {
         enabled: true,
         buttons: {
             contextButton: {
-                menuItems: ['downloadPNG', 'downloadJPEG'],
+                menuItems: [
+                    {
+                        text: 'Export PNG',
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/png',
+                            });
+                        },
+                    },
+                    {
+                        text: 'Export JPG',
+                        onclick: function () {
+                            this.exportChart({
+                                type: 'image/jpeg',
+                            });
+                        },
+                    },
+                    {
+                        text: 'Export CSV',
+                        onclick: function () {
+                            this.downloadCSV();
+                        },
+                    },
+                ],
             },
         },
     },
@@ -123,10 +147,13 @@ const initialChartOptions = {
     },
 };
 
-// init highcharts  modules
-exportingModule(Highcharts);
-indicators(Highcharts);
-bb(Highcharts);
+// init highcharts modules
+if (typeof Highcharts === 'object') {
+    Highcharts_exporting(Highcharts);
+    Highcharts_exportdata(Highcharts);
+    indicators(Highcharts);
+    bb(Highcharts);
+}
 
 const CandleChart = ({ symbol, data }) => {
     // state handler for chart options
@@ -243,6 +270,9 @@ const CandleChart = ({ symbol, data }) => {
                     },
                 },
             ],
+            exporting: {
+                filename: `${symbol}-candle`,
+            },
         });
     }, [data, symbol]);
 
