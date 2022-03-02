@@ -134,7 +134,11 @@ router.get('/aboveBelowData/:timeframe', auth, ensureMember, async (req, res) =>
 // @role:   authenticated
 router.get('/history', auth, async (req, res) => {
     try {
-        const spy = await History.findAll({ attributes: ['date', 'open', 'high', 'low', 'close'], where: { symbol: 'SPY' }, order: [['date', 'ASC']] });
+        const spy = await History.findAll({
+            attributes: ['date', 'open', 'high', 'low', 'close'],
+            where: { symbol: 'SPY' },
+            order: [['date', 'ASC']],
+        });
         const value = await Value.findAll({ attributes: ['date', 'open', 'high', 'low', 'close'], order: [['date', 'ASC']] });
         res.json({ spy, value });
     } catch (err) {
@@ -148,8 +152,13 @@ router.get('/history', auth, async (req, res) => {
 // @access: private
 // @role:   authenticated
 router.get('/openPositions', auth, async (req, res) => {
+    const mask = Array.from('KCIS');
     try {
-        const openPositions = await Sector.findAll({ attributes: ['symbol', 'shares', 'type'], where: { shares: { [Op.gt]: 0 }, type: 'K' }, order: [['symbol', 'ASC']] });
+        const openPositions = await Sector.findAll({
+            attributes: ['symbol', 'shares', 'previous', 'type'],
+            where: { shares: { [Op.gt]: 0 }, type: { [Op.in]: mask } },
+            order: [['symbol', 'ASC']],
+        });
         res.json(openPositions);
     } catch (err) {
         console.error(err.message);

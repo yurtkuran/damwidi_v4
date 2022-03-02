@@ -147,7 +147,19 @@ router.post('/updateStockInfo', auth, ensureAdmin, async (req, res) => {
 
             // retrieve IEX key stats
             const iexKeyStats = await keyStats(symbol);
-            const { sharesOutstanding, peRatio, year5ChangePercent, year2ChangePercent, year1ChangePercent, ytdChangePercent, month6ChangePercent, month3ChangePercent, month1ChangePercent, day30ChangePercent, day5ChangePercent } = iexKeyStats;
+            const {
+                sharesOutstanding,
+                peRatio,
+                year5ChangePercent,
+                year2ChangePercent,
+                year1ChangePercent,
+                ytdChangePercent,
+                month6ChangePercent,
+                month3ChangePercent,
+                month1ChangePercent,
+                day30ChangePercent,
+                day5ChangePercent,
+            } = iexKeyStats;
 
             if (sector === '') {
                 sector = iexCompany.sector;
@@ -229,6 +241,7 @@ router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
                 latestPrice: currentValue,
                 change: currentValue - prevClose,
                 changePercent: gain / 100,
+                previousClose: prevClose,
             };
         }
         res.json(iex);

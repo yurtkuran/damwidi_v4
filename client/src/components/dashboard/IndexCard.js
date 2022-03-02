@@ -16,7 +16,7 @@ import Spinner from '../layout/Spinner';
 
 // set initial state
 
-const IndexCard = ({ index, label, handleSetIndex }) => {
+const IndexCard = ({ index, label, handleSetIndex, trade }) => {
     const [loading, setLoading] = useState(true);
     const [indexData, setIndexData] = useState({});
 
@@ -30,13 +30,31 @@ const IndexCard = ({ index, label, handleSetIndex }) => {
                 const iex = await axios.get(`api/marketData/quote/${index}`);
                 setIndexData(iex.data);
                 setLoading(false);
-                handleSetIndex(index, iex.data.changePercent);
+
+                // destructure index data
+                const { latestPrice, change, changePercent, previousClose } = iex.data;
+                handleSetIndex(index, { latestPrice, change, changePercent, previousClose });
             } catch (err) {
                 console.error(err);
             }
         };
         loadStockData();
     }, [handleSetIndex, index]);
+
+    // update latest price state
+    useEffect(() => {
+        if (trade != null) {
+            const { price } = trade;
+            setIndexData((prevData) => {
+                return {
+                    ...prevData,
+                    latestPrice: price,
+                    change: [price - prevData.previousClose],
+                    changePercent: [(price - prevData.previousClose) / prevData.previousClose],
+                };
+            });
+        }
+    }, [trade]);
 
     return loading ? (
         <Spinner />
