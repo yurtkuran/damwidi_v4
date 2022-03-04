@@ -24,10 +24,19 @@ import { useLocalStorage } from '../../../customHooks/useStorage';
 // set initial state
 const sectors = ['XLK', 'XLV', 'XLY', 'XLC', 'XLF', 'XLI', 'XLP', 'XLRE', 'XLB', 'XLU', 'XLE'];
 
-const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, loading: historyLoading, openPositions, openPositionsLoading }, market: { quote, loading: marketLoading }, getDaily, getHistoryData, getQuote, getOpenPositions }) => {
+const Technical = ({
+    alphaVantage: { daily, loading },
+    damwidi: { historyData, loading: historyLoading, openPositions: allOpenPositions, openPositionsLoading },
+    market: { quote, loading: marketLoading },
+    getDaily,
+    getHistoryData,
+    getQuote,
+    getOpenPositions,
+}) => {
     // symbol state
     const [symbol, setSymbol] = useState('');
     const [symbolInput, setSymbolInput] = useState('');
+    const [openPositions, setOpenPositions] = useState([]);
 
     // store recent symbols to local storage
     const [recentSymbols, setRecentSymbols] = useLocalStorage('symbols', []);
@@ -56,15 +65,28 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
         getOpenPositions();
     }, [processSymbol, getOpenPositions]);
 
+    useEffect(() => {
+        if (!openPositionsLoading) setOpenPositions(() => allOpenPositions.filter((position) => position.type === 'K'));
+    }, [openPositionsLoading]);
+
     // display error if invalid symbol, else store symbol to local storage
     useEffect(() => {
         if (!loading) {
             if (daily.hasOwnProperty('error')) {
                 setErrorMessage(daily.error);
-            } else if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol) && !openPositions.map((position) => position.symbol).includes(symbol)) {
+            } else if (
+                symbol !== 'SPY' &&
+                symbol.trim !== '' &&
+                !sectors.includes(symbol) &&
+                !openPositions.map((position) => position.symbol).includes(symbol)
+            ) {
                 // do not store SPY to recents
                 const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
-                setRecentSymbols([...prevSymbols, symbol]);
+                if (recentSymbols.includes(symbol)) {
+                    setRecentSymbols([...prevSymbols, symbol]);
+                } else {
+                    setRecentSymbols([...prevSymbols, symbol]);
+                }
             }
         }
         // eslint-disable-next-line
@@ -103,7 +125,16 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
             <div className='symbol-input-containter'>
                 <form onSubmit={onSubmit}>
                     <div className='form-row'>
-                        <input ref={inputRef} type='text' id='inputStockSymbol' name='symbol' className='form-control form-control-sm symbol-input input' placeholder='Enter Symbol...' value={symbolInput} onChange={onChange} />
+                        <input
+                            ref={inputRef}
+                            type='text'
+                            id='inputStockSymbol'
+                            name='symbol'
+                            className='form-control form-control-sm symbol-input input'
+                            placeholder='Enter Symbol...'
+                            value={symbolInput}
+                            onChange={onChange}
+                        />
                         <button type='submit' name='submit' className='btn btn-sm btn-go'>
                             <i className='fa fa-play'></i>
                         </button>
@@ -112,7 +143,9 @@ const Technical = ({ alphaVantage: { daily, loading }, damwidi: { historyData, l
                 </form>
                 <div className='recent-symbol-buttons'>
                     {sectors.length > 0 && <RecentSymbols symbols={sectors} handleRecenSymbol={handleRecenSymbol} />}
-                    {!openPositionsLoading && <RecentSymbols symbols={openPositions.map((position) => position.symbol)} handleRecenSymbol={handleRecenSymbol} />}
+                    {!openPositionsLoading && (
+                        <RecentSymbols symbols={openPositions.map((position) => position.symbol)} handleRecenSymbol={handleRecenSymbol} />
+                    )}
                     {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
                 </div>
             </div>
