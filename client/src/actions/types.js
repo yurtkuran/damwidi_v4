@@ -51,11 +51,15 @@ export const RESET_ALPHA_LOADING    = 'RESET_ALPHA_LOADING';
 // damwidi actions
 export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
 export const GET_TRADE_HISTORY      = 'GET_TRADE_HISTORY';
-export const GET_INTRADAY_DATA      = 'GET_INTRADAY_DATA';
-export const GET_PERFORMANCE_DATA   = 'GET_PERFORMANCE_DATA';
+export const GET_PERFORMANCE        = 'GET_PERFORMANCE';
+export const GET_PERFORMANCE_DATA   = 'GET_PERFORMANCE_DATA'; // todo remove
 export const GET_ABOVEBELOW_DATA    = 'GET_ABOVEBELOW_DATA';
 export const GET_HISTORY            = 'GET_HISTORY';
 export const GET_OPEN_POSITIONS     = 'GET_OPEN_POSITIONS';
+export const GET_OPEN_POSDETAIL     = 'GET_OPEN_POSDETAIL';
+export const GET_ALLOCATION         = 'GET_ALLOCATION';
+
+export const SET_REALTIME_DATA      = 'SET_REALTIME_DATA';
 export const RESET_DAMWIDI_LOADING  = 'RESET_DAMWIDI_LOADING';
 
 // etf actions

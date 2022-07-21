@@ -23,7 +23,6 @@ const ETFSchema = new mongoose.Schema(
                     type: String,
                     trim: true,
                 },
-
                 weight: {
                     type: Number,
                 },

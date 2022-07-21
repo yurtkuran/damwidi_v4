@@ -14,7 +14,7 @@ import store from './store';
 
 // bring in actions
 import { loadUser } from './actions/authActions';
-// import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT to-do
+import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT to-do
 
 // bring in functions
 import setAuthToken from './utils/setAuthToken';
@@ -31,10 +31,10 @@ if (localStorage.token) {
 const App = () => {
     useEffect(() => {
         // login admin user - REMOVE BEFORE DEPLOYMENT to-do
-        // const email = 'marge@springfield.com';
-        // const password = '111111';
-        // store.dispatch(login({ email, password }));
-        // setAuthToken(localStorage.token);
+        const email = 'marge@springfield.com';
+        const password = '111111';
+        store.dispatch(login({ email, password }));
+        setAuthToken(localStorage.token);
 
         store.dispatch(loadUser());
     }, []);

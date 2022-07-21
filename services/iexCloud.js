@@ -65,9 +65,37 @@ const intraDay = async (symbol) => {
     }
 };
 
+const batchQuotes = async (symbols) => {
+    const url = iexBaseURL + `stock/market/batch?symbols=${symbols}&types=quote&token=${process.env.IEXCLOUD_PUBLIC_KEY}`;
+
+    try {
+        const iex = await axios.get(url);
+
+        // refactor object
+        let prices = {};
+        for (const symbol in iex.data) {
+            const { latestPrice, latestUpdate, latestVolume, open, previousClose } = iex.data[symbol].quote;
+            prices[symbol] = {
+                symbol,
+                price: latestPrice,
+                time: latestUpdate,
+                volume: latestVolume,
+                open,
+                previousClose,
+            };
+        }
+
+        return prices;
+    } catch (error) {
+        console.log(err.message);
+        return false;
+    }
+};
+
 module.exports = {
     company,
     keyStats,
     quote,
     intraDay,
+    batchQuotes,
 };

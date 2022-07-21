@@ -84,7 +84,11 @@ const Table = ({ columns, data }) => {
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps(column.getSortByToggleProps())} {...column.getHeaderProps({ className: column.headerClassName })} width={column.width}>
+                                <th
+                                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                                    {...column.getHeaderProps({ className: column.headerClassName })}
+                                    width={column.width}
+                                >
                                     {column.render('Header')}
                                     <span>
                                         {column.isSorted ? (
@@ -166,7 +170,7 @@ const TradeHistory = ({ damwidi: { history, loading }, getTradeHistory }) => {
         () => [
             {
                 Header: 'Date',
-                accessor: 'transaction_date',
+                accessor: 'date',
                 headerClassName: 'text-center',
                 className: 'text-center',
                 disableGlobalFilter: true,

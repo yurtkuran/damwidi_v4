@@ -1,16 +1,25 @@
-import React, { Fragment, useMemo, useCallback } from 'react';
+//
+// https://stackoverflow.com/questions/62152372/changing-column-width-in-react-table
+//
+
+import React, { Fragment, useMemo, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 // bring in dependencies
 import { useTable, useExpanded } from 'react-table';
 import numeral from 'numeral';
+import { round, gain } from '../../utils/round';
 import './PortfolioTable.css';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
-import PositionDetail from './PositionDetail';
+import Performance from './Performance';
+import Candlestick from '../charts/Candlestick';
 
 // bring in actions
+import { getOpenPositionsDetail } from '../../actions/damwidiActions';
 
 // bring in functions and hooks
 
@@ -36,7 +45,9 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubCo
                 {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map((column) => (
-                            <th {...column.getHeaderProps({ className: column.headerClassName })}>{column.render('Header')}</th>
+                            <th {...column.getHeaderProps({ className: column.headerClassName, style: { width: column.width } })}>
+                                {column.render('Header')}
+                            </th>
                         ))}
                     </tr>
                 ))}
@@ -48,12 +59,16 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubCo
                         <Fragment key={i}>
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>{cell.render('Cell')}</td>;
+                                    return (
+                                        <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    );
                                 })}
                             </tr>
                             {row.isExpanded ? (
                                 <tr>
-                                    <td colSpan={visibleColumns.length}>{renderRowSubComponent(data[row.index].sector)}</td>
+                                    <td colSpan={visibleColumns.length}>{renderRowSubComponent(data[row.index].symbol)}</td>
                                 </tr>
                             ) : null}
                         </Fragment>
@@ -73,24 +88,38 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubCo
     );
 };
 
-const PortfolioTable = ({ data }) => {
-    // function to render row sub components
-    const renderRowSubComponent = useCallback((symbol) => {
-        return <PositionDetail symbol={symbol} />;
-    }, []);
+const PortfolioTable = ({ sectors, prices, openPositionsDetailLoading, getOpenPositionsDetail }) => {
+    // load open positions details when componen loads
+    useEffect(() => {
+        getOpenPositionsDetail();
+    }, [getOpenPositionsDetail]);
 
-    // define data
-    const tableData = useMemo(
-        () =>
-            data
-                .filter((position) => position.sector !== 'DAM')
-                .sort((a, b) => {
-                    return a.sector < b.sector ? -1 : a.sector > b.sector ? 1 : 0;
-                }),
-        [data]
+    // function to render row sub components
+    const renderRowSubComponent = useCallback(
+        (symbol) => {
+            return (
+                !openPositionsDetailLoading && (
+                    <div className='charts charts-secondary'>
+                        <Candlestick symbol={symbol} type={'intraday'} simple={true} />
+                        <Performance symbol={symbol} />
+                    </div>
+                )
+            );
+        },
+        [openPositionsDetailLoading]
     );
 
-    const damData = useMemo(() => data.filter((position) => position.sector === 'DAM')[0], [data]);
+    // define table data
+    const tableData = useMemo(() => {
+        return sectors
+            .filter((position) => !'CF'.includes(position.type) && position.shares > 0)
+            .map((position) => ({ ...position, price: prices[position.symbol].price }));
+    }, [sectors, prices]);
+
+    // DAM data used for footer
+    const damData = useMemo(() => {
+        return sectors.filter((position) => position.symbol === 'DAM').map((position) => ({ ...position, price: prices[position.symbol].price }))[0];
+    }, [sectors, prices]);
 
     // build columns
     const columns = useMemo(
@@ -98,28 +127,31 @@ const PortfolioTable = ({ data }) => {
             {
                 Header: () => null, // No header
                 id: 'expander', // It needs an ID
-                width: '10px',
+                width: '20px',
                 className: 'text-center',
                 Cell: ({ row }) => (
-                    <span {...row.getToggleRowExpandedProps()}>{row.isExpanded ? <i className='far fa-caret-square-down'></i> : <i className='far fa-caret-square-right'></i>}</span>
+                    <span {...row.getToggleRowExpandedProps()}>
+                        {row.isExpanded ? <i className='far fa-caret-square-down'></i> : <i className='far fa-caret-square-right'></i>}
+                    </span>
                 ),
             },
             {
-                accessor: 'sector',
+                accessor: 'symbol',
                 Header: 'Symbol',
                 headerClassName: 'text-center',
                 Footer: () => {
-                    return damData.sector;
+                    return damData.symbol;
                 },
                 footerClassName: 'text-center',
                 className: 'text-center',
-                width: '10%',
+                width: '50px',
             },
             {
                 Header: 'Description',
                 accessor: 'description',
                 headerClassName: 'text-left',
                 className: 'text-left',
+                width: '300px',
             },
             {
                 Header: 'Basis',
@@ -127,6 +159,7 @@ const PortfolioTable = ({ data }) => {
                 Cell: (basis) => numeral(basis.value).format('$0,0.00'),
                 headerClassName: 'text-right',
                 className: 'text-right',
+                width: '70px',
             },
             {
                 Header: 'Shares',
@@ -134,58 +167,67 @@ const PortfolioTable = ({ data }) => {
                 headerClassName: 'text-right',
                 Cell: (prevClose) => numeral(prevClose.value).format('0,0.000'),
                 className: 'text-right',
+                width: '50px',
             },
             {
                 Header: 'Previous',
-                accessor: 'prevClose',
-                Cell: (prevClose) => numeral(prevClose.value).format('$0,0.00'),
+                accessor: 'previous',
+                Cell: (previous) => numeral(previous.value).format('$0,0.00'),
                 headerClassName: 'text-right',
                 className: 'text-right',
-                Footer: numeral(damData.prevClose).format('$0,0.00'),
+                Footer: numeral(damData.previous).format('$0,0.00'),
                 footerClassName: 'text-right',
+                width: '85px',
             },
             {
                 Header: 'Last',
-                accessor: 'last',
-                Cell: (last) => numeral(last.value).format('$0,0.00'),
+                accessor: 'price',
+                Cell: (price) => numeral(price.value).format('$0,0.00'),
                 headerClassName: 'text-right',
                 className: 'text-right',
+                width: '85px',
             },
             {
                 Header: 'Price Change',
                 accessor: 'priceChange',
                 Cell: ({ row: { original } }) => {
-                    const { last, prevClose } = original;
-                    const gain = ((last - prevClose) / prevClose) * 100;
-                    return `${numeral(gain).format('0.00')}% /  ${numeral(last - prevClose).format('$0,0.00')}`;
+                    const { price, previous } = original;
+                    const gain = ((price - previous) / previous) * 100;
+                    return `${numeral(gain).format('0.00')}% /  ${numeral(price - previous).format('$0,0.00')}`;
                 },
                 headerClassName: 'text-center',
                 className: 'text-center',
-                Footer: `${numeral(damData.gain).format('0.00')}%`,
-                footerClassName: `text-center ${damData.gain < 0 ? 'tickDown' : 'tickUp'}`,
+                Footer: () => {
+                    const { price, previous } = damData;
+                    return `${numeral(round(gain(price, previous), 2)).format('0.00')}%`;
+                },
+                footerClassName: `text-center ${damData.price < damData.previous ? 'tickDown' : 'tickUp'}`,
+                width: '120px',
             },
             {
                 Header: 'Value',
                 Cell: ({ row: { original } }) => {
-                    const { shares, last } = original;
-                    return numeral(shares * last).format('$0,0.00');
+                    const { shares, price } = original;
+                    return numeral(shares * price).format('$0,0.00');
                 },
                 headerClassName: 'text-right',
                 className: 'text-right',
-                Footer: numeral(damData.currentValue).format('$0,0.00'),
+                Footer: numeral(damData.price).format('$0,0.00'),
                 footerClassName: 'text-right',
+                width: '90px',
             },
             {
                 Header: 'Change',
                 accessor: 'change',
                 Cell: ({ row: { original } }) => {
-                    const { shares, last, prevClose } = original;
-                    return numeral(shares * (last - prevClose)).format('$0,0.00');
+                    const { shares, price, previous } = original;
+                    return numeral(shares * (price - previous)).format('$0,0.00');
                 },
                 headerClassName: 'text-right',
                 className: 'text-right',
-                Footer: numeral(damData.currentValue - damData.prevClose).format('$0,0.00'),
-                footerClassName: `text-right ${damData.gain < 0 ? 'tickDown' : 'tickUp'}`,
+                Footer: numeral(damData.price - damData.previous).format('$0,0.00'),
+                footerClassName: `text-right ${damData.price < damData.previous ? 'tickDown' : 'tickUp'}`,
+                width: '50px',
             },
         ],
         [damData]
@@ -197,9 +239,9 @@ const PortfolioTable = ({ data }) => {
             data={tableData}
             getCellProps={(cellInfo) => {
                 if (cellInfo.column.id === 'change' || cellInfo.column.id === 'priceChange') {
-                    const { gain } = cellInfo.row.original;
+                    const { price, previous } = cellInfo.row.original;
                     return {
-                        className: gain < 0 ? 'tickDown' : 'tickUp',
+                        className: price < previous ? 'tickDown' : 'tickUp',
                     };
                 }
 
@@ -210,4 +252,15 @@ const PortfolioTable = ({ data }) => {
     );
 };
 
-export default PortfolioTable;
+PortfolioTable.propTypes = {
+    sectors: PropTypes.array.isRequired,
+    prices: PropTypes.object.isRequired,
+    openPositionsDetailLoading: PropTypes.bool.isRequired,
+    getOpenPositionsDetail: PropTypes.func.isRequired,
+};
+
+const mapStatetoProps = (state) => ({
+    openPositionsDetailLoading: state.damwidi.openPositionsDetailLoading,
+});
+
+export default connect(mapStatetoProps, { getOpenPositionsDetail })(PortfolioTable);

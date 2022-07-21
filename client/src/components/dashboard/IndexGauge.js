@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 // bring in dependencies
 import numeral from 'numeral';
+import { round } from '../../utils/round';
 
 // bring in redux
 
 // bring in components
-import Spinner from '../layout/Spinner';
 
 // bring in actions
 
@@ -14,7 +14,11 @@ import Spinner from '../layout/Spinner';
 
 // set initial state
 
-const IndexGauge = ({ indexReturn: { DAM, SPY }, trades: { DAM: tradeDAM, SPY: tradeSPY } }) => {
+const changePercent = (price, previous) => {
+    return (price - previous) / previous;
+};
+
+const IndexGauge = ({ damData, spyData }) => {
     // default border style
     const defaultBorderStyle = '1px solid rgba(0, 0, 0, 0.2)';
 
@@ -24,42 +28,11 @@ const IndexGauge = ({ indexReturn: { DAM, SPY }, trades: { DAM: tradeDAM, SPY: t
 
     // load performance when data is available
     useEffect(() => {
-        if (DAM?.changePercent !== undefined && SPY?.changePercent !== undefined) {
-            const value = Math.round((DAM?.changePercent - SPY?.changePercent) * 10000) / 10000;
-            setPerformnace(value);
-        }
-    }, [DAM, SPY]);
-
-    // update performacne with realtime trades
-    useEffect(() => {
-        if (tradeDAM?.price !== undefined && tradeSPY?.price !== undefined) {
-            // calculate realtime DAM change percent
-            const changePercentDAM = (tradeDAM.price - DAM.previousClose) / DAM.previousClose;
-
-            // calculate realtime SPY change percent
-            const changePercentSPY = (tradeSPY.price - SPY.previousClose) / SPY.previousClose;
-
-            const value = Math.round((changePercentDAM - changePercentSPY) * 10000) / 10000;
-
-            // update border
-            if (value !== performance) {
-                let border = '';
-                if (value > performance) {
-                    border = '4px solid var(--up)';
-                } else if (value < performance) {
-                    border = '4px solid var(--down)';
-                }
-                setStyle({ border });
-
-                setTimeout(() => {
-                    setStyle({ border: defaultBorderStyle });
-                }, 200);
-            }
-
-            // update value
-            setPerformnace(value);
-        }
-    }, [tradeDAM, tradeSPY, DAM, SPY]);
+        const damChangePercent = changePercent(damData.price, damData.previousClose);
+        const spyChangePercent = changePercent(spyData.price, spyData.previousClose);
+        const value = round(damChangePercent - spyChangePercent, 5);
+        setPerformnace(value);
+    }, [damData, spyData]);
 
     const Performance = () => {
         return <h5 className={performance < 0 ? 'index-down' : 'index-up'}>{numeral(performance).format('0.00%')}</h5>;
@@ -73,9 +46,7 @@ const IndexGauge = ({ indexReturn: { DAM, SPY }, trades: { DAM: tradeDAM, SPY: t
         );
     };
 
-    return typeof DAM === 'undefined' || SPY === 'undefined' ? (
-        <Spinner />
-    ) : (
+    return (
         <div className='index-gauge' style={style}>
             {performance >= 0 ? (
                 <>

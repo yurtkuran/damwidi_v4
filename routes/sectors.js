@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 
 // database models
-const Sector = require('../models/Sector.model');
+const { Sector } = require('../config/db_MySQL').db;
 
 // authorization middleware
 const { auth, ensureAdmin } = require('../middleware/auth');

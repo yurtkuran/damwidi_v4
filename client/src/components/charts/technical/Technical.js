@@ -59,15 +59,27 @@ const Technical = ({
     );
 
     // load SPY when page loads
-    // load open positions when page loads
     useEffect(() => {
         processSymbol('SPY');
+    }, [processSymbol]);
+
+    // load open positions when page loads
+    useEffect(() => {
         getOpenPositions();
-    }, [processSymbol, getOpenPositions]);
+    }, [getOpenPositions]);
+
+    // purge open positions from recent symbols aray
+    useEffect(() => {
+        if (openPositions?.length > 0 && recentSymbols?.length > 0) {
+            const symbols = recentSymbols.filter((symbol) => !openPositions.some((position) => position.symbol === symbol));
+            setRecentSymbols(symbols);
+        }
+        // eslint-disable-next-line
+    }, [openPositions, setRecentSymbols]);
 
     useEffect(() => {
         if (!openPositionsLoading) setOpenPositions(() => allOpenPositions.filter((position) => position.type === 'K'));
-    }, [openPositionsLoading]);
+    }, [openPositionsLoading, allOpenPositions]);
 
     // display error if invalid symbol, else store symbol to local storage
     useEffect(() => {

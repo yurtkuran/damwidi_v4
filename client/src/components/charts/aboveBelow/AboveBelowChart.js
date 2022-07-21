@@ -7,6 +7,7 @@ import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
 
@@ -81,14 +82,18 @@ const initialChartOptions = {
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
+const AboveBelowChart = ({ title, chartType, abovebelow }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
 
     // update chart options when component loads
     useEffect(() => {
+        const chartConfig = abovebelow.ChartConfigs.filter((config) => config.chart === chartType)[0].config;
+        console.log(chartConfig);
+        const data = abovebelow[chartType];
+
         const formatCount = chartConfig.length - 1;
-        const processData = data.map(({ label: name, symbol, data }, idx) => {
+        const processData = data.map(({ name, symbol, data }, idx) => {
             const formatIdx = idx <= formatCount ? idx : formatCount;
             const { weight, dashstyle, color } = chartConfig[formatIdx];
             return {
@@ -103,7 +108,7 @@ const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
 
         setChartOptions({
             xAxis: {
-                categories: labels,
+                categories: abovebelow.labels,
             },
             yAxis: [
                 {
@@ -114,7 +119,7 @@ const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
             ],
             series: processData,
         });
-    }, [chartConfig, data, labels, title]);
+    }, [chartType, abovebelow]);
 
     return (
         <div className='above-below-chart'>
@@ -126,9 +131,12 @@ const AboveBelowChart = ({ title, labels, data, chartConfig }) => {
 
 AboveBelowChart.propTypes = {
     title: PropTypes.string.isRequired,
-    labels: PropTypes.array.isRequired,
-    data: PropTypes.array.isRequired,
-    chartConfig: PropTypes.object.isRequired,
+    chartType: PropTypes.string.isRequired,
+    abovebelow: PropTypes.object.isRequired,
 };
 
-export default AboveBelowChart;
+const mapStatetoProps = (state) => ({
+    abovebelow: state.damwidi.abovebelow,
+});
+
+export default connect(mapStatetoProps, null)(AboveBelowChart);

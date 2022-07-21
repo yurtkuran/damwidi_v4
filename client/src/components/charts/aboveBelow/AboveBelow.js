@@ -21,19 +21,17 @@ const timeFrames = ['1wk', '2wk', '4wk', '8wk', '1qtr', '1yr', 'ytd'];
 
 const TimeFrameButton = ({ timeFrame, current, handleButtonClick }) => {
     return (
-        <button className={`timeframe btn ${timeFrame === current ? 'selected' : ''}`} value={timeFrame} onClick={(e) => handleButtonClick(e.target.value)}>
+        <button
+            className={`timeframe btn ${timeFrame === current ? 'selected' : ''}`}
+            value={timeFrame}
+            onClick={(e) => handleButtonClick(e.target.value)}
+        >
             {timeFrame}
         </button>
     );
 };
 
-const AboveBelow = ({
-    damwidi: {
-        abovebelow: { labels, above, below, rs, chartConfig },
-        loading,
-    },
-    getAboveBelowData,
-}) => {
+const AboveBelow = ({ damwidi: { loading }, getAboveBelowData }) => {
     // state handler for timeframe
     const [timeframe, setTimeframe] = useState('4wk');
 
@@ -48,7 +46,7 @@ const AboveBelow = ({
     };
 
     return (
-        <div>
+        <div className='abovebelow-container'>
             <h4>above - below</h4>
 
             <div className='timeframe-button-container'>
@@ -61,9 +59,9 @@ const AboveBelow = ({
                 <Spinner />
             ) : (
                 <>
-                    <AboveBelowChart title={'above'} labels={labels} data={above} chartConfig={chartConfig['above']} />
-                    <AboveBelowChart title={'below'} labels={labels} data={below} chartConfig={chartConfig['below']} />
-                    <AboveBelowChart title={'relative strength'} labels={labels} data={rs} chartConfig={chartConfig['rs']} />
+                    <AboveBelowChart title={'above'} chartType={'above'} />
+                    <AboveBelowChart title={'below'} chartType={'below'} />
+                    <AboveBelowChart title={'relative strength'} chartType={'rs'} />
                 </>
             )}
         </div>

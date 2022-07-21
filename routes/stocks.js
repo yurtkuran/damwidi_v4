@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // database models
-const Stock = require('../models/Stock.model');
+const { Stock } = require('../config/db_MySQL').db;
 
 // authorization middleware
 const { auth, ensureAdmin } = require('../middleware/auth');

@@ -51,7 +51,11 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, getRowProps = 
                             {/* <tr {...row.getRowProps()}> */}
                             <tr {...row.getRowProps(getRowProps(row))}>
                                 {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>{cell.render('Cell')}</td>;
+                                    return (
+                                        <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    );
                                 })}
                             </tr>
                             {row.isExpanded ? (
@@ -78,28 +82,16 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, getRowProps = 
     );
 };
 
-const AllocationTable = ({ data, performanceData }) => {
+const AllocationTable = ({ data: { allocationData, damData, prices }, performanceData }) => {
     const postitionTypes = 'ISKY';
 
     // function to render row sub components
     const renderRowSubComponent = useCallback(
         (symbol) => {
-            return <PurchaseTable performanceData={performanceData[symbol]} />;
+            return <PurchaseTable purchases={performanceData[symbol].purchases} symbol={symbol} price={prices[symbol]} />;
         },
-        [performanceData]
+        [performanceData, prices]
     );
-
-    // define data
-    const tableData = useMemo(() => {
-        let tableData = [];
-        for (const symbol in data) {
-            if (symbol !== 'DAM') tableData.push(data[symbol]);
-        }
-        return tableData;
-    }, [data]);
-
-    // define DAM data
-    const damData = useMemo(() => data['DAM'], [data]);
 
     // build columns
     const columns = useMemo(
@@ -126,7 +118,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 headerClassName: 'text-left',
                 className: 'text-left',
                 Footer: () => {
-                    return damData.sector;
+                    return damData.symbol;
                 },
                 footerClassName: 'text-left',
                 width: '10%',
@@ -147,6 +139,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Shares',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: (shares) => (parseFloat(shares.value) > 0 ? numeral(shares.value).format('0,0.000') : ''),
                 width: '8%',
             },
             {
@@ -154,6 +147,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Current Value',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: (currentValue) => numeral(currentValue.value).format('$0,0.00'),
                 Footer: () => {
                     return numeral(damData.currentValue).format('$0,0.00');
                 },
@@ -165,6 +159,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Change',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: (change) => numeral(change.value).format('$0,0.00'),
                 width: '10%',
             },
             {
@@ -172,6 +167,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Allocation',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: (allocation) => `${numeral(allocation.value).format('0.0')}%`,
                 width: '8%',
             },
             {
@@ -180,8 +176,8 @@ const AllocationTable = ({ data, performanceData }) => {
                 className: 'text-right',
                 width: '8%',
                 Cell: ({ row: { original } }) => {
-                    const { type, weightPercent } = original;
-                    return type === 'Y' && `${weightPercent}`;
+                    const { type, weight } = original;
+                    return type === 'Y' && `${numeral(weight).format('0.0')}%`;
                 },
             },
             {
@@ -191,18 +187,18 @@ const AllocationTable = ({ data, performanceData }) => {
                 width: '8%',
                 Cell: ({ row: { original } }) => {
                     const { type, impliedPercent } = original;
-                    return type === 'Y' && `${impliedPercent}`;
+                    return type === 'Y' && `${numeral(impliedPercent).format('0.0')}%`;
                 },
             },
         ],
-        [damData.currentValue, damData.sector, damData.description]
+        [damData.currentValue, damData.description, damData.symbol]
     );
 
     return (
         <div>
             <Table
                 columns={columns}
-                data={tableData}
+                data={allocationData}
                 renderRowSubComponent={renderRowSubComponent}
                 getRowProps={(row) => {
                     const { symbol, type } = row.original;
@@ -220,14 +216,11 @@ const AllocationTable = ({ data, performanceData }) => {
                         column: { Header },
                         value,
                     } = cellInfo;
-
                     let cellClass = '';
                     if (Header === 'Change') {
-                        const change = parseFloat(value.replace(/,/g, ''));
-                        if (change > 0) cellClass = 'valueUp';
-                        if (change < 0) cellClass = 'valueDown';
+                        if (value > 0) cellClass = 'valueUp';
+                        if (value < 0) cellClass = 'valueDown';
                     }
-
                     return { className: cellClass };
                 }}
             />

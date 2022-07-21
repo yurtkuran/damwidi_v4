@@ -33,7 +33,7 @@ const UnstickPositions = ({ positions }) => {
                         .filter((position) => position !== 'provider')
                         .map((position, i) => (
                             <td className='text-right' key={i}>
-                                {numeral(positions[position].shares).format('0,0')}
+                                {numeral(positions[position].shares).format('0,0.000')}
                             </td>
                         ))}
                 </tr>

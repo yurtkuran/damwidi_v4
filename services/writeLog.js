@@ -12,12 +12,12 @@ const writeLog = (type, log, address = '') => {
         address,
     });
 
-    newLog.save((err, log) => {
-        if (err) {
-            console.log('Error during log save: ' + err);
-        }
-    });
-    return;
+    // newLog.save((err, log) => {
+    //     if (err) {
+    //         console.log('Error during log save: ' + err);
+    //     }
+    // });
+    // return;
 };
 
 module.exports = {

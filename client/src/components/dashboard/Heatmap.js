@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 // bring in dependencies
 import Highcharts from 'highcharts';
 import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
+import { gain } from '../../utils/round';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
 
@@ -18,7 +21,27 @@ import HighchartsReact from 'highcharts-react-official';
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const Heatmap = ({ title, categories, data, portfolio }) => {
+const Heatmap = ({ performance, prices }) => {
+    // state for chart data
+    const [chartData, setChartData] = useState([]);
+    const [openPositions, setOpenPositions] = useState([]);
+
+    // format data when component loads
+    useEffect(() => {
+        let seriesData = [];
+        for (const symbol in prices) {
+            const { price, previousClose } = prices[symbol];
+            seriesData.push({ symbol, gain: gain(price, previousClose) });
+        }
+        setChartData(seriesData.sort((a, b) => b.gain - a.gain));
+    }, [prices]);
+
+    useEffect(() => {
+        let openPositions = performance.filter((position) => position.shares > 0).map((position) => position.symbol);
+        openPositions.push('DAM');
+        setOpenPositions(openPositions);
+    }, [performance]);
+
     // state handler for chart options
     const chartOptions = {
         chart: {
@@ -40,7 +63,7 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
             },
         },
         xAxis: {
-            categories,
+            categories: chartData.map((position) => position.symbol),
             labels: {
                 formatter: function () {
                     if (this.value === 'DAM') {
@@ -92,7 +115,7 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
         },
         series: [
             {
-                data,
+                data: chartData.map((position) => position.gain),
                 pointWidth: 12,
             },
         ],
@@ -112,11 +135,16 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
             }
 
             // set bar color on current holding and value
-            if (Object.keys(portfolio).includes(chart.series[0].data[i].category)) {
+            if (openPositions.includes(chart.series[0].data[i].category)) {
                 chart.series[0].data[i].update(
                     {
                         color: chart.series[0].data[i].negative ? 'rgba(209, 58, 58, 1)' : 'rgba(18, 143, 4, 1)',
-                        borderColor: chart.series[0].data[i].category === 'DAM' ? 'rgba(0, 0, 0, 1)' : chart.series[0].data[i].negative ? 'rgba(209, 58, 58, 1)' : 'rgba(18, 143, 4, 1)',
+                        borderColor:
+                            chart.series[0].data[i].category === 'DAM'
+                                ? 'rgba(0, 0, 0, 1)'
+                                : chart.series[0].data[i].negative
+                                ? 'rgba(209, 58, 58, 1)'
+                                : 'rgba(18, 143, 4, 1)',
                         borderWidth: chart.series[0].data[i].category === 'DAM' ? 3 : 1, // set border width for DAM column
                     },
                     true
@@ -132,16 +160,29 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
             }
         }
         chart.redraw();
+        chart.reflow();
     };
 
     return (
         <div className='chart heatmap-wrapper'>
             <div className='heatmap'>
-                <div>Heatmap: {title}</div>
-                <HighchartsReact highcharts={Highcharts} options={chartOptions} oneToOne={true} callback={afterChartCreated} />
+                <div>Heatmap: insert title</div>
+                {chartData.length > 0 && (
+                    <HighchartsReact highcharts={Highcharts} options={chartOptions} oneToOne={true} callback={afterChartCreated} />
+                )}
             </div>
         </div>
     );
 };
 
-export default Heatmap;
+Heatmap.propTypes = {
+    performance: PropTypes.array.isRequired,
+    prices: PropTypes.object.isRequired,
+};
+
+const mapStatetoProps = (state) => ({
+    performance: state.damwidi.performance,
+    prices: state.damwidi.prices,
+});
+
+export default connect(mapStatetoProps, null)(Heatmap);

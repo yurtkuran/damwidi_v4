@@ -1,9 +1,10 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
 import { useTable } from 'react-table';
 import numeral from 'numeral';
+import { gain } from '../../utils/round';
 import './AllocationTable.css';
 
 // bring in redux
@@ -47,7 +48,11 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter }) => {
                         <Fragment key={i}>
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>{cell.render('Cell')}</td>;
+                                    return (
+                                        <td {...cell.getCellProps([{ className: cell.column.className }, getCellProps(cell)])}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    );
                                 })}
                             </tr>
                         </Fragment>
@@ -71,14 +76,15 @@ const Change = ({ change }) => {
     );
 };
 
-const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, pricePreviousClose } }) => {
-    const change = priceLast - pricePreviousClose;
+const PurchaseTable = ({ purchases, symbol, price: { price, previousClose } }) => {
+    const [pruchaeTalbeData] = useState(purchases.map((purchase) => ({ ...purchase, priceGain: gain(price, purchase.priceBasis) })));
+    const [change] = useState(price - previousClose);
 
     // build columns
     const columns = useMemo(
         () => [
             {
-                accessor: 'dateBasis',
+                accessor: 'date',
                 Header: 'Date',
                 headerClassName: 'text-left',
                 className: 'text-left',
@@ -88,7 +94,7 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
                 accessor: 'priceBasis',
                 Header: 'Price',
                 headerClassName: 'text-right',
-                Cell: (Price) => `${numeral(Price.value).format('0.00')}`,
+                Cell: (priceBasis) => `${numeral(priceBasis.value).format('0.00')}`,
                 className: 'text-right',
                 width: '15%',
             },
@@ -125,18 +131,18 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
         ],
         []
     );
+
     return (
         <div className='purchaseTableContainer'>
             <div className='purchase-table-title'>
                 <h6>{symbol} purchases</h6>
                 <h6>
-                    {/* last: {`${numeral(priceLast).format('$0.00')}`} <span className='up'> {`${numeral(change).format('+0.00')}`}</span>  */}
-                    last: {`${numeral(priceLast).format('$0.00')}`} <Change change={change} />
+                    last: {`${numeral(price).format('$0.00')}`} <Change change={change} />
                 </h6>
             </div>
             <Table
                 columns={columns}
-                data={purchases}
+                data={pruchaeTalbeData}
                 getCellProps={(cellInfo) => {
                     const {
                         column: { Header },
@@ -151,7 +157,6 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
                         if (gain > 0) cellClass = 'valueUp';
                         if (gain < 0) cellClass = 'valueDown';
                     }
-
                     return { className: cellClass };
                 }}
             />
@@ -161,6 +166,7 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
 
 PurchaseTable.propTypes = {
     performanceData: PropTypes.object.isRequired,
+    price: PropTypes.number.isRequired,
 };
 
 export default PurchaseTable;

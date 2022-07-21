@@ -13,11 +13,12 @@ process.env.TZ = 'America/New_York';
 // bring in local dependencies
 const { logTime } = require('./services/knowMoment');
 const { writeLog } = require('./services/writeLog');
-const connectDB = require('./config/db');
+const { connectMongoDB } = require('./config/db_Mongo');
+const { connectMySQL } = require('./config/db_MySQL');
 
 // connect to database
-connectDB.connectMongoDB(); // mongo database
-connectDB.connectMySQL(); // MySQL database
+connectMongoDB(); // mongo database
+connectMySQL(); // MySQL database
 
 // initalize app
 const app = express();

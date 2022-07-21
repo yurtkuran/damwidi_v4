@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 // bring in dependencies
 import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
 import Highcharts_exporting from 'highcharts/modules/exporting';
 import HighchartsReact from 'highcharts-react-official';
+import { gain } from '../../utils/round';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
 
@@ -91,7 +93,26 @@ const initialChartOptions = {
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const Performance = ({ seriesPrice, seriesSPY, categories }) => {
+const Performance = ({ symbol, openPositions, prices }) => {
+    // state for performance chart
+    const [categories, setCategories] = useState([]);
+    const [seriesPrice, setSeriesPrice] = useState([]);
+    const [seriesSPY, setSeriesSPY] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // format data when component loads
+    useMemo(() => {
+        openPositions[symbol].purchases.forEach(({ date, spyGain, priceBasis }) => {
+            categories.push(date);
+            seriesPrice.push(gain(prices[symbol].price, priceBasis));
+            seriesSPY.push(spyGain);
+        });
+        setCategories(categories);
+        setSeriesPrice(seriesPrice);
+        setSeriesSPY(seriesSPY);
+        setLoading(false);
+    }, [symbol, openPositions, prices, categories, seriesPrice, seriesSPY]);
+
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
 
@@ -117,23 +138,27 @@ const Performance = ({ seriesPrice, seriesSPY, categories }) => {
         });
 
         chart.redraw();
-        // chart.reflow();
     };
 
     return (
         <div className='chart performance-wrapper'>
             <div className='performance'>
                 <div>Performance Since Purchase</div>
-                <HighchartsReact highcharts={Highcharts} options={chartOptions} callback={afterChartCreated} />
+                {!loading && <HighchartsReact highcharts={Highcharts} options={chartOptions} callback={afterChartCreated} />}
             </div>
         </div>
     );
 };
 
 Performance.propTypes = {
-    seriesPrice: PropTypes.array.isRequired,
-    seriesSPY: PropTypes.array.isRequired,
-    categories: PropTypes.array.isRequired,
+    symbol: PropTypes.string.isRequired,
+    openPositions: PropTypes.object.isRequired,
+    prices: PropTypes.object.isRequired,
 };
 
-export default Performance;
+const mapStatetoProps = (state) => ({
+    openPositions: state.damwidi.openPositionsDetail,
+    prices: state.damwidi.prices,
+});
+
+export default connect(mapStatetoProps, null)(Performance);

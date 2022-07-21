@@ -8,6 +8,7 @@ import HighchartsReact from 'highcharts-react-official';
 import numeral from 'numeral';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
 
@@ -87,35 +88,74 @@ const initialChartOptions = {
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const PieChart = ({ data }) => {
+const PieChart = ({ performance, prices }) => {
     // state handler for chart options
     const [chartOptions, setChartOptions] = useState(initialChartOptions);
 
     // format data when component loads
     useEffect(() => {
-        let pieData = [];
-        let others = 0;
+        let sectors = {};
 
-        for (const item in data) {
-            const { name, impliedPercent, allocation, type, symbol } = data[item];
+        //isolate SPY share data
+        const spyIndex = performance.findIndex((sector) => sector.symbol === 'SPY');
+        const spyShares = performance[spyIndex].shares;
 
-            // add sectors and cash; SPY is allocated in these numbers
-            if (type === 'Y' || type === 'C') {
-                pieData.push({
+        // determine sector list and value; allocate SPY according to sector weight
+        performance
+            .filter((sector) => sector.type === 'S')
+            .map((sector) => {
+                const { symbol, weight, shares, name } = sector;
+                sectors[symbol] = {
+                    symbol,
                     name,
-                    y: type === 'Y' ? Number.parseFloat(impliedPercent) : Number.parseFloat(allocation),
-                });
-            }
+                    impliedPercent: 100 * ((shares * prices[symbol].price + (weight / 100) * spyShares * prices.SPY.price) / prices.DAM.price),
+                };
+                return true;
+            });
 
-            // accumulate others (e.g. BRK.b)
-            if (type === 'I' && symbol !== 'SPY') others += Number.parseFloat(allocation);
+        // add in cash, stocks, ETF and other indices
+        performance
+            .filter((sector) => (sector.type !== 'S') & (sector.symbol !== 'SPY'))
+            .map((position) => {
+                const { symbol, type, name, sector, shares, basis } = position;
+                switch (type) {
+                    case 'C': //cash
+                        sectors[symbol] = {
+                            symbol,
+                            name,
+                            impliedPercent: 100 * (basis / prices.DAM.price),
+                        };
+                        break;
+                    case 'K': // stock or ETF
+                        let { impliedPercent } = sectors[sector];
+                        sectors[sector] = {
+                            ...sectors[sector],
+                            impliedPercent: (impliedPercent += 100 * ((shares * prices[symbol].price) / prices.DAM.price)),
+                        };
+                        break;
+                    case 'I': // other iondicies (e.g. KOMP, BRK.B)
+                        position?.Other
+                            ? (position.Other = {
+                                  ...position[symbol],
+                                  impliedPercent: (impliedPercent += 100 * ((shares * prices[symbol].price) / prices.DAM.price)),
+                              })
+                            : (position.Other = {
+                                  name: 'Other',
+                                  impliedPercent: 100 * ((shares * prices[symbol].price) / prices.DAM.price),
+                              });
+                        break;
+                    default:
+                        break;
+                }
+
+                return true;
+            });
+
+        let pieData = [];
+        for (const sector in sectors) {
+            const { name, impliedPercent } = sectors[sector];
+            pieData.push({ name, y: impliedPercent });
         }
-
-        // add others (e.g. BRK.b)
-        pieData.push({
-            name: 'Other',
-            y: others,
-        });
 
         // sort arrary highest to lowest
         pieData.sort((a, b) => {
@@ -132,7 +172,8 @@ const PieChart = ({ data }) => {
                 },
             ],
         });
-    }, [data]);
+    }, [performance, prices]);
+
     return (
         <div className='chart'>
             <div>Allocation</div>
@@ -142,7 +183,13 @@ const PieChart = ({ data }) => {
 };
 
 PieChart.propTypes = {
-    data: PropTypes.object.isRequired,
+    performance: PropTypes.array.isRequired,
+    prices: PropTypes.object.isRequired,
 };
 
-export default PieChart;
+const mapStatetoProps = (state) => ({
+    performance: state.damwidi.performance,
+    prices: state.damwidi.prices,
+});
+
+export default connect(mapStatetoProps, null)(PieChart);

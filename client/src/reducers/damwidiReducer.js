@@ -1,12 +1,27 @@
-import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, GET_OPEN_POSITIONS, RESET_DAMWIDI_LOADING } from '../actions/types';
+import {
+    GET_UNSTICK_LOG,
+    GET_TRADE_HISTORY,
+    GET_PERFORMANCE,
+    GET_PERFORMANCE_DATA, // todo
+    GET_ABOVEBELOW_DATA,
+    GET_HISTORY,
+    GET_OPEN_POSITIONS,
+    GET_OPEN_POSDETAIL,
+    GET_ALLOCATION,
+    SET_REALTIME_DATA,
+    RESET_DAMWIDI_LOADING,
+} from '../actions/types';
 
 const initialState = {
     unstick: [],
     history: [],
-    intraDay: {},
     performance: {},
+    prices: {},
     abovebelow: {},
     historyData: {},
+    allocation: {},
+    openPositionsDetail: {},
+    openPositionsDetailLoading: true,
     openPositions: {},
     openPositionsLoading: true,
     loading: true,
@@ -30,10 +45,11 @@ export default (state = initialState, action) => {
                 loading: false,
             };
 
-        case GET_INTRADAY_DATA:
+        case GET_PERFORMANCE:
             return {
                 ...state,
-                intraDay: payload,
+                performance: payload.sectors,
+                prices: payload.prices,
                 loading: false,
             };
 
@@ -63,6 +79,25 @@ export default (state = initialState, action) => {
                 ...state,
                 openPositions: payload,
                 openPositionsLoading: false,
+            };
+
+        case GET_OPEN_POSDETAIL:
+            return {
+                ...state,
+                openPositionsDetail: payload,
+                openPositionsDetailLoading: false,
+            };
+        case GET_ALLOCATION:
+            return {
+                ...state,
+                allocation: payload,
+                loading: false,
+            };
+
+        case SET_REALTIME_DATA:
+            return {
+                ...state,
+                prices: payload,
             };
 
         case RESET_DAMWIDI_LOADING:

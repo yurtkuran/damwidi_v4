@@ -233,7 +233,7 @@ router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
         if (symbol !== 'DAM') {
             iex = await quote(req.params.symbol);
         } else {
-            const url = damwidiBaseURL + 'returnIntraDayData';
+            const url = damwidiBaseURL + 'returnIntraDayData'; // todo remove returnIntraDayData API
             const damwidi = await axios.get(url);
             const { currentValue, prevClose, gain } = damwidi.data.intraDay.DAM;
 

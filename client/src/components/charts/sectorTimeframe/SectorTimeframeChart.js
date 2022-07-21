@@ -84,9 +84,10 @@ const initialChartOptions = {
 Highcharts_exporting(Highcharts);
 
 const SectorTimeframeChart = ({ timeframe, data }) => {
-    const valueSPY = parseFloat(data.SPY[timeframe]);
-    const valueDAM = parseFloat(data.DAM[timeframe]);
+    const valueSPY = parseFloat(data.find(({ symbol }) => symbol === 'SPY')[timeframe]);
+    const valueDAM = parseFloat(data.find(({ symbol }) => symbol === 'DAM')[timeframe]);
 
+    // state handler for correct arrrow display
     const [arrowClass, setArrowClass] = useState('');
 
     // state handler for chart options
@@ -95,26 +96,32 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
     // set timeframe arrow and color
     useEffect(() => {
         setArrowClass(`${valueDAM > valueSPY ? 'fa-arrow-circle-up' : 'fa-arrow-circle-down'} ${valueDAM >= 0 ? 'arrowGreen' : 'arrowRed'}`);
-    }, [valueDAM, valueSPY]);
+    }, [valueSPY, valueDAM]);
 
     // chart callback
     const afterChartCreated = (chart) => {
         // build data
-        let categories = [];
         let processedData = [];
         let firstSectorIdx = null;
         let lastSectorIdx = null;
-        for (const sector in data) {
-            categories.push(sector);
-            const val = data[sector][timeframe];
+        const categories = data.map((sector, idx) => {
+            const { symbol, type } = sector;
+            console.log(sector);
+
+            // set series data
+            const val = parseFloat(sector[timeframe]);
+            console.log(val);
             processedData.push({
-                y: parseFloat(val),
+                y: val,
                 color: val < 0 ? 'rgba(209, 58, 58, 0.5)' : 'rgba(18, 143, 4, 0.5)',
             });
 
-            if (firstSectorIdx === null) if (data[sector].type === 'S') firstSectorIdx = sector;
-            if (firstSectorIdx !== null && lastSectorIdx === null) if (data[sector].type !== 'S') lastSectorIdx = sector;
-        }
+            // set horizontal plot lines
+            if (firstSectorIdx === null && type === 'S') firstSectorIdx = symbol;
+            if (firstSectorIdx !== null && lastSectorIdx === null) if (type !== 'S') lastSectorIdx = symbol;
+
+            return symbol;
+        });
 
         setChartOptions({
             xAxis: {
@@ -137,7 +144,7 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
             yAxis: {
                 plotLines: [
                     {
-                        value: data['SPY'][timeframe],
+                        value: valueSPY,
                         color: 'rgba(0, 0, 0, .5)',
                         width: 1,
                         dashStyle: 'ShortDash',
@@ -158,7 +165,6 @@ const SectorTimeframeChart = ({ timeframe, data }) => {
         });
 
         chart.redraw();
-        // chart.reflow();
     };
 
     return (
