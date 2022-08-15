@@ -22,6 +22,9 @@ import { isFormValid } from '../../utils/isFormValid';
 // bring in password validator schema
 import validatePassword from '../../utils/validatePassword';
 
+// bring in dependencies
+import './auth.scss';
+
 const initialErrorState = {
     firstName: '',
     lastName: '',
@@ -152,8 +155,8 @@ const Register = ({ register, clearMessages, history, errorMessages, auth: { loa
                     </nav>
                 </div>
 
-                <div className='landing-inner-form row'>
-                    <div className='col-md-6 m-auto'>
+                <div className='landing-inner-form'>
+                    <div className='landing-form'>
                         <div className='card card-body border-dark card-shadow'>
                             <h1 className='text-center mb-3'>
                                 <i className='fas fa-user-plus'></i> Register

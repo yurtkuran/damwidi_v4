@@ -146,7 +146,7 @@ const Technical = ({
                     {!openPositionsLoading && (
                         <RecentSymbols symbols={openPositions.map((position) => position.symbol)} handleRecenSymbol={handleRecenSymbol} />
                     )}
-                    {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
+                    {/* {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />} */}
                 </div>
             </div>
             {!loading && daily.hasOwnProperty('Time Series (Daily)') ? (
