@@ -1,0 +1,79 @@
+/* Landing Page */
+.header {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: 5rem;
+}
+
+.header nav ul {
+    display: flex;
+    list-style: none;
+}
+
+.header nav li {
+    margin: 0 0.5rem;
+}
+
+.header nav a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 200;
+    text-shadow: 1px 1px 3px #ccc;
+    font-size: 1.2rem;
+}
+
+.landing {
+    background: url('../../img/unsplash-02.jpg') no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+}
+
+.landing-inner-form {
+    /* height: 100%; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    /* resize: vertical; */
+}
+
+.landing-form {
+    max-width: 800px;
+    margin: auto;
+
+    &.login {
+        max-width: 600px;
+    }
+}
+
+.landing-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-text {
+    font-size: 3rem;
+    font-weight: 200;
+    color: #fff;
+    text-shadow: 1px 1px 3px #444;
+    margin: 0 0 1.5rem;
+}
+
+.card-shadow {
+    box-shadow: 5px 5px 8px -4px rgba(0, 0, 0, 0.75);
+}
+
+/* Overlay */
+.dark-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
