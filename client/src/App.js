@@ -14,7 +14,7 @@ import store from './store';
 
 // bring in actions
 import { loadUser } from './actions/authActions';
-import { login } from './actions/authActions'; // REMOVE BEFORE DEPLOYMENT to-do
+import { login } from './actions/authActions';
 
 // bring in functions
 import setAuthToken from './utils/setAuthToken';
