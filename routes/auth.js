@@ -71,7 +71,7 @@ router.post('/', [userValidation], async (req, res) => {
 
         jwt.sign(payload, process.env.SECRET, { expiresIn: '1d' }, (err, token) => {
             if (err) throw err;
-            writeLogUpdate(user, 'I', req.connection.remoteAddress);
+            if (process.env.NODE_ENV === 'production') writeLogUpdate(user, 'I', req.connection.remoteAddress);
             res.json({ token });
         });
     } catch (err) {
