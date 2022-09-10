@@ -16,6 +16,9 @@ import { setAlert } from '../../actions/alertActions';
 import { login } from '../../actions/authActions';
 import { clearMessages } from '../../actions/messageActions';
 
+// bring in dependencies
+import './auth.scss';
+
 const Login = ({ setAlert, login, clearMessages, isAuthenticated }) => {
     // clear errors when component loads
     useEffect(() => {
@@ -66,7 +69,7 @@ const Login = ({ setAlert, login, clearMessages, isAuthenticated }) => {
                 </div>
 
                 <div className='landing-inner-form'>
-                    <div className='col-md-6 m-auto'>
+                    <div className='landing-form login'>
                         <div className='card card-body border-dark card-shadow'>
                             <h1 className='text-center mb-3'>
                                 <i className='fas fa-sign-in-alt'></i> Login
