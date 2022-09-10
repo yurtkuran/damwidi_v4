@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// bring in dependencies
+import '../auth/auth.scss';
+
 const Landing = () => {
     return (
         <section className='landing'>

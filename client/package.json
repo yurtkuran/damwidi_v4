@@ -6,12 +6,12 @@
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.5.0",
         "@testing-library/user-event": "^7.2.1",
-        "axios": "^0.19.2",
+        "axios": "^0.27.2",
         "bootstrap": "^4.5.0",
         "email-validator": "^2.0.4",
         "highcharts": "^9.1.2",
         "highcharts-react-official": "^3.0.0",
-        "moment": "^2.25.3",
+        "moment": "^2.29.4",
         "papaparse": "^5.3.0",
         "password-validator": "^5.0.3",
         "react": "^16.13.1",
@@ -22,7 +22,7 @@
         "react-moment": "^0.9.7",
         "react-redux": "^7.2.0",
         "react-router-dom": "^5.1.2",
-        "react-scripts": "3.4.1",
+        "react-scripts": "5.0.1",
         "react-table": "^7.5.0",
         "redux": "^4.0.5",
         "redux-devtools-extension": "^2.13.8",
@@ -50,5 +50,8 @@
             "last 1 safari version"
         ]
     },
-    "proxy": "http://192.168.56.30:5000"
+    "proxy": "http://192.168.56.30:5000",
+    "devDependencies": {
+        "sass": "^1.54.4"
+    }
 }

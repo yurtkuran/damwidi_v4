@@ -77,26 +77,36 @@ const Technical = ({
         // eslint-disable-next-line
     }, [openPositions, setRecentSymbols]);
 
+    // store open positions to local stat4
     useEffect(() => {
-        if (!openPositionsLoading) setOpenPositions(() => allOpenPositions.filter((position) => position.type === 'K'));
+        if (!openPositionsLoading) {
+            setOpenPositions(() => allOpenPositions.filter((position) => position.type === 'K').map((position) => position.symbol));
+        }
     }, [openPositionsLoading, allOpenPositions]);
+
+    // remove any open positions from recent symbols array
+    useEffect(() => {
+        if (recentSymbols.length > 0 && openPositions.length > 0) {
+            setRecentSymbols(recentSymbols.filter((symbol) => !openPositions.includes(symbol)));
+        }
+        // disabled dependency rule since adding recentSymbols to dependency array will cause infinate loop
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [openPositions]);
 
     // display error if invalid symbol, else store symbol to local storage
     useEffect(() => {
         if (!loading) {
             if (daily.hasOwnProperty('error')) {
                 setErrorMessage(daily.error);
-            } else if (
-                symbol !== 'SPY' &&
-                symbol.trim !== '' &&
-                !sectors.includes(symbol) &&
-                !openPositions.map((position) => position.symbol).includes(symbol)
-            ) {
+            } else if (symbol !== 'SPY' && symbol.trim !== '' && !sectors.includes(symbol) && !openPositions.includes(symbol)) {
                 // do not store SPY to recents
-                const prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol).slice(0, 10);
+                let prevSymbols = recentSymbols.filter((ticker) => ticker !== symbol);
                 if (recentSymbols.includes(symbol)) {
+                    // put existing symboly at the end of the array
                     setRecentSymbols([...prevSymbols, symbol]);
                 } else {
+                    // when more than 10 recent symbols, remove the oldest from the list (ie, the first in the array)
+                    prevSymbols = prevSymbols.slice(prevSymbols.length <= 10 ? 0 : 1);
                     setRecentSymbols([...prevSymbols, symbol]);
                 }
             }
@@ -155,9 +165,7 @@ const Technical = ({
                 </form>
                 <div className='recent-symbol-buttons'>
                     {sectors.length > 0 && <RecentSymbols symbols={sectors} handleRecenSymbol={handleRecenSymbol} />}
-                    {!openPositionsLoading && (
-                        <RecentSymbols symbols={openPositions.map((position) => position.symbol)} handleRecenSymbol={handleRecenSymbol} />
-                    )}
+                    {!openPositionsLoading && <RecentSymbols symbols={openPositions} handleRecenSymbol={handleRecenSymbol} />}
                     {recentSymbols?.length > 0 && <RecentSymbols symbols={recentSymbols} handleRecenSymbol={handleRecenSymbol} />}
                 </div>
             </div>
