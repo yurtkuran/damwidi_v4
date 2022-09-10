@@ -156,7 +156,7 @@ const Register = ({ register, clearMessages, history, errorMessages, auth: { loa
                 </div>
 
                 <div className='landing-inner-form'>
-                    <div className='landing-form'>
+                    <div className='landing-form register'>
                         <div className='card card-body border-dark card-shadow'>
                             <h1 className='text-center mb-3'>
                                 <i className='fas fa-user-plus'></i> Register
