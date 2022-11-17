@@ -16,7 +16,6 @@ const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
 
 // express validator middleware
 const { check, validationResult } = require('express-validator');
-const { data } = require('cheerio/lib/api/attributes');
 
 // damwidi_v2 base URL
 const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
