@@ -13,7 +13,7 @@ router.get('/daily/:symbol', auth, async (req, res) => {
     const symbol = req.params.symbol;
 
     if (symbol.toUpperCase() !== 'DAM') {
-        var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.ALPHAVANTAGE_KEY}&outputsize=full`;
+        var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${process.env.ALPHAVANTAGE_KEY}&outputsize=full`;
     } else {
         var url = 'http://www.damwidi.com/damwidiMain.php?mode=returnDamwidiOHLC';
     }
