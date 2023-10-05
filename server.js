@@ -49,7 +49,7 @@ if (process.env.NODE_ENV === 'production') {
     app.get('/', (req, res) => res.send('api running...'));
 }
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`${logTime()}: Server started on port ${PORT}`);
     writeLog('system', `Server started on port ${PORT}`);
