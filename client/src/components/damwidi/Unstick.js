@@ -134,7 +134,7 @@ const Unstick = ({ damwidi: { unstick, loading }, getUnstick }) => {
         <Spinner />
     ) : (
         <>
-            <h4>Unstick Log!!</h4>
+            <h4>unstick log</h4>
             <Table columns={columns} data={unstick} renderRowSubComponent={renderRowSubComponent} />
             <div className='mt-2'>
                 <button type='button' className='btn btn-light' onClick={() => toggleDetails(!displayDetails)}>

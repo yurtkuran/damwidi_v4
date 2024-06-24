@@ -27,12 +27,12 @@ const IndexCard = ({ index, label, handleSetIndex, trade }) => {
     useEffect(() => {
         const loadStockData = async () => {
             try {
-                const iex = await axios.get(`api/marketData/quote/${index}`);
-                setIndexData(iex.data);
+                const quote = await axios.get(`api/marketData/quote/${index}`);
+                setIndexData(quote.data);
                 setLoading(false);
 
                 // destructure index data
-                const { latestPrice, change, changePercent, previousClose } = iex.data;
+                const { latestPrice, change, changePercent, previousClose } = quote.data;
                 handleSetIndex(index, { latestPrice, change, changePercent, previousClose });
             } catch (err) {
                 console.error(err);

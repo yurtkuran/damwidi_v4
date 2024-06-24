@@ -8,7 +8,8 @@ const Stock = require('../models/Stock');
 
 // bring in local service modules
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
-const { company, keyStats, quote, intraDay } = require('../services/iexCloud');
+const { company, keyStats, intraDay } = require('../services/iexCloud');
+const { quote } = require('../services/polygon');
 const { scrapeFidelity } = require('../services/scrapeGics');
 const { profile } = require('../services/finnHub');
 
@@ -20,8 +21,8 @@ const { check, validationResult } = require('express-validator');
 const { PromiseProvider } = require('mongoose');
 
 // damwidi_v2 base URL
-// const damwidiBaseURL = 'http://172.16.105.129/damwidiMain.php?mode=';
-const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
+const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
+// const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
 
 // @route:  GET api/marketData/sp500
 // @desc:   retrieve S&P500 companies
@@ -227,24 +228,25 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
     const symbol = req.params.symbol;
 
-    let iex = {};
+    let quoteData = {};
 
     try {
         if (symbol !== 'DAM') {
-            iex = await quote(req.params.symbol);
+            quoteData = await quote(req.params.symbol);
         } else {
             const url = damwidiBaseURL + 'returnIntraDayData';
             const damwidi = await axios.get(url);
             const { currentValue, prevClose, gain } = damwidi.data.intraDay.DAM;
 
-            iex = {
+            quoteData = {
+                symbol: 'DAM',
                 latestPrice: currentValue,
                 change: currentValue - prevClose,
                 changePercent: gain / 100,
                 previousClose: prevClose,
             };
         }
-        res.json(iex);
+        res.json(quoteData);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');
