@@ -15,8 +15,8 @@ const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
 // damwidi_v2 base URL
-const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
-// const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
+// const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
+const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
 
 // @route:  GET api/damwidi/unstick
 // @desc:   retrieve unstick log

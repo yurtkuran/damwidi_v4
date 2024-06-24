@@ -24,7 +24,6 @@ export const getKeyStats = (symbol) => async (dispatch) => {
 
 // get quote data
 export const getQuote = (symbol) => async (dispatch) => {
-    console.log("test")
     try {
         const res = await axios.get(`api/marketData/quote/${symbol}`);
         dispatch({ type: GET_QUOTE, payload: res.data });
