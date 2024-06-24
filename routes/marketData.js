@@ -21,8 +21,8 @@ const { check, validationResult } = require('express-validator');
 const { PromiseProvider } = require('mongoose');
 
 // damwidi_v2 base URL
-const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
-// const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
+// const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
+const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
 
 // @route:  GET api/marketData/sp500
 // @desc:   retrieve S&P500 companies
