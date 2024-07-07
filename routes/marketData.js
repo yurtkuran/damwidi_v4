@@ -9,9 +9,9 @@ const Stock = require('../models/Stock');
 // bring in local service modules
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
 const { company, keyStats, intraDay } = require('../services/iexCloud');
-const { quote } = require('../services/polygon');
+const { quote, profile } = require('../services/polygon');
 const { scrapeFidelity } = require('../services/scrapeGics');
-const { profile } = require('../services/finnHub');
+const {  } = require('../services/finnHub');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember, ensureVerified } = require('../middleware/auth');
@@ -224,7 +224,7 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @desc:   retrieve intraday quote
 // @access: private
 // @role:   verified
-// @source: iex - https://iexcloud.io/docs/api/#quote
+// @source: polygon
 router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
     const symbol = req.params.symbol;
 
@@ -285,15 +285,15 @@ router.get('/keystats/:symbol', auth, ensureMember, async (req, res) => {
 });
 
 // @route:  GET api/marketData/profile/:symbol
-// @desc:   retrieve general company information (e.g. weg url) from Finnhub
+// @desc:   retrieve general company information (e.g. web url) from Finnhub
 // @access: private
 // @role:   authenticated
-// @source: finnhub - https://finnhub.io/docs/api/company-profile2
+// @source: polygon 
 router.get('/profile/:symbol', auth, async (req, res) => {
     const stat = req.query.stat;
     try {
-        finnhub = await profile(req.params.symbol, stat);
-        res.json(finnhub);
+        data = await profile(req.params.symbol, stat);
+        res.json(data);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

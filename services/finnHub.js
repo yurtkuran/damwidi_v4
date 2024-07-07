@@ -5,13 +5,18 @@ require('dotenv').config();
 const finnhubURL = 'https://finnhub.io/api/v1/stock/';
 
 const profile = async (symbol) => {
+    symbol = symbol.toUpperCase();
     const url = finnhubURL + `profile2?symbol=${symbol}&token=` + process.env.FINNHUB_KEY;
     // https://finnhub.io/api/v1/stock/profile2?symbol=AAPL&token=btijeh748v6ula7ekfr0
-    console.log(url)
     try {
-        const finnhub = await axios.get(url);
-        return finnhub.data;
-    } catch (err) {
+        const tickerDeatil = await axios.get(url);
+        const data = tickerDeatil.data;
+        return {
+            symbol,
+            name: data?.name ?? symbol,
+            finnhub: data
+
+        };    } catch (err) {
         console.log(err.message);
         return false;
     }

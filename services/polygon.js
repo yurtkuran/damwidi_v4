@@ -29,7 +29,27 @@ const quote = async (symbol) => {
     }
 };
 
+const profile = async (symbol) => {
+    symbol = symbol.toUpperCase();
+    // const url = `https://api.polygon.io/v3/reference/tickers/AAPL?apiKey=Vvy94KTuAHToQ9W7ISHusgsTGu1YoKln`
+    const url = `${baseURL}v3/reference/tickers/${symbol.toUpperCase()}?apiKey=` + process.env.POLYGONIO_KEY;
+    try {
+        const tickerDeatil = await axios.get(url);
+        const data = tickerDeatil.data;
+        return {
+            symbol,
+            name: data?.results?.name ?? symbol,
+            desc: data?.results?.description ?? '',
+            polygon: data
+
+        };
+    } catch (err) {
+        console.log(err.message);
+        return false;
+    }
+}
 
 module.exports = {
-    quote
+    quote,
+    profile
 };

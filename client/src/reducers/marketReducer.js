@@ -1,8 +1,9 @@
-import { GET_INTRADAY, GET_KEYSTATS, GET_QUOTE, CLEAR_QUOTE } from '../actions/types';
+import { GET_INTRADAY, GET_KEYSTATS, GET_PROFILE, GET_QUOTE, CLEAR_QUOTE } from '../actions/types';
 
 const initialState = {
     realTimeIntraDay: [],
     keyStats: [],
+    profile: [],
     quote: [],
     loading: true,
 };
@@ -24,6 +25,13 @@ export default (state = initialState, action) => {
                 keyStats: payload,
                 loading: false,
             };
+           
+        case GET_PROFILE:
+            return {
+                ...state,
+                profile: payload,
+                loading: false,
+            };    
 
         case GET_QUOTE:
             return {

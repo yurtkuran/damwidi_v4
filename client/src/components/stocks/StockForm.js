@@ -10,7 +10,7 @@ import Spinner from '../layout/Spinner';
 
 // bring in actions
 import { getSectors } from '../../actions/sectorActions';
-import { validateSymbol as validateSymbolIEX } from '../../actions/iexActions';
+import { getProfile } from '../../actions/marketActions';
 import { validateSymbol as validateStock, addOrUpdateStock } from '../../actions/stockActions';
 
 // set initial form state
@@ -25,7 +25,7 @@ const initialErrorState = {
     symbol: '',
 };
 
-const StockForm = ({ current, sector: { sectors, loading }, getSectors, validateStock, addOrUpdateStock, history }) => {
+const StockForm = ({ current, sector: { sectors, loading }, getProfile, getSectors, validateStock, addOrUpdateStock, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialFormState);
 
@@ -67,10 +67,10 @@ const StockForm = ({ current, sector: { sectors, loading }, getSectors, validate
                     });
 
                     // check if valid symbol an update company name
-                    const companyData = await validateSymbolIEX({ symbol });
+                    const companyData = await getProfile(symbol);
                     if (companyData) {
                         setFormData((prevFormData) => {
-                            return { ...prevFormData, companyName: companyData.companyName };
+                            return { ...prevFormData, companyName: companyData.name };
                         });
                     } else {
                         error = 'Invalid symbol';
@@ -179,4 +179,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { getSectors, validateStock, addOrUpdateStock })(StockForm);
+export default connect(mapStatetoProps, { getSectors, validateStock, addOrUpdateStock, getProfile })(StockForm);

@@ -47,7 +47,6 @@ export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
 export const GET_DAILY              = 'GET_DAILY';
 export const RESET_ALPHA_LOADING    = 'RESET_ALPHA_LOADING';
 
-
 // damwidi actions
 export const GET_UNSTICK_LOG        = 'GET_UNSTICK_LOG';
 export const GET_TRADE_HISTORY      = 'GET_TRADE_HISTORY';
@@ -71,6 +70,7 @@ export const GET_INTRADAY           = 'GET_INTRADAY';
 export const GET_KEYSTATS           = 'GET_KEYSTATS';
 export const GET_QUOTE              = 'GET_QUOTE';
 export const CLEAR_QUOTE            = 'CLEAR_QUOTE';
+export const GET_PROFILE            = 'GET_PROFILE';
 
 // error actions
 export const LOG_ERROR              = 'LOG_ERROR';
