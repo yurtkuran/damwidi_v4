@@ -2,12 +2,10 @@ const axios = require('axios');
 const dayjs = require('dayjs');
 require('dotenv').config();
 
-// IEX Cloud base URL
 const baseURL = 'https://api.polygon.io/';
 
 
-// https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/AAPL?apiKey=Vvy94KTuAHToQ9W7ISHusgsTGu1YoKln
-
+// https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/AAPL?apiKey=
 const quote = async (symbol) => {
     const url = `${baseURL}v2/snapshot/locale/us/markets/stocks/tickers/${symbol}?apiKey=` + process.env.POLYGONIO_KEY;
 
@@ -29,9 +27,9 @@ const quote = async (symbol) => {
     }
 };
 
+// const url = `https://api.polygon.io/v3/reference/tickers/AAPL?apiKey=
 const profile = async (symbol) => {
     symbol = symbol.toUpperCase();
-    // const url = `https://api.polygon.io/v3/reference/tickers/AAPL?apiKey=Vvy94KTuAHToQ9W7ISHusgsTGu1YoKln`
     const url = `${baseURL}v3/reference/tickers/${symbol.toUpperCase()}?apiKey=` + process.env.POLYGONIO_KEY;
     try {
         const tickerDeatil = await axios.get(url);
@@ -40,7 +38,8 @@ const profile = async (symbol) => {
             symbol,
             name: data?.results?.name ?? symbol,
             desc: data?.results?.description ?? '',
-            polygon: data
+            source: "polygon",
+            data
 
         };
     } catch (err) {

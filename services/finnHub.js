@@ -7,10 +7,10 @@ const finnhubURL = 'https://finnhub.io/api/v1/stock/';
 const profile = async (symbol) => {
     symbol = symbol.toUpperCase();
     const url = finnhubURL + `profile2?symbol=${symbol}&token=` + process.env.FINNHUB_KEY;
-    // https://finnhub.io/api/v1/stock/profile2?symbol=AAPL&token=btijeh748v6ula7ekfr0
+    // https://finnhub.io/api/v1/stock/profile2?symbol=AAPL&token=
     try {
-        const tickerDeatil = await axios.get(url);
-        const data = tickerDeatil.data;
+        const response = await axios.get(url);
+        const data = response.data;
         return {
             symbol,
             name: data?.name ?? symbol,
@@ -22,6 +22,25 @@ const profile = async (symbol) => {
     }
 };
 
+const metrics = async (symbol) => {
+    symbol = symbol.toUpperCase();
+    const url = finnhubURL + `metric?symbol=${symbol}&token=` + process.env.FINNHUB_KEY;
+    // https://finnhub.io/api/v1/stock/metric?symbol=AAPL&metric=all&token=
+    try {
+        const response = await axios.get(url);
+        const data = response.data;
+        return {
+            symbol,
+            source: "finnhub",
+            data: data?.metric ?? {} 
+
+        };    } catch (err) {
+        console.log(err.message);
+        return false;
+    }
+};
+
 module.exports = {
     profile,
+    metrics
 };

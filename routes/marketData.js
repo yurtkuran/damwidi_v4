@@ -11,7 +11,7 @@ const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData'
 const { company, keyStats, intraDay } = require('../services/iexCloud');
 const { quote, profile } = require('../services/polygon');
 const { scrapeFidelity } = require('../services/scrapeGics');
-const {  } = require('../services/finnHub');
+const { metrics } = require('../services/finnHub');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember, ensureVerified } = require('../middleware/auth');
@@ -293,6 +293,22 @@ router.get('/profile/:symbol', auth, async (req, res) => {
     const stat = req.query.stat;
     try {
         data = await profile(req.params.symbol, stat);
+        res.json(data);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/marketData/profile/:symbol
+// @desc:   retrieve general company information (e.g. web url) from Finnhub
+// @access: private
+// @role:   authenticated
+// @source: polygon & finnhub
+router.get('/metrics/:symbol', auth, async (req, res) => {
+    const stat = req.query.stat;
+    try {
+        data = await metrics(req.params.symbol, stat);
         res.json(data);
     } catch (err) {
         console.error(err.message);
