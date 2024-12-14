@@ -19,7 +19,7 @@ import useFetch from '../../../customHooks/useFetch';
 const CompanyName = ({ companyName, profile, isLoading }) => {
     console.log({profile})
     const url = profile?.data?.homepage_url;
-    const name = `${profile.name}`
+    const name = `${profile?.name}`
         // !isLoading && url  ? (
         //     <a href={`${url}`} target='_blank' rel='noopener noreferrer'>
         //         {profile.name}
