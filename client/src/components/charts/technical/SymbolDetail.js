@@ -22,10 +22,10 @@ const CompanyName = ({ companyName, profile, isLoading }) => {
     const name =
         !isLoading && url  ? (
             <a href={`${url}`} target='_blank' rel='noopener noreferrer'>
-                {profile.name}
+                {profile?.name ?? ''}
             </a>
         ) : (
-            `${profile?.name ?? ""}`
+            `${profile?.name ?? ''}`
         );
     return <> {name} </>;
 };
