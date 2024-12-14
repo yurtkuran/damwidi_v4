@@ -24,7 +24,7 @@ const CompanyName = ({ companyName, profile, isLoading }) => {
                 {profile.name}
             </a>
         ) : (
-            companyName
+            profile.name
         );
     return <> {name} </>;
 };
