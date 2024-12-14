@@ -24,7 +24,7 @@ const CompanyName = ({ companyName, profile, isLoading }) => {
                 {profile.name}
             </a>
         ) : (
-            'profile.name'
+            `${profile.name}`
         );
     return <> {name} </>;
 };
