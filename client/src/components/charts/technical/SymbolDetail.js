@@ -17,15 +17,16 @@ import useFetch from '../../../customHooks/useFetch';
 
 // company name component
 const CompanyName = ({ companyName, profile, isLoading }) => {
+    console.log({profile})
     const url = profile?.data?.homepage_url;
-    const name =
-        !isLoading && url  ? (
-            <a href={`${url}`} target='_blank' rel='noopener noreferrer'>
-                {profile.name}
-            </a>
-        ) : (
-            `${profile.name}`
-        );
+    const name = `${profile.name}`
+        // !isLoading && url  ? (
+        //     <a href={`${url}`} target='_blank' rel='noopener noreferrer'>
+        //         {profile.name}
+        //     </a>
+        // ) : (
+        //     `${profile.name}`
+        // );
     return <> {name} </>;
 };
 
