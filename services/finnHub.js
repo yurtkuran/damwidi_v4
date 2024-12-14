@@ -15,8 +15,8 @@ const profile = async (symbol) => {
             symbol,
             name: data?.name ?? symbol,
             finnhub: data
-
-        };    } catch (err) {
+        }
+    } catch (err) {
         console.log(err.message);
         return false;
     }
@@ -27,14 +27,18 @@ const metrics = async (symbol) => {
     const url = finnhubURL + `metric?symbol=${symbol}&token=` + process.env.FINNHUB_KEY;
     // https://finnhub.io/api/v1/stock/metric?symbol=AAPL&metric=all&token=
     try {
-        const response = await axios.get(url);
-        const data = response.data;
+        const res = await axios.get(url);
+        const data = res.data;
+
+        // console.trace('finhub')
+        // console.log({finhub: data})
         return {
             symbol,
             source: "finnhub",
             data: data?.metric ?? {} 
 
-        };    } catch (err) {
+        }
+    } catch (err) {
         console.log(err.message);
         return false;
     }

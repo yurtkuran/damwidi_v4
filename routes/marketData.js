@@ -227,12 +227,15 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @source: polygon
 router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
     const symbol = req.params.symbol;
-
     let quoteData = {};
-
     try {
         if (symbol !== 'DAM') {
             quoteData = await quote(req.params.symbol);
+            
+            const stockMetrics = await metrics(req.params.symbol);
+            quoteData.week52High = stockMetrics.data["52WeekHigh"];
+            quoteData.week52Low  = stockMetrics.data["52WeekLow"];
+
         } else {
             const url = damwidiBaseURL + 'returnIntraDayData';
             const damwidi = await axios.get(url);
@@ -308,8 +311,9 @@ router.get('/profile/:symbol', auth, async (req, res) => {
 router.get('/metrics/:symbol', auth, async (req, res) => {
     const stat = req.query.stat;
     try {
-        data = await metrics(req.params.symbol, stat);
-        res.json(data);
+        const stockMetrics = await metrics(req.params.symbol, stat);
+        const stockProfile = await profile(req.params.symbol, stat);
+        res.json({stockMetrics, stockProfile});
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

@@ -7,11 +7,15 @@ const baseURL = 'https://api.polygon.io/';
 
 // https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/AAPL?apiKey=
 const quote = async (symbol) => {
-    const url = `${baseURL}v2/snapshot/locale/us/markets/stocks/tickers/${symbol}?apiKey=` + process.env.POLYGONIO_KEY;
+    const url = `${baseURL}v2/snapshot/locale/us/markets/stocks/tickers/${symbol.toUpperCase()}?apiKey=` + process.env.POLYGONIO_KEY;
 
     try {
         const res = await axios.get(url);
         const tickerData = res.data.ticker;
+
+        // console.trace('polygon ticker data')
+        // console.log({polygon: tickerData})
+
         const quote = {
             symbol: tickerData.ticker,
             latestPrice: tickerData.day.c != 0 ? tickerData.day.c : tickerData.prevDay.c,
@@ -32,14 +36,18 @@ const profile = async (symbol) => {
     symbol = symbol.toUpperCase();
     const url = `${baseURL}v3/reference/tickers/${symbol.toUpperCase()}?apiKey=` + process.env.POLYGONIO_KEY;
     try {
-        const tickerDeatil = await axios.get(url);
-        const data = tickerDeatil.data;
+        const res = await axios.get(url);
+        const data = res.data;
+
+        // console.trace('polygon profile')
+        // console.log({polygon: data})
+        
         return {
             symbol,
             name: data?.results?.name ?? symbol,
             desc: data?.results?.description ?? '',
             source: "polygon",
-            data
+            data: data.results
 
         };
     } catch (err) {
