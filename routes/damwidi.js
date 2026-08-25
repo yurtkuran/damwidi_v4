@@ -7,6 +7,7 @@ const { Op } = require('sequelize');
 const History = require('../models/History.model');
 const Value = require('../models/Value.model');
 const Sector = require('../models/Sector.model');
+const Transaction = require('../models/Transaction.model');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -39,11 +40,13 @@ router.get('/unstick', auth, ensureAdmin, async (req, res) => {
 // @access: private
 // @role:   member
 router.get('/tradeHistory', auth, ensureMember, async (req, res) => {
-    const url = damwidiBaseURL + 'returnTransactions';
-
     try {
-        const damwidi = await axios.get(url);
-        res.json(damwidi.data);
+        const transactions = await Transaction.findAll({
+            attributes: ['transaction_date', 'symbol', 'type', 'amount', 'shares', 'description'],
+            where: { [Op.or]: [{ type: 'S' }, { type: 'B' }] },
+            order: [['transaction_date', 'DESC']],
+        });
+        res.json({ data: transactions });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');
