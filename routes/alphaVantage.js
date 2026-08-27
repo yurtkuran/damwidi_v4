@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
+// bring in local dependencies
+const { returnDamwidiOHLC } = require('../services/damwidiHistory');
+
 // authorization middleware
 const { auth } = require('../middleware/auth');
 
@@ -13,13 +16,13 @@ router.get('/daily/:symbol', auth, async (req, res) => {
     const symbol = req.params.symbol;
     const apiFunction = 'TIME_SERIES_DAILY';
 
-    if (symbol.toUpperCase() !== 'DAM') {
-        var url = `https://www.alphavantage.co/query?function=${apiFunction}&symbol=${symbol}&apikey=${process.env.ALPHAVANTAGE_KEY}&outputsize=compact`;
-    } else {
-        var url = 'http://www.damwidi.com/damwidiMain.php?mode=returnDamwidiOHLC';
-    }
-
     try {
+        if (symbol.toUpperCase() === 'DAM') {
+            const daily = await returnDamwidiOHLC();
+            return res.json(daily);
+        }
+
+        const url = `https://www.alphavantage.co/query?function=${apiFunction}&symbol=${symbol}&apikey=${process.env.ALPHAVANTAGE_KEY}&outputsize=compact`;
         const daily = await axios.get(url);
         if (!daily.data.hasOwnProperty('Error Message')) {
             res.json(daily.data);
