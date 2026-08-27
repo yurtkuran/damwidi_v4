@@ -9,6 +9,9 @@ const Value = require('../models/Value.model');
 const Sector = require('../models/Sector.model');
 const Transaction = require('../models/Transaction.model');
 
+// bring in local service modules
+const { getSectorTimeframePerformanceData } = require('../services/sectorPerformance');
+
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
 
@@ -104,11 +107,9 @@ router.get('/intraDayData', auth, async (req, res) => {
 // @access: private
 // @role:   member
 router.get('/timeframeData', auth, ensureMember, async (req, res) => {
-    const url = `${damwidiBaseURL}returnSectorTimeframePerformanceData&version=v4`;
-
     try {
-        const damwidi = await axios.get(url);
-        res.json(damwidi.data);
+        const timeframeData = await getSectorTimeframePerformanceData();
+        res.json(timeframeData);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');
