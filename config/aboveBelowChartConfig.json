@@ -1,0 +1,29 @@
+{
+    "above": [
+        { "color": "000,150,000,1", "weight": "3", "dashstyle": "Solid" },
+        { "color": "000,150,000,1", "weight": "2", "dashstyle": "Solid" },
+        { "color": "000,150,000,1", "weight": "1", "dashstyle": "Solid" },
+        { "color": "000,150,000,1", "weight": "1", "dashstyle": "ShortDash" },
+        { "color": "000,150,000,1", "weight": "1", "dashstyle": "ShortDot" }
+    ],
+    "below": [
+        { "color": "192,000,000,1", "weight": "3", "dashstyle": "Solid" },
+        { "color": "192,000,000,1", "weight": "2", "dashstyle": "Solid" },
+        { "color": "192,000,000,1", "weight": "1", "dashstyle": "Solid" },
+        { "color": "192,000,000,1", "weight": "1", "dashstyle": "ShortDash" },
+        { "color": "192,000,000,1", "weight": "1", "dashstyle": "ShortDot" }
+    ],
+    "rs": [
+        { "color": "0,128,0,1", "weight": "3", "dashstyle": "Solid" },
+        { "color": "0,153,0,1", "weight": "2", "dashstyle": "Solid" },
+        { "color": "0,179,0,1", "weight": "1", "dashstyle": "Solid" },
+        { "color": "0,204,0,1", "weight": "1", "dashstyle": "ShortDash" },
+        { "color": "0,230,0,1", "weight": "1", "dashstyle": "ShortDot" },
+        { "color": "75,75,75", "weight": "1", "dashstyle": "ShortDot" },
+        { "color": "255,26,26,1", "weight": "1", "dashstyle": "ShortDot" },
+        { "color": "255,0,0,1", "weight": "1", "dashstyle": "ShortDash" },
+        { "color": "230,0,0,1", "weight": "1", "dashstyle": "Solid" },
+        { "color": "204,0,0,1", "weight": "2", "dashstyle": "Solid" },
+        { "color": "179,0,0,1", "weight": "3", "dashstyle": "Solid" }
+    ]
+}
