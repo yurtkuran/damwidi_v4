@@ -11,6 +11,7 @@ const Transaction = require('../models/Transaction.model');
 
 // bring in local service modules
 const { getSectorTimeframePerformanceData } = require('../services/sectorPerformance');
+const { getAboveBelowData } = require('../services/aboveBelow');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -121,11 +122,9 @@ router.get('/timeframeData', auth, ensureMember, async (req, res) => {
 // @access: private
 // @role:   member
 router.get('/aboveBelowData/:timeframe', auth, ensureMember, async (req, res) => {
-    const url = `${damwidiBaseURL}returnAboveBelow&timeframe=${req.params.timeframe}&version=v4`;
-
     try {
-        const damwidi = await axios.get(url);
-        res.json(damwidi.data);
+        const aboveBelowData = await getAboveBelowData(req.params.timeframe);
+        res.json(aboveBelowData);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');
