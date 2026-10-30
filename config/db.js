@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Sequelize = require('sequelize');
+const fs = require('fs');
+
 
 // bring in local dependencies
 const { logTime } = require('../services/knowMoment');
@@ -7,6 +9,14 @@ const { logTime } = require('../services/knowMoment');
 DB_MySQL = new Sequelize(process.env.DB_MYSQL_DATABASE, process.env.DB_MYSQL_USER, process.env.DB_MYSQL_PASS, {
     host: process.env.DB_MYSQL_HOST,
     dialect: 'mysql',
+    dialectOptions: process.env.DB_MYSQL_SSL_CA
+        ? {
+                ssl: {
+                    ca: fs.readFileSync(process.env.DB_MYSQL_SSL_CA, 'utf8'),
+                    rejectUnauthorized: true,
+                },
+            }
+        : {},
     pool: {
         max: 5,
         min: 0,
