@@ -15,6 +15,7 @@ export const getUnstick = () => async (dispatch) => {
 // get trade history
 export const getTradeHistory = () => async (dispatch) => {
     try {
+        console.log("getTradeHistory called - frontend");
         const res = await axios.get(`/api/damwidi/tradeHistory`);
         dispatch({ type: GET_TRADE_HISTORY, payload: Object.values(res.data.data) });
     } catch (err) {
