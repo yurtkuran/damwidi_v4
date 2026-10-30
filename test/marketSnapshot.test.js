@@ -170,6 +170,87 @@ const testCacheAndConcurrency = async () => {
     );
 };
 
+const testSessionTTLPolicies = async () => {
+    const cases = [
+        {
+            session: 'open',
+            timestamp: '2026-08-28T15:00:00.000Z',
+            marketStatus: { market: 'open', earlyHours: false, afterHours: false },
+        },
+        {
+            session: 'premarket',
+            timestamp: '2026-08-28T12:00:00.000Z',
+            marketStatus: { market: 'closed', earlyHours: true, afterHours: false },
+        },
+        {
+            session: 'afterHours',
+            timestamp: '2026-08-28T21:00:00.000Z',
+            marketStatus: { market: 'closed', earlyHours: false, afterHours: true },
+        },
+        {
+            session: 'closed',
+            timestamp: '2026-08-28T21:00:00.000Z',
+            marketStatus: { market: 'closed', earlyHours: false, afterHours: false },
+        },
+        {
+            session: 'weekend',
+            timestamp: '2026-08-29T16:00:00.000Z',
+            marketStatus: { market: 'closed', earlyHours: false, afterHours: false },
+        },
+        {
+            session: 'holiday',
+            timestamp: '2026-12-25T17:00:00.000Z',
+            marketStatus: { market: 'closed', earlyHours: false, afterHours: false },
+        },
+    ];
+
+    for (const testCase of cases) {
+        let timestamp = new Date(testCase.timestamp).getTime();
+        let batchCalls = 0;
+        let repositoryCalls = 0;
+        const policy = marketSnapshotConfig.sessionPolicies[testCase.session];
+        const service = createMarketSnapshotService({
+            cache: createMarketSnapshotCache(),
+            config: { ...marketSnapshotConfig, additionalSymbols: ['DIA'] },
+            fallbackProvider: null,
+            logger: quietLogger,
+            now: () => new Date(timestamp),
+            provider: {
+                async getMarketStatus() {
+                    return testCase.marketStatus;
+                },
+                async getBatchSnapshots(symbols) {
+                    batchCalls++;
+                    return new Map(symbols.map((symbol, index) => [symbol, ticker(symbol, 100 + index, 99 + index)]));
+                },
+            },
+            repository: {
+                async getMarketSnapshotRows() {
+                    repositoryCalls++;
+                    return rows;
+                },
+            },
+        });
+
+        const first = await service.getMarketSnapshot();
+        assert.strictEqual(first.session, testCase.session);
+        assert.strictEqual(batchCalls, 1);
+        assert.strictEqual(repositoryCalls, 1);
+
+        timestamp += policy.snapshotTTL - 1;
+        const cached = await service.getMarketSnapshot();
+        assert.strictEqual(cached.fetchedAt, first.fetchedAt);
+        assert.strictEqual(batchCalls, 1);
+        assert.strictEqual(repositoryCalls, 1);
+
+        timestamp += 2;
+        const refreshed = await service.getMarketSnapshot();
+        assert.notStrictEqual(refreshed.fetchedAt, first.fetchedAt);
+        assert.strictEqual(batchCalls, 2);
+        assert.strictEqual(repositoryCalls, 2);
+    }
+};
+
 const testPremarketAndFallback = async () => {
     const premarketService = createMarketSnapshotService({
         cache: createMarketSnapshotCache(),
@@ -216,11 +297,18 @@ const testPremarketAndFallback = async () => {
         },
         repository: { async getMarketSnapshotRows() { return rows; } },
     });
-    const fallback = await fallbackService.getMarketSnapshot();
+    const fallbackRequests = [
+        fallbackService.getMarketSnapshot({ symbols: ['AAPL'] }),
+        fallbackService.getMarketSnapshot({ symbols: ['SPY'] }),
+        ...Array.from({ length: 8 }, () => fallbackService.getMarketSnapshot()),
+    ];
+    const fallbackSnapshots = await Promise.all(fallbackRequests);
+    const fallback = fallbackSnapshots[0];
     assert.strictEqual(fallbackCalls, 1);
     assert.strictEqual(fallback.complete, true);
     assert.strictEqual(fallback.quotes.get('AAPL').source, 'yahoo');
     assert.strictEqual(fallback.quotes.get('AAPL').previousClose, 99);
+    assert.strictEqual(new Set(fallbackSnapshots.map((snapshot) => snapshot.fetchedAt)).size, 1);
 };
 
 const testFailureRetry = async () => {
@@ -258,6 +346,7 @@ const run = async () => {
     await testAwsQuote();
     await testPolygonService();
     await testCacheAndConcurrency();
+    await testSessionTTLPolicies();
     await testPremarketAndFallback();
     await testFailureRetry();
 
