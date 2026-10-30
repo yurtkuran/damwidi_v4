@@ -44,6 +44,7 @@ router.get('/unstick', auth, ensureAdmin, async (req, res) => {
 // @access: private
 // @role:   member
 router.get('/tradeHistory', auth, ensureMember, async (req, res) => {
+    console.log("tradeHistory route called - backend");
     try {
         const transactions = await Transaction.findAll({
             attributes: ['transaction_date', 'symbol', 'type', 'amount', 'shares', 'description'],
