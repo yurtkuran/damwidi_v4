@@ -15,7 +15,7 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | Legacy analysis and consumer inventory | Complete | Detailed findings are in `return-intraday-data-decomposition-analysis.md`. |
 | Polygon usage and cache analysis | Complete | The analysis recommends one shared, cached market-snapshot service. |
 | Map-based migration design | Complete | The phased design is documented in `return-intraday-data-map-cache-migration-plan.md`. |
-| Shared market-snapshot foundation | Committed on feature branch | Commit `adc3ee5` on `feature/market-snapshot-foundation` adds the cache, provider integration, repository read, observability, and focused tests. It is not yet wired into application routes. |
+| Shared market-snapshot foundation | Implementation and validation complete on feature branch | Commits `adc3ee5` and `26b7d24` on `feature/market-snapshot-foundation` add the cache, provider integration, repository read, observability, tests, live smoke assertions, and CI execution. It is not yet wired into application routes. |
 | DAM quote migration | Not complete | `/api/marketData/quote/DAM` still calls PHP `returnIntraDayData`. |
 | Position-performance endpoint | Not started | Performance is still generated for all positions by the legacy endpoint. |
 | Allocation endpoint and React migration | Not started | Allocation still consumes `/api/damwidi/intraDayData`. |
@@ -90,7 +90,9 @@ Capture deterministic database and provider fixtures for normal market operation
 
 ### Phase 1 — Complete the shared market-snapshot foundation
 
-The cache, Polygon batch/status functions, Yahoo fallback, repository read, session policies, single-flight behavior, observability, and focused tests are committed as `adc3ee5` on `feature/market-snapshot-foundation`. Isolated syntax and unit tests pass. The branch intentionally contains no route or React changes; live environment validation and review remain required before merging.
+The cache, Polygon batch/status functions, Yahoo fallback adapter, repository read, session policies, single-flight behavior, observability, and focused tests are committed as `adc3ee5` and `26b7d24` on `feature/market-snapshot-foundation`. Deterministic tests cover every configured session TTL, concurrent refresh/fallback coalescing, projection isolation, and provider failure/retry. A live read-only smoke test returned one complete 24-symbol snapshot through one Polygon status request and one batch request, then reused the cache. CI now runs the focused test before building the Docker image. The branch intentionally contains no route or React changes.
+
+The configured AWS fallback endpoint is reachable and returns HTTP 200, but live checks on several valid symbols returned an empty `previousClose` and no usable current price. The Node adapter correctly treats those responses as unavailable, while deterministic tests verify normalization for a valid response. The external AWS/Yahoo service must return usable quote data before a migrated route can rely on fallback behavior in production.
 
 ### Phase 2 — Migrate the DAM quote
 
