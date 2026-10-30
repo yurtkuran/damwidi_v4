@@ -15,7 +15,7 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | Legacy analysis and consumer inventory | Complete | Detailed findings are in `return-intraday-data-decomposition-analysis.md`. |
 | Polygon usage and cache analysis | Complete | The analysis recommends one shared, cached market-snapshot service. |
 | Map-based migration design | Complete | The phased design is documented in `return-intraday-data-map-cache-migration-plan.md`. |
-| Shared market-snapshot foundation | Local work in progress | Uncommitted services/config/tests exist locally, but they are not wired into application routes and are not part of the documentation branch. |
+| Shared market-snapshot foundation | Committed on feature branch | Commit `adc3ee5` on `feature/market-snapshot-foundation` adds the cache, provider integration, repository read, observability, and focused tests. It is not yet wired into application routes. |
 | DAM quote migration | Not complete | `/api/marketData/quote/DAM` still calls PHP `returnIntraDayData`. |
 | Position-performance endpoint | Not started | Performance is still generated for all positions by the legacy endpoint. |
 | Allocation endpoint and React migration | Not started | Allocation still consumes `/api/damwidi/intraDayData`. |
@@ -44,7 +44,7 @@ These changes reduce the remaining PHP surface and provide examples for read-onl
 
 ### `feature/migrate-dam-quote`
 
-This local branch has no unique committed changes relative to its base and is behind current `master`. It must not be treated as evidence that the DAM quote has migrated. Market-snapshot foundation work exists only as local uncommitted/stashed work and needs to be completed, tested, and committed on an appropriate feature branch before the DAM route can use it.
+This local branch has no unique committed changes relative to its base and is behind current `master`. It must not be treated as evidence that the DAM quote has migrated. The reusable foundation has instead been committed separately as `adc3ee5` on `feature/market-snapshot-foundation`; the DAM route still needs a later integration phase.
 
 ## Front-End Usage
 
@@ -90,7 +90,7 @@ Capture deterministic database and provider fixtures for normal market operation
 
 ### Phase 1 — Complete the shared market-snapshot foundation
 
-Finish and verify the cache, Polygon batch/status functions, Yahoo fallback, repository reads, session policies, single-flight behavior, stale-data behavior, logging, and focused unit tests. Keep this phase independent from route and React changes. Local work exists but is not yet a committed, integrated implementation.
+The cache, Polygon batch/status functions, Yahoo fallback, repository read, session policies, single-flight behavior, observability, and focused tests are committed as `adc3ee5` on `feature/market-snapshot-foundation`. Isolated syntax and unit tests pass. The branch intentionally contains no route or React changes; live environment validation and review remain required before merging.
 
 ### Phase 2 — Migrate the DAM quote
 
