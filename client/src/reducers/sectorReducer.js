@@ -7,7 +7,7 @@ const initialState = {
     loading: true,
 };
 
-export default (state = initialState, action) => {
+const sectorReducer = (state = initialState, action) => {
     const { type, payload } = action;
 
     switch (type) {
@@ -52,3 +52,5 @@ export default (state = initialState, action) => {
             return state;
     }
 };
+
+export default sectorReducer;
