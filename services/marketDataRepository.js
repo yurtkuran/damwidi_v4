@@ -48,8 +48,28 @@ const getYTDHistoryLength = async (year, database = db) => {
     return Number(rows[0].count) + 1;
 };
 
+const getMarketSnapshotRows = async (database = db) => {
+    return database.query(
+        `
+            SELECT
+                sector AS symbol,
+                type,
+                shares,
+                previous,
+                previousDate,
+                \`1day\`,
+                \`2day\`
+            FROM data_performance
+            WHERE type IN ('S', 'I', 'K')
+            ORDER BY sector
+        `,
+        { type: Sequelize.QueryTypes.SELECT }
+    );
+};
+
 module.exports = {
     getAboveBelowSectors,
+    getMarketSnapshotRows,
     getRecentHistory,
     getYTDHistoryLength,
 };
