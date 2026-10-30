@@ -8,7 +8,7 @@ const initialState = {
     user: null,
 };
 
-export default (state = initialState, action) => {
+const authReducer = (state = initialState, action) => {
     const { type, payload } = action;
 
     switch (type) {
@@ -68,3 +68,5 @@ export default (state = initialState, action) => {
             return state;
     }
 };
+
+export default authReducer;
