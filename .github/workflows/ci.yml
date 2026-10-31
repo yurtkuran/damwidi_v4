@@ -24,6 +24,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install server dependencies
+        run: npm ci
+
+      - name: Install getQuote Lambda dependencies
+        run: npm ci --prefix lambdas/getQuote
+
+      - name: Test getQuote Lambda
+        run: npm test --prefix lambdas/getQuote
+
+      - name: Test market snapshot foundation
+        run: npm run test:market-snapshot
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
