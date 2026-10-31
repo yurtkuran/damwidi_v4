@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { validateSymbol } from '../../actions/iexActions';
+import { getProfile } from '../../actions/marketActions';
 import { addOrUpdateETF, validateSymbol as validateETF } from '../../actions/etfActions';
 
 // set initial form state
@@ -23,7 +23,7 @@ const initialErrorState = {
     description: '',
 };
 
-const EtfForm = ({ current, addOrUpdateETF, history }) => {
+const EtfForm = ({ current, getProfile, addOrUpdateETF, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialState);
 
@@ -56,19 +56,21 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
                 if (symbol === '') {
                     error = 'ETF symbol is required';
                 } else {
+                    const normalizedSymbol = symbol.toUpperCase();
+
                     setFormData((prevFormData) => {
-                        return { ...prevFormData, symbol: symbol.toUpperCase() };
+                        return { ...prevFormData, symbol: normalizedSymbol };
                     });
 
-                    if (error === '' && (current === null || symbol.toUpperCase() !== current.symbol)) {
-                        error = !(await validateETF({ symbol })) ? 'Symbol already in use' : '';
+                    if (error === '' && (current === null || normalizedSymbol !== current.symbol)) {
+                        error = !(await validateETF({ symbol: normalizedSymbol })) ? 'Symbol already in use' : '';
                     }
 
                     if (error === '') {
-                        const companyData = await validateSymbol({ symbol });
+                        const companyData = await getProfile(normalizedSymbol);
                         if (companyData) {
                             setFormData((prevFormData) => {
-                                return { ...prevFormData, description: companyData.issueType === 'et' ? companyData.securityName : companyData.companyName, disabled: true };
+                                return { ...prevFormData, description: companyData.name, disabled: true };
                             });
                         } else {
                             setFormData((prevFormData) => {
@@ -182,6 +184,7 @@ const EtfForm = ({ current, addOrUpdateETF, history }) => {
 
 EtfForm.propTypes = {
     current: PropTypes.object.isRequired,
+    getProfile: PropTypes.func.isRequired,
     addOrUpdateETF: PropTypes.func.isRequired,
 };
 
@@ -190,4 +193,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { addOrUpdateETF })(EtfForm);
+export default connect(mapStatetoProps, { getProfile, addOrUpdateETF })(EtfForm);
