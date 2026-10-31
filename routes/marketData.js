@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
 
 // database models
 const SP500 = require('../models/SP500');
@@ -10,6 +9,7 @@ const Stock = require('../models/Stock');
 const { scrapeSlickCharts, scrapeStockMBA } = require('../services/scrapeSPData');
 const { company, keyStats, intraDay } = require('../services/iexCloud');
 const { quote, profile } = require('../services/polygon');
+const { getDamQuote } = require('../services/portfolioValuation');
 const { scrapeFidelity } = require('../services/scrapeGics');
 const { metrics } = require('../services/finnHub');
 
@@ -19,10 +19,6 @@ const { auth, ensureAdmin, ensureMember, ensureVerified } = require('../middlewa
 // express validator middleware
 const { check, validationResult } = require('express-validator');
 const { PromiseProvider } = require('mongoose');
-
-// damwidi_v2 base URL
-// const damwidiBaseURL = 'http://localhost:8080/damwidiMain.php?mode=';
-const damwidiBaseURL = 'http://www.damwidi.com/damwidiMain.php?mode=';
 
 // @route:  GET api/marketData/sp500
 // @desc:   retrieve S&P500 companies
@@ -224,7 +220,7 @@ router.get('/stockInfo', auth, ensureMember, async (req, res) => {
 // @desc:   retrieve intraday quote
 // @access: private
 // @role:   verified
-// @source: polygon
+// @source: polygon / shared market snapshot and MySQL for DAM
 router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
     const symbol = req.params.symbol;
     let quoteData = {};
@@ -237,17 +233,7 @@ router.get('/quote/:symbol', auth, ensureVerified, async (req, res) => {
             quoteData.week52Low  = stockMetrics.data["52WeekLow"];
 
         } else {
-            const url = damwidiBaseURL + 'returnIntraDayData';
-            const damwidi = await axios.get(url);
-            const { currentValue, prevClose, gain } = damwidi.data.intraDay.DAM;
-
-            quoteData = {
-                symbol: 'DAM',
-                latestPrice: currentValue,
-                change: currentValue - prevClose,
-                changePercent: gain / 100,
-                previousClose: prevClose,
-            };
+            quoteData = await getDamQuote();
         }
         res.json(quoteData);
     } catch (err) {
