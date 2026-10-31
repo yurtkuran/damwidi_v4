@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 // bring in actions
-import { validateSymbol as validateSymbolIEX } from '../../actions/iexActions';
+import { getProfile } from '../../actions/marketActions';
 import { validateSymbol as validateSector, addOrUpdateSector } from '../../actions/sectorActions';
 
 // set initial form state
@@ -21,7 +21,7 @@ const initialErrorState = {
     name: '',
 };
 
-const SectorForm = ({ current, validateSector, addOrUpdateSector, history }) => {
+const SectorForm = ({ current, getProfile, validateSector, addOrUpdateSector, history }) => {
     // init local form data
     const [formData, setFormData] = useState(initialState);
 
@@ -54,17 +54,25 @@ const SectorForm = ({ current, validateSector, addOrUpdateSector, history }) => 
                 if (symbol === '') {
                     error = 'Symbol is required';
                 } else {
+                    const normalizedSymbol = symbol.toUpperCase();
+
+                    setFormData((prevFormData) => {
+                        return { ...prevFormData, symbol: normalizedSymbol };
+                    });
+
                     // check if valid symbol and update description
-                    const companyData = await validateSymbolIEX({ symbol });
+                    const companyData = await getProfile(normalizedSymbol);
                     if (companyData) {
-                        setFormData({ ...formData, description: companyData.companyName });
+                        setFormData((prevFormData) => {
+                            return { ...prevFormData, description: companyData.name };
+                        });
                     } else {
                         error = 'Invalid symbol';
                     }
 
                     // verify symbol (check if symbol is in use)
-                    if (error === '' && symbol.toUpperCase() !== current.symbol) {
-                        error = !(await validateSector({ symbol })) ? 'Sector already in use' : '';
+                    if (error === '' && (current === null || normalizedSymbol !== current.symbol)) {
+                        error = !(await validateSector({ symbol: normalizedSymbol })) ? 'Sector already in use' : '';
                     }
                 }
                 break;
@@ -155,6 +163,7 @@ const SectorForm = ({ current, validateSector, addOrUpdateSector, history }) => 
 
 SectorForm.propTypes = {
     current: PropTypes.object.isRequired,
+    getProfile: PropTypes.func.isRequired,
     validateSector: PropTypes.func.isRequired,
     addOrUpdateSector: PropTypes.func.isRequired,
 };
@@ -164,4 +173,4 @@ const mapStatetoProps = (state) => ({
     errorMessages: state.message,
 });
 
-export default connect(mapStatetoProps, { validateSector, addOrUpdateSector })(SectorForm);
+export default connect(mapStatetoProps, { getProfile, validateSector, addOrUpdateSector })(SectorForm);
