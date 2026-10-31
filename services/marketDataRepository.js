@@ -76,6 +76,8 @@ const getAllocationInputs = async (database = db) => {
                     weight,
                     shares,
                     basis,
+                    previous,
+                    \`2day\`,
                     name,
                     description,
                     type
@@ -92,6 +94,8 @@ const getAllocationInputs = async (database = db) => {
                     weight,
                     shares,
                     basis,
+                    previous,
+                    \`2day\`,
                     name,
                     description,
                     type

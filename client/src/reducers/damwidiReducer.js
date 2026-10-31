@@ -2,8 +2,9 @@ import {
     GET_ABOVEBELOW_DATA,
     GET_ALLOCATION_DATA,
     GET_ALLOCATION_ERROR,
+    GET_DASHBOARD_DATA,
+    GET_DASHBOARD_ERROR,
     GET_HISTORY,
-    GET_INTRADAY_DATA,
     GET_OPEN_POSITIONS,
     GET_PERFORMANCE_DATA,
     GET_POSITION_PERFORMANCE,
@@ -12,13 +13,16 @@ import {
     GET_TRADE_HISTORY,
     GET_UNSTICK_LOG,
     RESET_ALLOCATION_LOADING,
+    RESET_DASHBOARD_LOADING,
     RESET_DAMWIDI_LOADING,
 } from '../actions/types';
 
 const initialState = {
     unstick: [],
     history: [],
-    intraDay: {},
+    dashboardData: null,
+    dashboardLoading: true,
+    dashboardError: false,
     performance: {},
     abovebelow: {},
     historyData: {},
@@ -51,11 +55,19 @@ const damwidiReducer = (state = initialState, action) => {
                 loading: false,
             };
 
-        case GET_INTRADAY_DATA:
+        case GET_DASHBOARD_DATA:
             return {
                 ...state,
-                intraDay: payload,
-                loading: false,
+                dashboardData: payload,
+                dashboardLoading: false,
+                dashboardError: false,
+            };
+
+        case GET_DASHBOARD_ERROR:
+            return {
+                ...state,
+                dashboardLoading: false,
+                dashboardError: true,
             };
 
         case GET_ALLOCATION_DATA:
@@ -134,6 +146,13 @@ const damwidiReducer = (state = initialState, action) => {
                 ...state,
                 allocationLoading: true,
                 allocationError: false,
+            };
+
+        case RESET_DASHBOARD_LOADING:
+            return {
+                ...state,
+                dashboardLoading: true,
+                dashboardError: false,
             };
 
         default:

@@ -10,6 +10,7 @@
         "dev": "concurrently \"npm run server\" \"npm run client\"",
         "test:allocation-data": "node test/allocation.test.js",
         "test:dam-quote": "node test/damQuote.test.js",
+        "test:dashboard-data": "node test/dashboardData.test.js",
         "test:market-snapshot": "node test/marketSnapshot.test.js",
         "test:position-performance": "node test/positionPerformance.test.js",
         "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
