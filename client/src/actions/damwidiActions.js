@@ -4,8 +4,9 @@ import {
     GET_ABOVEBELOW_DATA,
     GET_ALLOCATION_DATA,
     GET_ALLOCATION_ERROR,
+    GET_DASHBOARD_DATA,
+    GET_DASHBOARD_ERROR,
     GET_HISTORY,
-    GET_INTRADAY_DATA,
     GET_OPEN_POSITIONS,
     GET_PERFORMANCE_DATA,
     GET_POSITION_PERFORMANCE,
@@ -14,6 +15,7 @@ import {
     GET_TRADE_HISTORY,
     GET_UNSTICK_LOG,
     RESET_ALLOCATION_LOADING,
+    RESET_DASHBOARD_LOADING,
     RESET_DAMWIDI_LOADING,
 } from './types';
 
@@ -38,13 +40,16 @@ export const getTradeHistory = () => async (dispatch) => {
     }
 };
 
-// get intraday data
-export const getIntraDayData = () => async (dispatch) => {
+// get dashboard data
+export const getDashboardData = () => async (dispatch) => {
+    dispatch({ type: RESET_DASHBOARD_LOADING });
+
     try {
-        const res = await axios.get(`/api/damwidi/intraDayData`);
-        dispatch({ type: GET_INTRADAY_DATA, payload: res.data });
+        const res = await axios.get(`/api/damwidi/dashboardData`);
+        dispatch({ type: GET_DASHBOARD_DATA, payload: res.data });
     } catch (err) {
         console.log(err);
+        dispatch({ type: GET_DASHBOARD_ERROR });
     }
 };
 
