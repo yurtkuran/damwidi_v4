@@ -32,7 +32,6 @@ app.use('/api/confirm', require('./routes/confirm'));
 app.use('/api/damwidi', require('./routes/damwidi'));
 app.use('/api/etf', require('./routes/etf'));
 app.use('/api/marketData', require('./routes/marketData'));
-app.use('/api/iex', require('./routes/iex'));
 app.use('/api/sectors', require('./routes/sectors'));
 app.use('/api/stocks', require('./routes/stocks'));
 app.use('/api/users', require('./routes/users'));

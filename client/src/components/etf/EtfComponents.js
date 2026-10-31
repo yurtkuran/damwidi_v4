@@ -17,7 +17,7 @@ import EtfUpload from './EtfUpload';
 
 // bring in actions
 import { addOrUpdateComponents } from '../../actions/etfActions';
-import { validateSymbol } from '../../actions/iexActions';
+import { getProfile } from '../../actions/marketActions';
 
 // set initial form state
 const initialFormState = {
@@ -35,7 +35,7 @@ const initialMessageState = {
 
 // form validation
 const fieldList = ['symbol', 'weight'];
-const validateFormSymbol = async (component, componentArray, error, updateStatus, setStatusMessage) => {
+const validateFormSymbol = async (component, componentArray, error, updateStatus, setStatusMessage, getProfile) => {
     // if symbol is blank
     if (component.symbol === '') {
         error = true;
@@ -54,12 +54,12 @@ const validateFormSymbol = async (component, componentArray, error, updateStatus
 
     // check if valid symbol and update company name
     if (error === false) {
-        const companyData = await validateSymbol({ symbol: component.symbol.toUpperCase() });
+        const companyData = await getProfile(component.symbol.toUpperCase());
         if (!companyData) {
             error = true;
             if (updateStatus) setStatusMessage({ message: `invalid symbol`, type: 'text-danger' });
         } else {
-            if (updateStatus) setStatusMessage({ message: `${companyData.companyName}`, type: 'text-success' });
+            if (updateStatus) setStatusMessage({ message: `${companyData.name}`, type: 'text-success' });
         }
     }
     return error;
@@ -80,7 +80,7 @@ const validateFormWeight = async (component, error, updateStatus, setStatusMessa
     return error;
 };
 
-const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUpdateComponents, validateSymbol, history }) => {
+const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUpdateComponents, getProfile, history }) => {
     // local state
     const [components, setComponents] = useState([initialFormState]);
 
@@ -156,7 +156,7 @@ const EtfComponents = ({ current: { _id, symbol, holdings, weightType }, addOrUp
         switch (field) {
             case 'symbol':
                 component = { ...component, symbol: component.symbol.toUpperCase().trim() }; // make symbol uppercase
-                error = await validateFormSymbol(component, components, error, updateStatus, setStatusMessage);
+                error = await validateFormSymbol(component, components, error, updateStatus, setStatusMessage, getProfile);
                 break;
             case 'weight':
                 if (weightType !== 'market') error = await validateFormWeight(component, error, updateStatus, setStatusMessage);
@@ -327,7 +327,7 @@ const FormGroup = ({ onChange, onBlur, buttonClick, buttonDisabled, weightDisabl
 
 EtfComponents.propTypes = {
     addOrUpdateComponents: PropTypes.func.isRequired,
-    validateSymbol: PropTypes.func.isRequired,
+    getProfile: PropTypes.func.isRequired,
     current: PropTypes.object.isRequired,
 };
 
@@ -335,4 +335,4 @@ const mapStatetoProps = (state) => ({
     current: state.etf.current,
 });
 
-export default connect(mapStatetoProps, { addOrUpdateComponents, validateSymbol })(EtfComponents);
+export default connect(mapStatetoProps, { addOrUpdateComponents, getProfile })(EtfComponents);
