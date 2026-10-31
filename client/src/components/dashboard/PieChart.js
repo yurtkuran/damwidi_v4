@@ -96,8 +96,8 @@ const PieChart = ({ data }) => {
         let pieData = [];
         let others = 0;
 
-        for (const item in data) {
-            const { name, impliedPercent, allocation, type, symbol } = data[item];
+        for (const item of data) {
+            const { name, impliedPercent, allocation, type, symbol } = item;
 
             // add sectors and cash; SPY is allocated in these numbers
             if (type === 'Y' || type === 'C') {
@@ -142,7 +142,7 @@ const PieChart = ({ data }) => {
 };
 
 PieChart.propTypes = {
-    data: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
 };
 
 export default PieChart;

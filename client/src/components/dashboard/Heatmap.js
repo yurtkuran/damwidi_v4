@@ -18,7 +18,10 @@ import HighchartsReact from 'highcharts-react-official';
 // init highcharts export module
 Highcharts_exporting(Highcharts);
 
-const Heatmap = ({ title, categories, data, portfolio }) => {
+const Heatmap = ({ title, movers }) => {
+    const categories = movers.map((mover) => mover.symbol);
+    const data = movers.map((mover) => mover.gain);
+    const heldSymbols = movers.filter((mover) => mover.held).map((mover) => mover.symbol);
     // state handler for chart options
     const chartOptions = {
         chart: {
@@ -112,7 +115,7 @@ const Heatmap = ({ title, categories, data, portfolio }) => {
             }
 
             // set bar color on current holding and value
-            if (Object.keys(portfolio).includes(chart.series[0].data[i].category)) {
+            if (heldSymbols.includes(chart.series[0].data[i].category)) {
                 chart.series[0].data[i].update(
                     {
                         color: chart.series[0].data[i].negative ? 'rgba(209, 58, 58, 1)' : 'rgba(18, 143, 4, 1)',

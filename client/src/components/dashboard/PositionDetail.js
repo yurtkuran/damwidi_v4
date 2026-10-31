@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
@@ -9,48 +9,48 @@ import { connect } from 'react-redux';
 // bring in components
 import Performance from './Performance';
 import Candlestick from '../charts/Candlestick';
+import Spinner from '../layout/Spinner';
+
+// bring in actions
+import { getPositionPerformance } from '../../actions/damwidiActions';
 
 // bring in functions and hooks
 
 // set initial state
 
-const PositionDetail = ({ symbol, performanceData }) => {
-    // state for performance chart
-    const [categories, setCategories] = useState([]);
-    const [seriesPrice, setSeriesPrice] = useState([]);
-    const [seriesSPY, setSeriesSPY] = useState([]);
-    const [loading, setLoading] = useState(true);
+const PositionDetail = ({ error, getPositionPerformance, loading, performanceData, symbol }) => {
+    useEffect(() => {
+        getPositionPerformance(symbol);
+    }, [getPositionPerformance, symbol]);
 
-    // format data when component loads
-    useMemo(() => {
-        performanceData[symbol].purchases.forEach((purchase) => {
-            categories.push(purchase.dateBasis);
-            seriesPrice.push(purchase.priceGain);
-            seriesSPY.push(purchase.spyGain);
-        });
+    const categories = useMemo(() => (performanceData ? performanceData.purchases.map((purchase) => purchase.dateBasis) : []), [performanceData]);
+    const seriesPrice = useMemo(() => (performanceData ? performanceData.purchases.map((purchase) => purchase.priceGain) : []), [performanceData]);
+    const seriesSPY = useMemo(() => (performanceData ? performanceData.purchases.map((purchase) => purchase.spyGain) : []), [performanceData]);
 
-        setCategories(categories);
-        setSeriesPrice(seriesPrice);
-        setSeriesSPY(seriesSPY);
-        setLoading(false);
-    }, [symbol, performanceData, categories, seriesPrice, seriesSPY]);
+    if (loading || !performanceData) {
+        return error ? <p>unable to load position performance</p> : <Spinner />;
+    }
 
     return (
-        !loading && (
-            <div className='charts charts-secondary'>
-                <Candlestick symbol={symbol} type={'intraday'} simple={true} />
-                <Performance categories={categories} seriesSPY={seriesSPY} seriesPrice={seriesPrice} />
-            </div>
-        )
+        <div className='charts charts-secondary'>
+            <Candlestick symbol={symbol} type={'intraday'} simple={true} />
+            <Performance categories={categories} seriesSPY={seriesSPY} seriesPrice={seriesPrice} />
+        </div>
     );
 };
 
 PositionDetail.propTypes = {
-    performanceData: PropTypes.object.isRequired,
+    error: PropTypes.bool,
+    getPositionPerformance: PropTypes.func.isRequired,
+    loading: PropTypes.bool,
+    performanceData: PropTypes.object,
+    symbol: PropTypes.string.isRequired,
 };
 
-const mapStatetoProps = (state) => ({
-    performanceData: state.damwidi.intraDay.performanceData.data,
+const mapStatetoProps = (state, { symbol }) => ({
+    error: Boolean(state.damwidi.positionPerformanceErrors[symbol]),
+    loading: Boolean(state.damwidi.positionPerformanceLoading[symbol]),
+    performanceData: state.damwidi.positionPerformance[symbol],
 });
 
-export default connect(mapStatetoProps)(PositionDetail);
+export default connect(mapStatetoProps, { getPositionPerformance })(PositionDetail);

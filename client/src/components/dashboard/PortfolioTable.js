@@ -53,7 +53,7 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubCo
                             </tr>
                             {row.isExpanded ? (
                                 <tr>
-                                    <td colSpan={visibleColumns.length}>{renderRowSubComponent(data[row.index].sector)}</td>
+                                    <td colSpan={visibleColumns.length}>{renderRowSubComponent(row.original.symbol)}</td>
                                 </tr>
                             ) : null}
                         </Fragment>
@@ -73,7 +73,7 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, renderRowSubCo
     );
 };
 
-const PortfolioTable = ({ data }) => {
+const PortfolioTable = ({ data, fundQuote }) => {
     // function to render row sub components
     const renderRowSubComponent = useCallback((symbol) => {
         return <PositionDetail symbol={symbol} />;
@@ -83,14 +83,21 @@ const PortfolioTable = ({ data }) => {
     const tableData = useMemo(
         () =>
             data
-                .filter((position) => position.sector !== 'DAM')
                 .sort((a, b) => {
-                    return a.sector < b.sector ? -1 : a.sector > b.sector ? 1 : 0;
+                    return a.symbol < b.symbol ? -1 : a.symbol > b.symbol ? 1 : 0;
                 }),
         [data]
     );
 
-    const damData = useMemo(() => data.filter((position) => position.sector === 'DAM')[0], [data]);
+    const damData = useMemo(
+        () => ({
+            sector: fundQuote.symbol,
+            prevClose: fundQuote.previousClose,
+            currentValue: fundQuote.latestPrice,
+            gain: fundQuote.changePercent * 100,
+        }),
+        [fundQuote]
+    );
 
     // build columns
     const columns = useMemo(
@@ -105,7 +112,7 @@ const PortfolioTable = ({ data }) => {
                 ),
             },
             {
-                accessor: 'sector',
+                accessor: 'symbol',
                 Header: 'Symbol',
                 headerClassName: 'text-center',
                 Footer: () => {
@@ -137,7 +144,7 @@ const PortfolioTable = ({ data }) => {
             },
             {
                 Header: 'Previous',
-                accessor: 'prevClose',
+                accessor: 'previousClose',
                 Cell: (prevClose) => numeral(prevClose.value).format('$0,0.00'),
                 headerClassName: 'text-right',
                 className: 'text-right',
@@ -155,9 +162,9 @@ const PortfolioTable = ({ data }) => {
                 Header: 'Price Change',
                 accessor: 'priceChange',
                 Cell: ({ row: { original } }) => {
-                    const { last, prevClose } = original;
-                    const gain = ((last - prevClose) / prevClose) * 100;
-                    return `${numeral(gain).format('0.00')}% /  ${numeral(last - prevClose).format('$0,0.00')}`;
+                    const { last, previousClose } = original;
+                    const gain = ((last - previousClose) / previousClose) * 100;
+                    return `${numeral(gain).format('0.00')}% /  ${numeral(last - previousClose).format('$0,0.00')}`;
                 },
                 headerClassName: 'text-center',
                 className: 'text-center',
@@ -179,8 +186,8 @@ const PortfolioTable = ({ data }) => {
                 Header: 'Change',
                 accessor: 'change',
                 Cell: ({ row: { original } }) => {
-                    const { shares, last, prevClose } = original;
-                    return numeral(shares * (last - prevClose)).format('$0,0.00');
+                    const { shares, last, previousClose } = original;
+                    return numeral(shares * (last - previousClose)).format('$0,0.00');
                 },
                 headerClassName: 'text-right',
                 className: 'text-right',

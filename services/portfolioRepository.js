@@ -79,8 +79,26 @@ const getPositionTransactions = async (symbol, throughDate, database = db) => {
     );
 };
 
+const getLatestDamValue = async (database = db) => {
+    const rows = await database.query(
+        `
+            SELECT
+                date,
+                total_shares,
+                share_value,
+                bivio_value
+            FROM data_value
+            ORDER BY date DESC
+            LIMIT 1
+        `,
+        { type: Sequelize.QueryTypes.SELECT }
+    );
+
+    return rows[0] || null;
+};
+
 const getDamValuationInputs = async (database = db) => {
-    const [performanceRows, valueRows] = await Promise.all([
+    const [performanceRows, latestValue] = await Promise.all([
         database.query(
             `
                 SELECT
@@ -95,31 +113,20 @@ const getDamValuationInputs = async (database = db) => {
             `,
             { type: Sequelize.QueryTypes.SELECT }
         ),
-        database.query(
-            `
-                SELECT
-                    date,
-                    total_shares,
-                    share_value,
-                    bivio_value
-                FROM data_value
-                ORDER BY date DESC
-                LIMIT 1
-            `,
-            { type: Sequelize.QueryTypes.SELECT }
-        ),
+        getLatestDamValue(database),
     ]);
 
     return {
         cash: performanceRows.find((row) => row.type === 'C' && row.symbol === 'CASH') || null,
         holdings: performanceRows.filter((row) => row.type !== 'C'),
-        latestValue: valueRows[0] || null,
+        latestValue,
     };
 };
 
 module.exports = {
     getDamValuationInputs,
     getHistoricalCloses,
+    getLatestDamValue,
     getPositionPreviousClose,
     getPositionSplits,
     getPositionTransactions,

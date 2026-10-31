@@ -59,7 +59,7 @@ const IndexGauge = ({ indexReturn: { DAM, SPY }, trades: { DAM: tradeDAM, SPY: t
             // update value
             setPerformnace(value);
         }
-    }, [tradeDAM, tradeSPY, DAM, SPY]);
+    }, [tradeDAM, tradeSPY, DAM, SPY, performance]);
 
     const Performance = () => {
         return <h5 className={performance < 0 ? 'index-down' : 'index-up'}>{numeral(performance).format('0.00%')}</h5>;

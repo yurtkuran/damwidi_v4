@@ -13,6 +13,7 @@ const Transaction = require('../models/Transaction.model');
 const { getSectorTimeframePerformanceData } = require('../services/sectorPerformance');
 const { getAboveBelowData } = require('../services/aboveBelow');
 const { getAllocationData } = require('../services/allocation');
+const { getDashboardData, projectDashboardData } = require('../services/dashboardData');
 const { getPositionPerformance } = require('../services/positionPerformance');
 
 // authorization middleware
@@ -100,6 +101,20 @@ router.get('/intraDayData', auth, async (req, res) => {
             delete damwidi.data.heatMapData;
         }
         res.json(damwidi.data);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/damwidi/dashboardData
+// @desc:   retrieve role-appropriate dashboard data
+// @access: private
+// @role:   authenticated; detailed positions are returned only to members
+router.get('/dashboardData', auth, async (req, res) => {
+    try {
+        const dashboardData = await getDashboardData();
+        res.json(projectDashboardData(dashboardData, req.user.isMember));
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

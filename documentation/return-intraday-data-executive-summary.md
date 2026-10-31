@@ -19,8 +19,8 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | DAM quote migration | Complete, deployed, and production validated | `/api/marketData/quote/DAM` uses the shared market snapshot plus read-only portfolio valuation. The existing route, authentication, response fields, and error response are preserved. Production Node output exactly matches live PHP against production MySQL data. |
 | Position-performance endpoint | Deployed and production validated; Allocation consumer migrated | The member-only lazy endpoint exactly matched live PHP for AMZN and split-adjusted XLK. Allocation now uses the per-symbol React cache/consumer; Dashboard remains on eager legacy performance data. |
 | Allocation endpoint and React migration | Complete, deployed, and production validated | The focused member endpoint, numeric domain response, Allocation React migration, and lazy purchase loading were merged through PR #73. Production visible values, row order, fund totals, data quality, and expanded-position results match PHP. |
-| Dashboard endpoint and React migration | Not started | Dashboard is the sole remaining React consumer of `/api/damwidi/intraDayData`. Its DAM card now uses the migrated Node quote route independently. |
-| Legacy proxy retirement | Not started | `routes/damwidi.js` still exposes the PHP-backed intraday route. |
+| Dashboard endpoint and React migration | Implemented and locally validated; merge/deployment pending | `feature/migrate-dashboard-data` adds the focused authenticated endpoint, role-aware projection, shared initial index quotes, React migration, and lazy position performance. Live Node/PHP parity and route tests pass. |
+| Legacy proxy retirement | Not started | No React source calls `/api/damwidi/intraDayData` on the Dashboard feature branch, but `routes/damwidi.js` still exposes the PHP-backed route pending deployment and caller observation. |
 
 Production now has one active Node-to-PHP path for this functionality:
 
@@ -49,9 +49,9 @@ The original local branch contained no unique committed changes and was deleted 
 
 ## Front-End Usage
 
-Dashboard is now the React application's sole remaining direct consumer of `/api/damwidi/intraDayData`. Allocation uses `/api/damwidi/allocationData`, and `/api/marketData/quote/DAM` no longer depends on the legacy response.
+On `feature/migrate-dashboard-data`, the React application has no remaining direct consumer of `/api/damwidi/intraDayData`. Dashboard uses `/api/damwidi/dashboardData`, Allocation uses `/api/damwidi/allocationData`, and `/api/marketData/quote/DAM` no longer depends on the legacy response. The PHP-backed Node route remains available during deployment validation and caller observation.
 
-- Dashboard uses selected heatmap, allocation, holdings, fund-value, and position-performance data. It ignores the complete raw `intraDay`, `marketStatus`, and `status` sections. Mounting Dashboard invokes the PHP endpoint for Dashboard data; the DAM `IndexCard` separately uses the migrated Node quote route.
+- Dashboard now receives only market movers, allocation summary rows, a role-appropriate holdings projection, data quality, the DAM fund quote, and initial DAM/SPY/QQQ/DIA quotes. Its four `IndexCard` components use those initial quotes instead of making separate startup requests, and expanded member positions use the lazy position-performance endpoint.
 - Allocation now receives only its allocation rows and fund summary from `/api/damwidi/allocationData`; purchase performance is requested by symbol when a row is first expanded. It no longer fetches the heatmap, portfolio table, raw quote universe, market status, diagnostics, or eager performance for every open position.
 - Purchase performance is calculated for every open position on every legacy request, although React needs it only after a user expands a position.
 
@@ -119,7 +119,11 @@ The deployed React asset (`/static/js/main.3cce9515.js`) exactly matches the loc
 
 ### Phase 5 — Migrate Dashboard
 
-Implement `/api/damwidi/dashboardData` and migrate Dashboard. Include initial fund and market-card quotes in the response, keep presentation styling in React where explicitly approved, and use the lazy performance endpoint for expanded positions.
+Implemented on `feature/migrate-dashboard-data`: `GET /api/damwidi/dashboardData` uses `auth`, one shared market snapshot, the existing allocation calculations, and portfolio valuation. It returns `asOf`, `fundQuote`, initial DAM/SPY/QQQ/DIA `indexQuotes`, gain-ordered `movers`, the Dashboard-only allocation summary, role-projected `positions`, and data quality. Non-members receive an empty `positions` array while retaining the public Dashboard projection.
+
+React now derives heatmap presentation from `movers`, builds the pie from numeric summary rows, initializes all four index cards from the Dashboard response, and loads position performance through the existing per-symbol cache. The existing `/openPositions` request remains temporarily because it supplies shares for Finnhub WebSocket updates. Real-time DAM valuation starts from the complete server fund value and applies live price deltas, preserving CASH without exposing it as a position.
+
+Deterministic tests cover response fields and scalar types, gain ordering, premarket previous-close behavior, role projection, missing inputs, service composition, removal of frontend legacy calls, initial-quote reuse, and lazy performance wiring. A live read-only comparison matched all 23 movers and gains in order, all 18 allocation-summary rows, all 10 member positions, the DAM quote, and data-quality status. Local route validation returned the existing missing-token and invalid-token 401 responses, member and non-member 200 responses with the correct projection, and database-failure 500 `server error`. All prior migration suites still pass and the production React build compiles without application lint warnings; the existing Browserslist-data freshness notice remains. An interactive rendered-browser check remains for deployment validation because browser automation was unavailable in the implementation session.
 
 ### Phase 6 — Retire `returnIntraDayData`
 
