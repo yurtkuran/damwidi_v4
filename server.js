@@ -37,6 +37,9 @@ app.use('/api/sectors', require('./routes/sectors'));
 app.use('/api/stocks', require('./routes/stocks'));
 app.use('/api/users', require('./routes/users'));
 
+// return JSON for unmatched API routes before the React fallback
+app.use('/api', (req, res) => res.status(404).json({ msg: 'route not found' }));
+
 // server static assets in production
 if (process.env.NODE_ENV === 'production') {
     // set static folder
