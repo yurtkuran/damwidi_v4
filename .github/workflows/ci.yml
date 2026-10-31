@@ -45,6 +45,9 @@ jobs:
       - name: Test DAM quote migration
         run: npm run test:dam-quote
 
+      - name: Test position performance migration
+        run: npm run test:position-performance
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

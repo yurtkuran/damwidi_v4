@@ -16,18 +16,17 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | Polygon usage and cache analysis | Complete | The analysis recommends one shared, cached market-snapshot service. |
 | Map-based migration design | Complete | The phased design is documented in `return-intraday-data-map-cache-migration-plan.md`. |
 | Shared market-snapshot foundation | Phase 1 complete, merged, and deployed | Commits `87524ba`, `e25ab89`, and `403b92d`, merged through PR #69, add the cache, provider integration, repository read, observability, AWS/Yahoo fallback repair, tests, live smoke assertions, and CI execution. `feature/migrate-dam-quote` is the first route integration. |
-| DAM quote migration | Implemented and parity validated; merge/deployment pending | `feature/migrate-dam-quote` replaces the PHP call with the shared market snapshot plus read-only portfolio valuation. The existing route, authentication, response fields, and error response are preserved. Node output exactly matches live PHP against the production MySQL data. |
-| Position-performance endpoint | Not started | Performance is still generated for all positions by the legacy endpoint. |
+| DAM quote migration | Complete, deployed, and production validated | `/api/marketData/quote/DAM` uses the shared market snapshot plus read-only portfolio valuation. The existing route, authentication, response fields, and error response are preserved. Production Node output exactly matches live PHP against production MySQL data. |
+| Position-performance endpoint | Backend implemented; React migration pending | `feature/migrate-position-performance` adds the member-only lazy endpoint, read-only repository functions, shared-snapshot integration, and focused/live tests. Dashboard and Allocation still receive eager legacy performance data until their consumers migrate. |
 | Allocation endpoint and React migration | Not started | Allocation still consumes `/api/damwidi/intraDayData`. |
 | Dashboard endpoint and React migration | Not started | Dashboard still consumes `/api/damwidi/intraDayData`; its DAM card can cause a second PHP call. |
 | Legacy proxy retirement | Not started | `routes/damwidi.js` still exposes the PHP-backed intraday route. |
 
-Production therefore still has two active Node-to-PHP paths for this functionality until the DAM quote feature is merged and deployed:
+Production now has one active Node-to-PHP path for this functionality:
 
 - `/api/damwidi/intraDayData` proxies the complete legacy response.
-- The DAM branch of `/api/marketData/quote/:symbol` calls `returnIntraDayData` to extract the fund quote.
 
-On `feature/migrate-dam-quote`, the second path has been removed. After that branch is deployed, `/api/damwidi/intraDayData` will be the only remaining Node-to-PHP path for this functionality.
+The deployed DAM branch of `/api/marketData/quote/:symbol` no longer calls `returnIntraDayData`.
 
 ## Relevant Branch Review
 
@@ -46,7 +45,7 @@ These changes reduce the remaining PHP surface and provide examples for read-onl
 
 ### `feature/migrate-dam-quote`
 
-The original local branch contained no unique committed changes and was deleted after the shared foundation merged. The fresh `feature/migrate-dam-quote` branch implements Phase 2 with read-only repository and portfolio-valuation services. It has deterministic and live local validation but must not be considered complete until it is merged, deployed, and tested through the authenticated production route.
+The original local branch contained no unique committed changes and was deleted after the shared foundation merged. The replacement `feature/migrate-dam-quote` branch implemented Phase 2 with read-only repository and portfolio-valuation services and was merged through PR #71. The deployed authenticated route returned the expected five-field response twice, the second request was consistent with cache reuse, and every numeric field exactly matched live PHP.
 
 ## Front-End Usage
 
@@ -100,11 +99,15 @@ The AWS fallback Lambda was repaired to use Yahoo's structured chart response in
 
 Implemented on `feature/migrate-dam-quote`: only the DAM branch of `/api/marketData/quote/:symbol` now uses the shared snapshot and portfolio-valuation services. The existing URL, `auth` and `ensureVerified` middleware, five response fields, numeric scalar types, and `500 "server error"` response are preserved. Non-DAM quote behavior and React consumers are unchanged. Focused tests cover the repository projection, PHP-compatible percentage rounding, response contract, missing inputs, cash-only portfolios, dependency composition, and removal of the PHP call. CI runs these tests alongside the market-snapshot and Lambda suites.
 
-A live local run used ten held symbols, completed through one Polygon batch request, returned no excluded symbols, and reused the cached snapshot on the second request. After configuring Node to use the production MySQL database, the latest `data_value` row was dated 2026-10-30 and Node exactly matched the simultaneously captured live PHP response for `latestPrice`, `previousClose`, `change`, and `changePercent`, with zero numeric difference in every field. After deployment, repeat the authenticated route smoke test and confirm no request reaches PHP before production sign-off.
+A live local run used ten held symbols, completed through one Polygon batch request, returned no excluded symbols, and reused the cached snapshot on the second request. After configuring Node to use the production MySQL database, the latest `data_value` row was dated 2026-10-30 and Node exactly matched the simultaneously captured live PHP response for `latestPrice`, `previousClose`, `change`, and `changePercent`, with zero numeric difference in every field. The deployed authenticated route subsequently returned HTTP 200 with the same exact parity; consecutive responses were identical and the second response was materially faster, consistent with cache reuse. Phase 2 is complete.
 
 ### Phase 3 — Add lazy position performance
 
-Implement `/api/damwidi/positionPerformance/:symbol` and update expanded Dashboard/Allocation rows to request only one symbol. Reuse cached current prices and locally stored historical data; expanding a row should not unconditionally issue a fresh Polygon request. Replace the legacy per-position query pattern with reusable, set-based repository functions where behavior permits.
+The backend portion is implemented on `feature/migrate-position-performance`. `GET /api/damwidi/positionPerformance/:symbol` uses `auth` and `ensureMember`, validates and normalizes the symbol, returns only the fields used by expanded rows, and returns `404 {"msg":"position not found"}` for a symbol without an open position. Its repository reads one symbol's transactions, splits, locally persisted previous close, and the distinct historical SPY closes needed by its purchase dates. Current symbol and SPY prices come from the shared market snapshot, so a fresh upstream request is not unconditional and simultaneous/overlapping consumers retain the foundation's cache and single-flight behavior.
+
+Legacy-compatible details discovered during live parity testing are intentional: a same-date duplicate purchase remains a separate response row while all purchases on that date use the first database purchase basis, split adjustments include purchases made on the split date, and `pricePreviousClose` uses the session-appropriate locally persisted `data_performance.previous` or premarket `2day` value rather than Polygon's provider-relative previous close. The focused endpoint converts that previous close to a number as specified by the decomposition contract. Live read-only comparison matched the complete focused PHP subset for AMZN (7 purchases) and split-adjusted XLK (24 purchases). The local route smoke test covered the existing missing-token, invalid-token, and non-member 401 responses plus validation 400, missing-position 404, member 200, and database-failure 500 behavior.
+
+The remaining Phase 3 work is the React per-symbol action/state cache and updating Dashboard `PositionDetail` and Allocation `PurchaseTable` to request the endpoint on first expansion. Until those consumers move—and until their parent endpoints are migrated—the legacy `returnIntraDayData` request still eagerly builds performance for all open positions.
 
 ### Phase 4 — Migrate Allocation
 
