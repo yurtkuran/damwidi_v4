@@ -49,14 +49,21 @@ const testAwsQuote = async () => {
             async get(url, options) {
                 assert.strictEqual(url, 'https://example.test/AAPL');
                 assert.strictEqual(options.headers['x-api-key'], 'test-key');
-                return { data: { previousClose: '$123.45' } };
+                assert.strictEqual(options.timeout, 10000);
+                return {
+                    data: {
+                        regularMarketPrice: 124.5,
+                        regularMarketPreviousClose: 123.45,
+                        regularMarketTime: 1793456789,
+                    },
+                };
             },
         });
         assert.deepStrictEqual(quote, {
             symbol: 'AAPL',
-            latestPrice: 123.45,
+            latestPrice: 124.5,
             previousClose: 123.45,
-            updated: null,
+            updated: 1793456789,
             source: 'yahoo',
         });
     } finally {

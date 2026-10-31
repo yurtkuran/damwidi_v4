@@ -33,6 +33,12 @@ jobs:
       - name: Install server dependencies
         run: npm ci
 
+      - name: Install getQuote Lambda dependencies
+        run: npm ci --prefix lambdas/getQuote
+
+      - name: Test getQuote Lambda
+        run: npm test --prefix lambdas/getQuote
+
       - name: Test market snapshot foundation
         run: npm run test:market-snapshot
 

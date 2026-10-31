@@ -25,6 +25,7 @@ const quote = async (symbol, httpClient = axios) => {
             Accept: 'application/json',
             'x-api-key': process.env.AWS_QUOTE_KEY,
         },
+        timeout: 10000,
     });
     const data = response.data || {};
     const previousClose = toNumber(data.regularMarketPreviousClose ?? data.previousClose);
