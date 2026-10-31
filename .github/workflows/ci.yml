@@ -48,6 +48,9 @@ jobs:
       - name: Test position performance migration
         run: npm run test:position-performance
 
+      - name: Test allocation data migration
+        run: npm run test:allocation-data
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

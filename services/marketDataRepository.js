@@ -67,7 +67,48 @@ const getMarketSnapshotRows = async (database = db) => {
     );
 };
 
+const getAllocationInputs = async (database = db) => {
+    const [baseRows, stockRows, stockMappings] = await Promise.all([
+        database.query(
+            `
+                SELECT
+                    sector AS symbol,
+                    weight,
+                    shares,
+                    basis,
+                    name,
+                    description,
+                    type
+                FROM data_performance
+                WHERE type IN ('C', 'I', 'S')
+                ORDER BY FIELD(type, 'C', 'I', 'S'), weight DESC, sector
+            `,
+            { type: Sequelize.QueryTypes.SELECT }
+        ),
+        database.query(
+            `
+                SELECT
+                    sector AS symbol,
+                    weight,
+                    shares,
+                    basis,
+                    name,
+                    description,
+                    type
+                FROM data_performance
+                WHERE type = 'K'
+                ORDER BY sector
+            `,
+            { type: Sequelize.QueryTypes.SELECT }
+        ),
+        database.query('CALL stock_allocation()'),
+    ]);
+
+    return { baseRows, stockMappings, stockRows };
+};
+
 module.exports = {
+    getAllocationInputs,
     getAboveBelowSectors,
     getMarketSnapshotRows,
     getRecentHistory,
