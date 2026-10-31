@@ -234,7 +234,7 @@ const TradeHistory = ({ damwidi: { history, loading }, getTradeHistory }) => {
         <Spinner />
     ) : (
         <div>
-            <h4>Trade History++</h4>
+            <h4>Trade History+!+</h4>
             <Table columns={columns} data={history} />
         </div>
     );
