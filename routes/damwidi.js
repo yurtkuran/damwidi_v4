@@ -12,6 +12,7 @@ const Transaction = require('../models/Transaction.model');
 // bring in local service modules
 const { getSectorTimeframePerformanceData } = require('../services/sectorPerformance');
 const { getAboveBelowData } = require('../services/aboveBelow');
+const { getAllocationData } = require('../services/allocation');
 const { getPositionPerformance } = require('../services/positionPerformance');
 
 // authorization middleware
@@ -127,6 +128,20 @@ router.get('/aboveBelowData/:timeframe', auth, ensureMember, async (req, res) =>
     try {
         const aboveBelowData = await getAboveBelowData(req.params.timeframe);
         res.json(aboveBelowData);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('server error');
+    }
+});
+
+// @route:  GET api/damwidi/allocationData
+// @desc:   retrieve member allocation data
+// @access: private
+// @role:   member
+router.get('/allocationData', auth, ensureMember, async (req, res) => {
+    try {
+        const allocationData = await getAllocationData();
+        res.json(allocationData);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('server error');

@@ -10,38 +10,40 @@ import { connect } from 'react-redux';
 import AllocationTable from './AllocationTable';
 
 // bring in actions
-import { getIntraDayData } from '../../actions/damwidiActions';
+import { getAllocationData } from '../../actions/damwidiActions';
 
 // bring in functions and hooks
 
 // set initial state
 
-const Allocation = ({ damwidi: { intraDay, loading }, getIntraDayData }) => {
+const Allocation = ({ damwidi: { allocationData, allocationError, allocationLoading }, getAllocationData }) => {
     // load damwidi data
     useEffect(() => {
-        getIntraDayData();
-    }, [getIntraDayData]);
+        getAllocationData();
+    }, [getAllocationData]);
 
     return (
         <div>
             <h4>allocation</h4>
-            {!loading && (
-                <>
-                    <AllocationTable data={intraDay.allocationTable} performanceData={intraDay.performanceData.data} />
-                </>
+            {!allocationLoading && allocationData && (
+                <AllocationTable data={allocationData.rows} fund={allocationData.fund} />
             )}
+            {!allocationLoading && allocationError && <p>unable to load allocation data</p>}
         </div>
     );
 };
 
 Allocation.propTypes = {
-    getIntraDayData: PropTypes.func.isRequired,
-    intraDay: PropTypes.object.isRequired,
-    loading: PropTypes.bool.isRequired,
+    damwidi: PropTypes.shape({
+        allocationData: PropTypes.object,
+        allocationError: PropTypes.bool.isRequired,
+        allocationLoading: PropTypes.bool.isRequired,
+    }).isRequired,
+    getAllocationData: PropTypes.func.isRequired,
 };
 
 const mapStatetoProps = (state) => ({
     damwidi: state.damwidi,
 });
 
-export default connect(mapStatetoProps, { getIntraDayData })(Allocation);
+export default connect(mapStatetoProps, { getAllocationData })(Allocation);

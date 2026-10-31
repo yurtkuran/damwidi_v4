@@ -78,28 +78,21 @@ const Table = ({ columns, data, getCellProps = defaultPropGetter, getRowProps = 
     );
 };
 
-const AllocationTable = ({ data, performanceData }) => {
+const AllocationTable = ({ data, fund }) => {
     const postitionTypes = 'ISKY';
 
     // function to render row sub components
     const renderRowSubComponent = useCallback(
         (symbol) => {
-            return <PurchaseTable performanceData={performanceData[symbol]} />;
+            return <PurchaseTable symbol={symbol} />;
         },
-        [performanceData]
+        []
     );
 
     // define data
     const tableData = useMemo(() => {
-        let tableData = [];
-        for (const symbol in data) {
-            if (symbol !== 'DAM') tableData.push(data[symbol]);
-        }
-        return tableData;
+        return data;
     }, [data]);
-
-    // define DAM data
-    const damData = useMemo(() => data['DAM'], [data]);
 
     // build columns
     const columns = useMemo(
@@ -126,7 +119,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 headerClassName: 'text-left',
                 className: 'text-left',
                 Footer: () => {
-                    return damData.sector;
+                    return fund.symbol;
                 },
                 footerClassName: 'text-left',
                 width: '10%',
@@ -137,7 +130,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 headerClassName: 'text-left',
                 className: 'text-left',
                 Footer: () => {
-                    return damData.description;
+                    return fund.description;
                 },
                 footerClassName: 'text-left',
                 // width: '20%',
@@ -154,8 +147,9 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Current Value',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: ({ value }) => numeral(value).format('0,0.00'),
                 Footer: () => {
-                    return numeral(damData.currentValue).format('$0,0.00');
+                    return numeral(fund.currentValue).format('$0,0.00');
                 },
                 footerClassName: 'text-right',
                 width: '10%',
@@ -165,6 +159,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Change',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: ({ value }) => numeral(value).format('0,0.00'),
                 width: '10%',
             },
             {
@@ -172,6 +167,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 Header: 'Allocation',
                 headerClassName: 'text-right',
                 className: 'text-right',
+                Cell: ({ value }) => `${numeral(value).format('0.0')}%`,
                 width: '8%',
             },
             {
@@ -181,7 +177,7 @@ const AllocationTable = ({ data, performanceData }) => {
                 width: '8%',
                 Cell: ({ row: { original } }) => {
                     const { type, weightPercent } = original;
-                    return type === 'Y' && `${weightPercent}`;
+                    return type === 'Y' && `${numeral(weightPercent).format('0.0')}%`;
                 },
             },
             {
@@ -191,11 +187,11 @@ const AllocationTable = ({ data, performanceData }) => {
                 width: '8%',
                 Cell: ({ row: { original } }) => {
                     const { type, impliedPercent } = original;
-                    return type === 'Y' && `${impliedPercent}`;
+                    return type === 'Y' && `${numeral(impliedPercent).format('0.0')}%`;
                 },
             },
         ],
-        [damData.currentValue, damData.sector, damData.description]
+        [fund.currentValue, fund.symbol, fund.description]
     );
 
     return (
@@ -223,7 +219,7 @@ const AllocationTable = ({ data, performanceData }) => {
 
                     let cellClass = '';
                     if (Header === 'Change') {
-                        const change = parseFloat(value.replace(/,/g, ''));
+                        const change = Number(value);
                         if (change > 0) cellClass = 'valueUp';
                         if (change < 0) cellClass = 'valueDown';
                     }
@@ -236,8 +232,8 @@ const AllocationTable = ({ data, performanceData }) => {
 };
 
 AllocationTable.propTypes = {
-    data: PropTypes.object.isRequired,
-    performanceData: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
+    fund: PropTypes.object.isRequired,
 };
 
 export default AllocationTable;

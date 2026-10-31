@@ -8,6 +8,7 @@
         "server": "clear; nodemon server.js",
         "client": "npm start --prefix client",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
+        "test:allocation-data": "node test/allocation.test.js",
         "test:dam-quote": "node test/damQuote.test.js",
         "test:market-snapshot": "node test/marketSnapshot.test.js",
         "test:position-performance": "node test/positionPerformance.test.js",

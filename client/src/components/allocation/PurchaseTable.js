@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
 // bring in dependencies
@@ -7,10 +7,13 @@ import numeral from 'numeral';
 import './AllocationTable.css';
 
 // bring in redux
+import { connect } from 'react-redux';
 
 // bring in components
+import Spinner from '../layout/Spinner';
 
 // bring in actions
+import { getPositionPerformance } from '../../actions/damwidiActions';
 
 // bring in functions and hooks
 
@@ -71,7 +74,14 @@ const Change = ({ change }) => {
     );
 };
 
-const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, pricePreviousClose } }) => {
+const PurchaseTable = ({ error, getPositionPerformance, loading, performanceData, symbol }) => {
+    useEffect(() => {
+        getPositionPerformance(symbol);
+    }, [getPositionPerformance, symbol]);
+
+    const purchases = performanceData ? performanceData.purchases : [];
+    const priceLast = performanceData ? performanceData.priceLast : 0;
+    const pricePreviousClose = performanceData ? performanceData.pricePreviousClose : 0;
     const change = priceLast - pricePreviousClose;
 
     // build columns
@@ -125,6 +135,11 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
         ],
         []
     );
+
+    if (loading || !performanceData) {
+        return error ? <p>unable to load purchase performance</p> : <Spinner />;
+    }
+
     return (
         <div className='purchaseTableContainer'>
             <div className='purchase-table-title'>
@@ -160,7 +175,17 @@ const PurchaseTable = ({ performanceData: { purchases, symbol, priceLast, priceP
 };
 
 PurchaseTable.propTypes = {
-    performanceData: PropTypes.object.isRequired,
+    error: PropTypes.bool,
+    getPositionPerformance: PropTypes.func.isRequired,
+    loading: PropTypes.bool,
+    performanceData: PropTypes.object,
+    symbol: PropTypes.string.isRequired,
 };
 
-export default PurchaseTable;
+const mapStateToProps = (state, { symbol }) => ({
+    error: Boolean(state.damwidi.positionPerformanceErrors[symbol]),
+    loading: Boolean(state.damwidi.positionPerformanceLoading[symbol]),
+    performanceData: state.damwidi.positionPerformance[symbol],
+});
+
+export default connect(mapStateToProps, { getPositionPerformance })(PurchaseTable);

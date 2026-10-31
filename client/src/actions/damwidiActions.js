@@ -1,6 +1,21 @@
 import axios from 'axios';
 
-import { GET_UNSTICK_LOG, GET_TRADE_HISTORY, GET_INTRADAY_DATA, GET_PERFORMANCE_DATA, GET_ABOVEBELOW_DATA, GET_HISTORY, GET_OPEN_POSITIONS, RESET_DAMWIDI_LOADING } from './types';
+import {
+    GET_ABOVEBELOW_DATA,
+    GET_ALLOCATION_DATA,
+    GET_ALLOCATION_ERROR,
+    GET_HISTORY,
+    GET_INTRADAY_DATA,
+    GET_OPEN_POSITIONS,
+    GET_PERFORMANCE_DATA,
+    GET_POSITION_PERFORMANCE,
+    GET_POSITION_PERFORMANCE_ERROR,
+    GET_POSITION_PERFORMANCE_REQUEST,
+    GET_TRADE_HISTORY,
+    GET_UNSTICK_LOG,
+    RESET_ALLOCATION_LOADING,
+    RESET_DAMWIDI_LOADING,
+} from './types';
 
 // get unstick log
 export const getUnstick = () => async (dispatch) => {
@@ -30,6 +45,37 @@ export const getIntraDayData = () => async (dispatch) => {
         dispatch({ type: GET_INTRADAY_DATA, payload: res.data });
     } catch (err) {
         console.log(err);
+    }
+};
+
+// get allocation data
+export const getAllocationData = () => async (dispatch) => {
+    dispatch({ type: RESET_ALLOCATION_LOADING });
+
+    try {
+        const res = await axios.get(`/api/damwidi/allocationData`);
+        dispatch({ type: GET_ALLOCATION_DATA, payload: res.data });
+    } catch (err) {
+        console.log(err);
+        dispatch({ type: GET_ALLOCATION_ERROR });
+    }
+};
+
+// get one open position's purchase performance
+export const getPositionPerformance = (requestedSymbol) => async (dispatch, getState) => {
+    const symbol = requestedSymbol.trim().toUpperCase();
+    const { positionPerformance, positionPerformanceLoading } = getState().damwidi;
+
+    if (positionPerformance[symbol] || positionPerformanceLoading[symbol]) return;
+
+    dispatch({ type: GET_POSITION_PERFORMANCE_REQUEST, payload: symbol });
+
+    try {
+        const res = await axios.get(`/api/damwidi/positionPerformance/${symbol}`);
+        dispatch({ type: GET_POSITION_PERFORMANCE, payload: { symbol, data: res.data } });
+    } catch (err) {
+        console.log(err);
+        dispatch({ type: GET_POSITION_PERFORMANCE_ERROR, payload: symbol });
     }
 };
 
