@@ -15,17 +15,19 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | Legacy analysis and consumer inventory | Complete | Detailed findings are in `return-intraday-data-decomposition-analysis.md`. |
 | Polygon usage and cache analysis | Complete | The analysis recommends one shared, cached market-snapshot service. |
 | Map-based migration design | Complete | The phased design is documented in `return-intraday-data-map-cache-migration-plan.md`. |
-| Shared market-snapshot foundation | Phase 1 complete, merged, and deployed | Commits `87524ba`, `e25ab89`, and `403b92d`, merged through PR #69, add the cache, provider integration, repository read, observability, AWS/Yahoo fallback repair, tests, live smoke assertions, and CI execution. The foundation is deployed but is not yet wired into application routes. |
-| DAM quote migration | Not complete | `/api/marketData/quote/DAM` still calls PHP `returnIntraDayData`. |
+| Shared market-snapshot foundation | Phase 1 complete, merged, and deployed | Commits `87524ba`, `e25ab89`, and `403b92d`, merged through PR #69, add the cache, provider integration, repository read, observability, AWS/Yahoo fallback repair, tests, live smoke assertions, and CI execution. `feature/migrate-dam-quote` is the first route integration. |
+| DAM quote migration | Implemented and locally validated; merge/deployment pending | `feature/migrate-dam-quote` replaces the PHP call with the shared market snapshot plus read-only portfolio valuation. The existing route, authentication, response fields, and error response are preserved. |
 | Position-performance endpoint | Not started | Performance is still generated for all positions by the legacy endpoint. |
 | Allocation endpoint and React migration | Not started | Allocation still consumes `/api/damwidi/intraDayData`. |
 | Dashboard endpoint and React migration | Not started | Dashboard still consumes `/api/damwidi/intraDayData`; its DAM card can cause a second PHP call. |
 | Legacy proxy retirement | Not started | `routes/damwidi.js` still exposes the PHP-backed intraday route. |
 
-The application therefore still has two active Node-to-PHP paths for this functionality:
+Production therefore still has two active Node-to-PHP paths for this functionality until the DAM quote feature is merged and deployed:
 
 - `/api/damwidi/intraDayData` proxies the complete legacy response.
 - The DAM branch of `/api/marketData/quote/:symbol` calls `returnIntraDayData` to extract the fund quote.
+
+On `feature/migrate-dam-quote`, the second path has been removed. After that branch is deployed, `/api/damwidi/intraDayData` will be the only remaining Node-to-PHP path for this functionality.
 
 ## Relevant Branch Review
 
@@ -44,7 +46,7 @@ These changes reduce the remaining PHP surface and provide examples for read-onl
 
 ### `feature/migrate-dam-quote`
 
-The original local branch contained no unique committed changes and was deleted after the shared foundation merged. A fresh `feature/migrate-dam-quote` branch has been created from current `master` for Phase 2, with no implementation committed yet. The branch name must not be treated as evidence that the DAM quote has migrated; the DAM route still calls PHP until its implementation and validation are complete.
+The original local branch contained no unique committed changes and was deleted after the shared foundation merged. The fresh `feature/migrate-dam-quote` branch implements Phase 2 with read-only repository and portfolio-valuation services. It has deterministic and live local validation but must not be considered complete until it is merged, deployed, and tested through the authenticated production route.
 
 ## Front-End Usage
 
@@ -96,7 +98,9 @@ The AWS fallback Lambda was repaired to use Yahoo's structured chart response in
 
 ### Phase 2 — Migrate the DAM quote
 
-Replace only the DAM branch of `/api/marketData/quote/:symbol` with the shared snapshot and portfolio-valuation services. Preserve its existing URL, authentication behavior, response fields, scalar types, and errors. This is the first route migration because its five-field contract is small while exercising the shared valuation path.
+Implemented on `feature/migrate-dam-quote`: only the DAM branch of `/api/marketData/quote/:symbol` now uses the shared snapshot and portfolio-valuation services. The existing URL, `auth` and `ensureVerified` middleware, five response fields, numeric scalar types, and `500 "server error"` response are preserved. Non-DAM quote behavior and React consumers are unchanged. Focused tests cover the repository projection, PHP-compatible percentage rounding, response contract, missing inputs, cash-only portfolios, dependency composition, and removal of the PHP call. CI runs these tests alongside the market-snapshot and Lambda suites.
+
+A live local run used ten held symbols, completed through one Polygon batch request, returned no excluded symbols, and reused the cached snapshot on the second request. Its current account value exactly matched the simultaneously captured live PHP value. The configured Node database's newest `data_value` row was dated 2026-10-23, while the live PHP response reflected a newer prior fund value, so `previousClose`, `change`, and `changePercent` could not be compared against the same database. Before production sign-off, verify that the deployed Node database has the expected current `data_value` row, then compare all five fields through the authenticated route and confirm no request reaches PHP.
 
 ### Phase 3 — Add lazy position performance
 
