@@ -12,6 +12,7 @@ const Transaction = require('../models/Transaction.model');
 // bring in local service modules
 const { getSectorTimeframePerformanceData } = require('../services/sectorPerformance');
 const { getAboveBelowData } = require('../services/aboveBelow');
+const { getPositionPerformance } = require('../services/positionPerformance');
 
 // authorization middleware
 const { auth, ensureAdmin, ensureMember } = require('../middleware/auth');
@@ -131,6 +132,41 @@ router.get('/aboveBelowData/:timeframe', auth, ensureMember, async (req, res) =>
         res.status(500).send('server error');
     }
 });
+
+// @route:  GET api/damwidi/positionPerformance/:symbol
+// @desc:   retrieve purchase-lot and SPY performance for one open position
+// @access: private
+// @role:   member
+router.get(
+    '/positionPerformance/:symbol',
+    auth,
+    ensureMember,
+    check('symbol', 'invalid symbol')
+        .trim()
+        .notEmpty()
+        .isLength({ max: 5 })
+        .matches(/^[A-Za-z0-9.-]+$/),
+    async (req, res) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        try {
+            const performance = await getPositionPerformance(req.params.symbol);
+
+            if (!performance) {
+                return res.status(404).json({ msg: 'position not found' });
+            }
+
+            res.json(performance);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('server error');
+        }
+    }
+);
 
 // @route:  GET api/damwidi/history
 // @desc:   retrieve historical SPY and DAM data
