@@ -10,9 +10,6 @@ import { connect } from 'react-redux';
 import Performance from './Performance';
 import Candlestick from '../charts/Candlestick';
 
-// bring in actions
-import { getIntraDayData } from '../../actions/marketActions';
-
 // bring in functions and hooks
 
 // set initial state
@@ -56,4 +53,4 @@ const mapStatetoProps = (state) => ({
     performanceData: state.damwidi.intraDay.performanceData.data,
 });
 
-export default connect(mapStatetoProps, { getIntraDayData })(PositionDetail);
+export default connect(mapStatetoProps)(PositionDetail);

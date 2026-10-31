@@ -8,38 +8,6 @@ const { auth, ensureAdmin } = require('../middleware/auth');
 // IEX Cloud base URL
 const iexBaseURL = 'https://cloud.iexapis.com/stable/';
 
-// @route:  GET api/iex/usage
-// @desc:   retrieve current month usage for your account
-// @access: private
-// @role:   admin
-router.get('/usage', auth, ensureAdmin, async (req, res) => {
-    const url = iexBaseURL + 'account/usage?token=' + process.env.IEXCLOUD_SECRET_KEY;
-
-    try {
-        const iex = await axios.get(url);
-        res.json(iex.data);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('server error');
-    }
-});
-
-// @route:  GET api/iex/usage
-// @desc:   retrieve current month usage for your account
-// @access: private
-// @role:   admin
-router.get('/details', auth, ensureAdmin, async (req, res) => {
-    const url = iexBaseURL + 'account/metadata?token=' + process.env.IEXCLOUD_SECRET_KEY;
-
-    try {
-        const iex = await axios.get(url);
-        res.json(iex.data);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('server error');
-    }
-});
-
 // @route:  get api/iex/validate/:symbol
 // @desc:   validate symbol
 // @access: private
