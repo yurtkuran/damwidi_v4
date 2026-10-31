@@ -1,6 +1,6 @@
 # Executive Summary — `returnIntraDayData` Decomposition and Migration
 
-> Living migration document. Last updated: 2026-10-30. Update this summary after each implementation phase, behavior decision, and production validation milestone.
+> Living migration document. Last updated: 2026-10-31. Update this summary after each implementation phase, behavior decision, and production validation milestone.
 
 ## Decision
 
@@ -15,7 +15,7 @@ The endpoint is also expensive. A representative response was approximately 36 K
 | Legacy analysis and consumer inventory | Complete | Detailed findings are in `return-intraday-data-decomposition-analysis.md`. |
 | Polygon usage and cache analysis | Complete | The analysis recommends one shared, cached market-snapshot service. |
 | Map-based migration design | Complete | The phased design is documented in `return-intraday-data-map-cache-migration-plan.md`. |
-| Shared market-snapshot foundation | Implementation and validation complete on feature branch | Commits `adc3ee5` and `26b7d24` on `feature/market-snapshot-foundation` add the cache, provider integration, repository read, observability, tests, live smoke assertions, and CI execution. It is not yet wired into application routes. |
+| Shared market-snapshot foundation | Phase 1 complete, merged, and deployed | Commits `87524ba`, `e25ab89`, and `403b92d`, merged through PR #69, add the cache, provider integration, repository read, observability, AWS/Yahoo fallback repair, tests, live smoke assertions, and CI execution. The foundation is deployed but is not yet wired into application routes. |
 | DAM quote migration | Not complete | `/api/marketData/quote/DAM` still calls PHP `returnIntraDayData`. |
 | Position-performance endpoint | Not started | Performance is still generated for all positions by the legacy endpoint. |
 | Allocation endpoint and React migration | Not started | Allocation still consumes `/api/damwidi/intraDayData`. |
@@ -44,7 +44,7 @@ These changes reduce the remaining PHP surface and provide examples for read-onl
 
 ### `feature/migrate-dam-quote`
 
-This local branch has no unique committed changes relative to its base and is behind current `master`. It must not be treated as evidence that the DAM quote has migrated. The reusable foundation has instead been committed separately as `adc3ee5` on `feature/market-snapshot-foundation`; the DAM route still needs a later integration phase.
+The original local branch contained no unique committed changes and was deleted after the shared foundation merged. A fresh `feature/migrate-dam-quote` branch has been created from current `master` for Phase 2, with no implementation committed yet. The branch name must not be treated as evidence that the DAM quote has migrated; the DAM route still calls PHP until its implementation and validation are complete.
 
 ## Front-End Usage
 
@@ -90,9 +90,9 @@ Capture deterministic database and provider fixtures for normal market operation
 
 ### Phase 1 — Complete the shared market-snapshot foundation
 
-The cache, Polygon batch/status functions, Yahoo fallback adapter, repository read, session policies, single-flight behavior, observability, and focused tests are committed as `adc3ee5` and `26b7d24` on `feature/market-snapshot-foundation`. Deterministic tests cover every configured session TTL, concurrent refresh/fallback coalescing, projection isolation, and provider failure/retry. A live read-only smoke test returned one complete 24-symbol snapshot through one Polygon status request and one batch request, then reused the cache. CI now runs the focused test before building the Docker image. The branch intentionally contains no route or React changes.
+Phase 1 is complete. The cache, Polygon batch/status functions, Yahoo fallback adapter, repository read, session policies, single-flight behavior, observability, and focused tests were merged into `master` through PR #69 as commits `87524ba`, `e25ab89`, and `403b92d`. Deterministic tests cover every configured session TTL, concurrent refresh/fallback coalescing, projection isolation, and provider failure/retry. A live read-only smoke test returned one complete 24-symbol snapshot through one Polygon status request and one batch request, then reused the cache. CI runs the focused tests before building the Docker image. Phase 1 intentionally contains no route or React migration.
 
-The configured AWS fallback endpoint is reachable and returns HTTP 200, but live checks on several valid symbols returned an empty `previousClose` and no usable current price. The Node adapter correctly treats those responses as unavailable, while deterministic tests verify normalization for a valid response. The external AWS/Yahoo service must return usable quote data before a migrated route can rely on fallback behavior in production.
+The AWS fallback Lambda was repaired to use Yahoo's structured chart response instead of obsolete HTML selectors, deployed, and tested live. AAPL and SPY returned usable numeric current prices, previous closes, and market timestamps through the Node adapter; an invalid symbol returned `null` as expected. Lambda unit tests and market-snapshot integration tests pass. The application deployment on `app.damwidi.com` also passed anonymous routing and static-asset smoke tests. The foundation remains dormant until a migrated route loads it.
 
 ### Phase 2 — Migrate the DAM quote
 
@@ -128,7 +128,7 @@ Each phase should record evidence for:
 
 ## Risks and Decisions Requiring Approval
 
-The migration is not a syntax conversion. Legacy behaviors needing explicit decisions include potentially defective missing-quote fallback, ambiguous premarket semantics, same-date purchase lots, inconsistent stock-split treatment, ordering assumptions in React, and mixed numeric/string response types. Authentication and role behavior also require review because route middleware, comments, navigation restrictions, and response redaction are not fully aligned.
+The migration is not a syntax conversion. Legacy behaviors needing explicit decisions include the defective legacy missing-quote fallback, ambiguous premarket semantics, same-date purchase lots, inconsistent stock-split treatment, ordering assumptions in React, and mixed numeric/string response types. The repaired Node AWS/Yahoo fallback is an explicit replacement for that legacy defect. Authentication and role behavior also require review because route middleware, comments, navigation restrictions, and response redaction are not fully aligned.
 
 Existing Sequelize mappings must be verified against the real schema before use. Defects found in PHP should not automatically be reproduced, but they also must not be silently corrected. Every intentional behavior change should be documented and approved.
 
