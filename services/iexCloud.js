@@ -30,18 +30,6 @@ const keyStats = async (symbol, stat = null) => {
     }
 };
 
-const quote = async (symbol) => {
-    const url = iexBaseURL + `stock/${symbol}/quote?token=` + process.env.IEXCLOUD_PUBLIC_KEY;
-
-    try {
-        const iex = await axios.get(url);
-        return iex.data;
-    } catch (err) {
-        console.log(err.message);
-        return false;
-    }
-};
-
 const intraDay = async (symbol) => {
     const url = iexBaseURL + `stock/${symbol}/intraday-prices?token=` + process.env.IEXCLOUD_PUBLIC_KEY;
 
@@ -68,6 +56,5 @@ const intraDay = async (symbol) => {
 module.exports = {
     company,
     keyStats,
-    quote,
     intraDay,
 };

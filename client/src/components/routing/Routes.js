@@ -23,8 +23,6 @@ import EtfComponents from '../etf/EtfComponents';
 import EtfList from '../etf/EtfList';
 import StockData from '../etf/StockData';
 
-import IEXStatus from '../info/IEXStatus';
-
 import Unstick from '../damwidi/Unstick';
 import MeetingMinutes from '../damwidi/MeetingMinutes';
 import TradeHistory from '../damwidi/TradeHistory';
@@ -62,8 +60,6 @@ const Routes = () => {
                     <PrivateRoute exact path='/etfcomponents' component={EtfComponents} />
                     <PrivateRoute expact path='/etflist' component={EtfList} />
                     <PrivateRoute expact path='/stockData' component={StockData} />
-
-                    <PrivateRoute exact path='/iexstatus' component={IEXStatus} />
 
                     <PrivateRoute exact path='/minutes' component={MeetingMinutes} />
 

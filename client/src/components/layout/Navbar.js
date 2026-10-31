@@ -25,7 +25,6 @@ const AppNavbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                     <NavDropdown.Item href='/userlog'>Users Log</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item href='/unstick'>Unstick Log</NavDropdown.Item>
-                    <NavDropdown.Item href='/iexstatus'>IEX Details</NavDropdown.Item>
                 </NavDropdown>
             )}
             {user !== null && isAuthenticated && <Nav.Link onClick={logout}>{user.firstName}: Logout</Nav.Link>}

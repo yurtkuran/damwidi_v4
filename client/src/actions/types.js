@@ -39,10 +39,6 @@ export const REMOVE_STOCK           = 'REMOVE_STOCK';
 export const SET_CURRENT_STOCK      = 'SET_CURRENT_STOCK';
 export const CLEAR_CURRENT_STOCK    = 'CLEAR_CURRENT_STOCK';
 
-// iex actions
-export const GET_IEX_USAGE          = 'GET_IEX_USAGE';
-export const GET_IEX_DETAILS        = 'GET_IEX_DETAILS';
-
 // alphavantage actions
 export const GET_DAILY              = 'GET_DAILY';
 export const RESET_ALPHA_LOADING    = 'RESET_ALPHA_LOADING';
@@ -66,8 +62,6 @@ export const SET_CURRENT_ETF        = 'SET_CURRENT_ETF';
 export const CLEAR_CURRENT_ETF      = 'CLEAR_CURRENT_ETF';
 
 // market data actions
-export const GET_INTRADAY           = 'GET_INTRADAY';
-export const GET_KEYSTATS           = 'GET_KEYSTATS';
 export const GET_QUOTE              = 'GET_QUOTE';
 export const CLEAR_QUOTE            = 'CLEAR_QUOTE';
 export const GET_PROFILE            = 'GET_PROFILE';

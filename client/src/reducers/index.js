@@ -12,7 +12,6 @@ import authReducer from './authReducer';
 import damwidiReducer from './damwidiReducer';
 import errorReducer from './errorReducer';
 import etfReducer from './etfReducer';
-import iexReducer from './iexReducer';
 import logReducer from './logReducer';
 import marketReducer from './marketReducer';
 import messageReducer from './messageReducer';
@@ -27,7 +26,6 @@ const appReducer = combineReducers({
     damwidi: damwidiReducer,
     error: errorReducer,
     etf: etfReducer,
-    iex: iexReducer,
     log: logReducer,
     market: marketReducer,
     message: messageReducer,
