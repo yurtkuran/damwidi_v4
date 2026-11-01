@@ -68,6 +68,14 @@ router.get('/tradeHistory', auth, ensureMember, async (req, res) => {
 router.get('/intraDayData', auth, async (req, res) => {
     const url = damwidiBaseURL + 'returnIntraDayData';
 
+    console.log(
+        `[legacyIntradayProxy] ${JSON.stringify({
+            timestamp: new Date().toISOString(),
+            isMember: Boolean(req.user.isMember),
+            isAdmin: Boolean(req.user.isAdmin),
+        })}`
+    );
+
     try {
         const damwidi = await axios.get(url);
         if (!req.user.isMember) {
